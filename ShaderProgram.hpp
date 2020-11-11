@@ -2,7 +2,19 @@
  *
  * license
  *
+ *
+ * issues: need thread safety impliment
+ *         need another shader types impliment
+ *         need shader tree impliment
+ *         need RAII wraper for Shaders
+ *         need realise correct copy/move operations with shaders
  */
+
+//////////////////////////////////////////////////
+//                                              //
+//       !!!WARNING: not thread safety          //
+//                                              //
+//////////////////////////////////////////////////
 
 #ifndef SHADERPROGRAM_HPP
 #define SHADERPROGRAM_HPP
