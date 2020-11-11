@@ -1,3 +1,9 @@
+/**
+ *
+ * license
+ *
+ */
+
 #ifndef SHADERPROGRAM_HPP
 #define SHADERPROGRAM_HPP
 
@@ -9,27 +15,45 @@
 #include <vector>
 #include <fstream>
 
+/**
+ * @brief enumeration with types of shaders, generaly must have all type of shaders
+ * need add other shader types
+ */
 enum class Shaders
 {
-    vertex,
-    fragment,
-    geometry,
+    vertex = GL_VERTEX_SHADER,
+    fragment = GL_FRAGMENT_SHADER,
+    geometry = GL_GEOMETRY_SHADER,
     // etc...
 };
 
+/**
+ * @brief enumeration with load method factor
+ */
 enum class LoadMethod
 { filePath, sourceCode };
 
+/**
+ * @class Shader is impliment interface for all shader types
+ */
 template<Shaders type>
     class Shader
     {
     private:
-        GLuint                          _shader;
+        GLuint                          _shader;                // shader ref
 
     public:
+        /**
+         * @brief default (constructor) init shader ref
+         */
+        Shader() noexcept : _shader(glCreateShader(static_cast<GLuint>(type))) { }
 
-        Shader() noexcept : _shader(glCreateShader(getCreateArg())) { }
-
+        /**
+         * @brief (constructor) have load politics, path to file with shader,
+         * @brief or source code, default load politics is path to file, also
+         * @brief shader (constructor) have overloading for c-string
+         * @need add enother string types (maybe string_view?)
+         */
         constexpr Shader(const char* data, const LoadMethod method = LoadMethod::filePath)
             : Shader()
         {
@@ -53,15 +77,23 @@ template<Shaders type>
             if (method == LoadMethod::filePath) loadShaderFromFile(data);
         }
 
+        /**
+         * @brief (destructor) clear shader use OpenGL methods
+         */
         ~Shader() noexcept
-        {
-            glDeleteShader(_shader);
-        }
+        { glDeleteShader(_shader); }
 
+        /**
+         * @brief returns reference to current shaders
+         */
         const auto&
         get() const noexcept
         { return _shader; }
 
+        /**
+         * @brief imoliment compile processe, if shader load unsuccsesful have UB
+         * @need rewrite for detach unssucsesful loading
+         */
         void
         compile() const noexcept
         {
@@ -78,21 +110,25 @@ template<Shaders type>
         	   glGetShaderInfoLog(_shader, 512, NULL, infoLog);
                std::cout << "|    EROR     | Compile shader\n\n" << infoLog << std::endl;
             }
+            else std::cout << "| SUCCSESSFUL | compile shader\n";
         }
 
+        /**
+         * @brief all copy/move operations blocked
+         * @comment I dont know how realized correct copy for shaders, and move
+         * @comment operstions relevant only in shaderr tree
+         */
         Shader(const Shader& other) = delete;
         Shader(Shader&& other) = delete;
         Shader& operator=(const Shader& other) = delete;
         Shader& operator=(Shader&& other) = delete;
 
     private:
-        auto getCreateArg() const noexcept
-        {
-            if (type == Shaders::vertex)   return GL_VERTEX_SHADER;
-            if (type == Shaders::fragment) return GL_FRAGMENT_SHADER;
-            if (type == Shaders::geometry) return GL_GEOMETRY_SHADER;
-        }
-
+        /**
+         * @brief loading shader source code use path to file
+         * @comment have many way to optimisation
+         * @comment need check memory leaking
+         */
         void loadShaderFromFile(const char* data) const
         {
             std::ifstream in(data, std::ios::in);
@@ -129,9 +165,19 @@ template<Shaders type>
         }
     };
 
-template<typename... types>
+template<typename... types>    //dikyi kostyl
     void foo(types...) {  }
 
+/**
+ * @class ShaderProgram realize dynamic shader linking, use pack of shader
+ *        types using in this program, need init this type pack only if used default
+ *        (constructor) in other situations shader types pack will be generate use
+ *        (constructor) paramenrs, for use this get all shaders to (constructor)
+ * @brief using setShaders after (constructor) with parametrs - UB
+ * @brief double using setShaders - UB
+ * @brief change shaders order - UB
+ * @need  rewrite linkProgram & setShaders aka "use only first time" (maybe use singleton functor)
+ */
 template<Shaders... types>
     class ShaderProgram
     {
@@ -140,15 +186,44 @@ template<Shaders... types>
         GLuint                                                 _programm;
 
     public:
-        ShaderProgram(const Shader<types>&... shaders)
+        /**
+         * @brief default (constructor) only create programm no attach shader
+         */
+        ShaderProgram()
             : _programm(glCreateProgram())
-            // , _shaders(std::forward_as_tuple(shaders))
-        {
-            foo(attachShader(shaders)...);
-            link();
-            foo(deleteShaders(shaders)...);
-        }
+        {  }
 
+        /**
+         * @brief (constructor) work "in box"
+         * @param shaders - shader pack in correct order
+         */
+        ShaderProgram(const Shader<types>&... shaders)
+            : ShaderProgram()
+            // , _shaders(std::forward_as_tuple(shaders))
+        { linkProgram(shaders...); }
+
+        /**
+         * @brief seter for shaders work only if use default (constructor)
+         * @param shaders - parametr pack with Shader objects in order equal
+         *        order parametr pack in initialisation ShaderProgram
+         */
+        void setShaders(const Shader<types>&... shaders)
+        { linkProgram(shaders...); }
+
+        /**
+         * @brief enable current shaderProgram
+         * @brief automaticaly disable other shaderProgram
+         */
+        void enable() const noexcept
+        { glUseProgram(_programm); }
+
+        /**
+         * @brief manual disabling shaderProgram
+         */
+        void disable() const noexcept
+        { glUseProgram(NULL); }
+
+    private:
         void link() const noexcept
         {
             glLinkProgram(_programm);
@@ -169,13 +244,14 @@ template<Shaders... types>
             std::cout << "| SUCCSESSFUL | linked shader programm\n";
         }
 
-        void enable() const noexcept
-        { glUseProgram(_programm); }
+        void
+        linkProgram(const Shader<types>&... shaders) const noexcept
+        {
+            foo(attachShader(shaders)...);
+            link();
+            foo(deleteShaders(shaders)...);
+        }
 
-        void disable() const noexcept
-        { glUseProgram(NULL); }
-
-    private:
         template < Shaders type >
             Shaders attachShader(const Shader<type>& shader) const noexcept
             {
@@ -193,5 +269,6 @@ template<Shaders... types>
 using VertexShader   = Shader <  Shaders::vertex  >;
 using FragmentShader = Shader < Shaders::fragment >;
 using GeometryShader = Shader < Shaders::geometry >;
+// etc..
 
 #endif // SHADERPROGRAM_HPP

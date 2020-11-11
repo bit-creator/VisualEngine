@@ -2,8 +2,9 @@
 
 #include "ShaderProgram.hpp"
 
+#define GLEW_STATIC
 #include <GL/glew.h>
-#include <GL/glut.h>
+#include <GL/freeglut.h>
 #include <GLFW/glfw3.h>
 
 using WndPtr = GLFWwindow*;
@@ -18,7 +19,15 @@ int main()
          0.0f,  0.5f, 0.0f
     };
 
-	glfwInit();
+    std::cout << glfwGetVersionString() << '\n';
+    std::cout << glewGetString(GLEW_VERSION) << "\n\n";
+
+    if (!glfwInit())
+    {
+        std::cout << "|    EROR     | initialize GLFW\n" << "|             | " << glGetError() << '\n';
+        return -1;
+    }
+    std::cout << "| SUCCSESSFUL | initialize GLFW\n";
 
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
@@ -39,10 +48,10 @@ int main()
     glfwMakeContextCurrent(window);
 
     glewExperimental = GL_TRUE;
-    if (glewInit() != GLEW_OK)
+    if (auto err =glewInit(); err != GLEW_OK)
     {
-        std::cout << "|    EROR     | initialize GLEW\n";
-        return -1;
+        std::cout << "|    EROR     | initialize GLEW\n" << "|             | " << glewGetErrorString(err) << '\n' << "|             | " << glGetError() << '\n';
+        // return -1;
     }
     std::cout << "| SUCCSESSFUL | Initialize GLEW\n";
 
