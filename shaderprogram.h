@@ -30,6 +30,12 @@ class ShaderProgram : public GLObject
         bool attachShader(const Shader& shader) const noexcept;
         bool link() const noexcept;
         void enable() const noexcept;
+
+        // set Uniform //
+
+        void setUniform(const std::string& name,
+            const float& f1, const float& f2, 
+            const float& f3, const float& f4) const noexcept;
 };
 
 #endif // SHADERPROGRAM_H

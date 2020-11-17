@@ -24,7 +24,7 @@ bool Shader::compileShader() const noexcept
     return true;
 }
 
-void Shader::loadShader(const std::string& source) const noexcept
+void Shader::addSource(const std::string& source) const noexcept
 {
     auto sourceArray = source.c_str();
     glShaderSource(getID(), 1, &sourceArray, NULL); 

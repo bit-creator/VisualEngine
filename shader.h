@@ -36,8 +36,6 @@ class Shader : public GLObject
          */
         Shader(const GLuint shaderType) noexcept;
 
-        Shader(const Shader&) =default;
-        Shader& operator=(const Shader&) =default;
         ~Shader() noexcept;
 
         Shader(Shader&&) =default;
@@ -59,7 +57,7 @@ class Shader : public GLObject
          * @param source string with shader
          */
         void 
-        loadShader(const std::string& source) const noexcept;
+        addSource(const std::string& source) const noexcept;
 }; // Shader
 
 std::string loadShaderFromFile(const std::string& path) noexcept;

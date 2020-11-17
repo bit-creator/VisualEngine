@@ -1,4 +1,6 @@
 #include <iostream>
+#include <chrono>
+#include <cmath>
 
 #define GLEW_STATIC
 #include <GL/glew.h>
@@ -11,11 +13,15 @@
 #include "shaderprogram.h"
 // #include "shadertree.h"
 
+namespace ch = std::chrono;
+
 using WndPtr = GLFWwindow*;
 
 int main()
 {
     system("clear");
+
+    auto time_start = ch::high_resolution_clock().now();    
 
     GLfloat vertices[] = {
         -0.5f, -0.5f, 0.0f,
@@ -69,8 +75,8 @@ int main()
     VertexShader vertex(GL_VERTEX_SHADER);
     FragmentShader frag(GL_FRAGMENT_SHADER);
 
-    vertex.loadShader(loadShaderFromFile("shaders/primitive/primitive.vert.glsl"));
-    frag.loadShader(loadShaderFromFile("shaders/primitive/primitive.frag.glsl"));
+    vertex.addSource(loadShaderFromFile("shaders/primitive/primitive.vert.glsl"));
+    frag.addSource(loadShaderFromFile("shaders/primitive/primitive.frag.glsl"));
 
     ShaderProgram shader;
    
@@ -79,6 +85,8 @@ int main()
 
     shader.link();
 
+    // GLint color = glGetUniformLocation(shader.getID(), "Color");
+    
     GLuint VBO, VAO;
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
@@ -103,6 +111,16 @@ int main()
         glClear(GL_COLOR_BUFFER_BIT);
 
         shader.enable();
+
+        auto current_time = ch::high_resolution_clock().now();    
+        auto count = duration_cast<ch::seconds>(current_time - time_start).count();
+
+        float f1 = std::abs(std::sin(1 * count));
+        float f2 = std::abs(std::sin(2 * count));
+        float f3 = std::abs(std::sin(3 * count));
+
+        shader.setUniform("Color", f1, f2, f3, 1.0);
+        
         glBindVertexArray(VAO);
         glDrawArrays(GL_TRIANGLES, 0, 3);
         glBindVertexArray(0);

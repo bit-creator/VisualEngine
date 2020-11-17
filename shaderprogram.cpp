@@ -42,3 +42,12 @@ bool ShaderProgram::link() const noexcept
     std::cout << "| SUCCSESSFUL | linked shader programm\n";
     return true;
 }
+
+void ShaderProgram::setUniform(const std::string& name,
+    const float& f1, const float& f2, 
+    const float& f3, const float& f4) const noexcept
+{
+    GLint loc = glGetUniformLocation(getID(), name.c_str());
+
+    glUniform4f(loc, f1, f2, f3, f4);
+}

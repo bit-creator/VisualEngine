@@ -45,6 +45,10 @@ class GLObject
         
         GLObject& 
         operator=(const GLObject&) =delete;
+
+        GLObject(GLObject&&) =default;
+        GLObject& operator=(GLObject&&) =default;
+
         
         /**
          * @brief Destroy the GLObject object
