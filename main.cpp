@@ -113,7 +113,7 @@ int main()
         shader.enable();
 
         auto current_time = ch::high_resolution_clock().now();    
-        auto count = duration_cast<ch::seconds>(current_time - time_start).count();
+        auto count = duration_cast<ch::milliseconds>(current_time - time_start).count();
 
         float f1 = std::abs(std::sin(1 * count));
         float f2 = std::abs(std::sin(2 * count));

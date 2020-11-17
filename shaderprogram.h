@@ -23,8 +23,6 @@ class ShaderProgram : public GLObject
 {
     public:
         ShaderProgram() noexcept;
-        ShaderProgram(const ShaderProgram&) =delete;
-        ShaderProgram& operator=(const ShaderProgram&) =delete;
         ~ShaderProgram() noexcept;
 
         bool attachShader(const Shader& shader) const noexcept;

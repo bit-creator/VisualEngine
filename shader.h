@@ -38,9 +38,6 @@ class Shader : public GLObject
 
         ~Shader() noexcept;
 
-        Shader(Shader&&) =default;
-        Shader& operator=(Shader&&) =default;
-
         /**
          * @brief impliment compile process for
          *        shader (use OGL func)
