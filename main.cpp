@@ -1,11 +1,15 @@
 #include <iostream>
 
-#include "ShaderProgram.hpp"
-
 #define GLEW_STATIC
 #include <GL/glew.h>
 #include <GL/freeglut.h>
 #include <GLFW/glfw3.h>
+
+// #include "ShaderProgram.hpp"
+#include "globject.hpp"
+#include "shader.h"
+#include "shaderprogram.h"
+// #include "shadertree.h"
 
 using WndPtr = GLFWwindow*;
 
@@ -19,8 +23,10 @@ int main()
          0.0f,  0.5f, 0.0f
     };
 
-    std::cout << glfwGetVersionString() << '\n';
-    std::cout << glewGetString(GLEW_VERSION) << "\n\n";
+    // ShaderTree::get().initShaderTree("shaders");
+
+    // std::cout << glfwGetVersionString() << '\n';
+    // std::cout << glewGetString(GLEW_VERSION) << "\n\n";
 
     if (!glfwInit())
     {
@@ -60,10 +66,18 @@ int main()
 
     glViewport(0, 0, width, height);
 
-    VertexShader vertex("shaders/vertex.glsl");
-    FragmentShader fragment("shaders/fragment.glsl");
+    VertexShader vertex(GL_VERTEX_SHADER);
+    FragmentShader frag(GL_FRAGMENT_SHADER);
 
-    ShaderProgram shader(vertex, fragment);
+    vertex.loadShader(loadShaderFromFile("shaders/primitive/primitive.vert.glsl"));
+    frag.loadShader(loadShaderFromFile("shaders/primitive/primitive.frag.glsl"));
+
+    ShaderProgram shader;
+   
+    shader.attachShader(vertex);
+    shader.attachShader(frag);
+
+    shader.link();
 
     GLuint VBO, VAO;
     glGenVertexArrays(1, &VAO);
