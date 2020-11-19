@@ -2,20 +2,9 @@
 #include <chrono>
 #include <cmath>
 
-#define GLEW_STATIC
-#include <GL/glew.h>
-#include <GL/freeglut.h>
-#include <GLFW/glfw3.h>
-
-// #include "ShaderProgram.hpp"
-#include "globject.hpp"
-#include "shader.h"
-#include "shaderprogram.h"
 // #include "shadertree.h"
-#include "object3d.h"
-#include "window.h"
-#include "engine.h"
 #include "triangle.h"
+#include "engine.h"
 
 namespace ch = std::chrono;
 

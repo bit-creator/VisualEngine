@@ -6,7 +6,7 @@ Triangle::Triangle() noexcept
     , _vert_A(std::make_shared<glm::vec3>(glm::vec3(0.0, 0.0f, 0.0f)))
     , _vert_B(std::make_shared<glm::vec3>(glm::vec3(0.0, 0.0f, 0.0f)))
     , _vert_C(std::make_shared<glm::vec3>(glm::vec3(0.0, 0.0f, 0.0f)))
-{  }
+{ setupBuffers(); }
 
 Triangle::Triangle(const Triangle& oth) noexcept
     : Object3D(oth._colour)
@@ -14,7 +14,7 @@ Triangle::Triangle(const Triangle& oth) noexcept
     , _vert_A(oth._vert_A)
     , _vert_B(oth._vert_B)
     , _vert_C(oth._vert_C)
-{  }
+{ setupBuffers(); }
 
 Triangle::Triangle(Triangle&& oth) noexcept
     : Object3D(std::move(oth._colour))
@@ -22,7 +22,7 @@ Triangle::Triangle(Triangle&& oth) noexcept
     , _vert_A(std::move(oth._vert_A))
     , _vert_B(std::move(oth._vert_B))
     , _vert_C(std::move(oth._vert_C))
-{  }
+{ setupBuffers(); }
 
 // Triangle::Triangle(colour_t colour, normal_t normal,
 //     vertex_t vert_A, vertex_t vert_B, vertex_t vert_C) noexcept
@@ -71,11 +71,10 @@ Triangle& Triangle::operator =(Triangle&& oth) noexcept
 }
 
 Triangle::~Triangle() noexcept
-{  }
+{ glDeleteVertexArrays(1, &VBO); glDeleteBuffers(1, &VBO); }
 
 void Triangle::setupBuffers() const noexcept
 {
-    GLuint VBO;
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
 

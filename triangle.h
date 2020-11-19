@@ -13,11 +13,13 @@
 #define TRIANGLE_H
 
 #include "object3d.h"
+#include "GL/shaderprogram.h"
 
 class Triangle : public Object3D
 {
     private:
         mutable GLuint                          VAO;
+        mutable GLuint                          VBO;        
 
     protected:
         normal_t                       _normal;

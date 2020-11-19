@@ -57,7 +57,7 @@ Window::Window(const GLfloat& version, const GLint& width, const GLint& height, 
 { setup(); }
 
 Window::~Window() noexcept
-{ glfwDestroyWindow(*_window); }
+{ glfwDestroyWindow(_window); }
 
 void Window::setup() noexcept
 {
@@ -76,7 +76,7 @@ void Window::setup() noexcept
 
     glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
 
-    _window = std::make_shared<GLFWwindow*>(glfwCreateWindow(_width, _height, _title.c_str(), nullptr, nullptr));
+    _window = glfwCreateWindow(_width, _height, _title.c_str(), nullptr, nullptr);
 
     if(_window == nullptr)
     {
@@ -87,7 +87,7 @@ void Window::setup() noexcept
 
     std::cout << "| SUCCSESSFUL | Window create\n";
 
-    glfwMakeContextCurrent(*_window);
+    glfwMakeContextCurrent(_window);
 
     glewExperimental = GL_TRUE;
 
@@ -99,11 +99,11 @@ void Window::setup() noexcept
     }
     std::cout << "| SUCCSESSFUL | Initialize GLEW\n";
 
-    glfwGetFramebufferSize(*_window, &_width, &_height);
+    glfwGetFramebufferSize(_window, &_width, &_height);
 
     glViewport(0, 0, _width, _height);
 
-    glfwSetKeyCallback(*_window, callBack);
+    glfwSetKeyCallback(_window, callBack);
 }
 
 Window::pointer Window::get() noexcept
@@ -112,13 +112,13 @@ Window::pointer Window::get() noexcept
 Window::const_pointer Window::get() const noexcept
 { return _window; }
 
-Window::operator Window::raw_pointer( ) const
-{ return *_window; }
+Window::operator Window::pointer( ) const
+{ return _window; }
 
-Window::operator Window::raw_pointer( )
-{ return *_window; }
+Window::operator Window::pointer( )
+{ return _window; }
 
-void Window::callBack(raw_pointer window, int key, int scancode, int action, int mode)
+void Window::callBack(pointer window, int key, int scancode, int action, int mode)
 {
     if(key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
     {

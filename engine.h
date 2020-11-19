@@ -12,8 +12,9 @@
 #ifndef ENGINE_H
 #define ENGINE_H
 
-#include "window.h"
+#include "GL/shaderprogram.h"
 #include "object3d.h"
+#include "window.h"
 
 class Engine
 {

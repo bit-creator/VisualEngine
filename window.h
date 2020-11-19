@@ -12,7 +12,7 @@
 #ifndef WINDOW_HPP
 #define WINDOW_HPP
 
-// #define GLEW_STATIC
+#define GLEW_STATIC
 #include <GL/glew.h>
 #include <GL/freeglut.h>
 #include <GLFW/glfw3.h>
@@ -24,9 +24,8 @@
 class Window
 {
 public:
-    using pointer       =       std::shared_ptr<GLFWwindow*>;
+    using pointer   =       GLFWwindow*;
     using const_pointer = const pointer;
-    using raw_pointer   =       GLFWwindow*;
 
 private:
     pointer                         _window;
@@ -70,12 +69,12 @@ public:
     const_pointer get() const noexcept;
     pointer       get() noexcept;
 
-    operator raw_pointer( ) const;
-    operator raw_pointer( );
+    operator pointer( ) const;
+    operator pointer( );
 
 
 private:
-    static void callBack(raw_pointer window, int key, int scancode, int action, int mode);
+    static void callBack(pointer window, int key, int scancode, int action, int mode);
 };
 
 

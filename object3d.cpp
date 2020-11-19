@@ -11,7 +11,7 @@ Object3D::Object3D(colour_t colour) noexcept
 // Object3D::Object3D(GLfloat R, GLfloat G,
 //     GLfloat B, GLfloat A = 1.0) noexcept
 //         : _colour(glm::vec4(R, G, B, A))
-{  }
+// {  }
 
 Object3D::Object3D(const Object3D& oth) noexcept
     : _colour(oth._colour)

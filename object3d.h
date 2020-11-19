@@ -14,14 +14,9 @@
 
 #include <memory>
 
-#define GLEW_STATIC
-#include <GL/glew.h>
-#include <GL/freeglut.h>
-#include <GLFW/glfw3.h>
-
 #include <glm/glm.hpp>
 
-#include "shaderprogram.h"
+#include "GL/shaderprogram.h"
 
 using colour_t = glm::vec3;
 using normal_t = glm::vec3;
