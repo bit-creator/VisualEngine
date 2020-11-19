@@ -30,7 +30,7 @@ class Engine
         static const Engine& 
         engine() noexcept;
         
-        void run(const Triangle& tr, const Window& window = _mainWindow) const noexcept;
+        void run(const Object3D* tr, const Window& window = _mainWindow) const noexcept;
 };
 
 #endif // ENGINE_H

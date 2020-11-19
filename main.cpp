@@ -15,6 +15,7 @@
 #include "object3d.h"
 #include "window.h"
 #include "engine.h"
+#include "triangle.h"
 
 namespace ch = std::chrono;
 
@@ -25,14 +26,15 @@ int main()
     system("clear");
 
     vertex_t vert_1 = std::make_shared<glm::vec3>(glm::vec3(-0.5f, -0.5f, 0.0f));
-    vertex_t vert_2 = std::make_shared<glm::vec3>(glm::vec3(-0.5f, -0.5f, 0.0f));
-    vertex_t vert_3 = std::make_shared<glm::vec3>(glm::vec3(-0.5f, -0.5f, 0.0f));
+    vertex_t vert_2 = std::make_shared<glm::vec3>(glm::vec3(0.5f, -0.5f, 0.0f));
+    vertex_t vert_3 = std::make_shared<glm::vec3>(glm::vec3(0.0f, 0.5f, 0.0f));
     
 
-    Triangle tr1 (vert_1, vert_1, vert_1);
+    Triangle tr1 (vert_1, vert_2, vert_3);
+    
+    Object3D* tr = &tr1;
 
-
-    Engine::engine().run(tr1);
+    Engine::engine().run(tr);
 
     // Window window(4.6f, "Visual Engine");
 

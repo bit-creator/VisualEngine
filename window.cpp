@@ -57,7 +57,7 @@ Window::Window(const GLfloat& version, const GLint& width, const GLint& height, 
 { setup(); }
 
 Window::~Window() noexcept
-{ /*delete _window;*/ }
+{ glfwDestroyWindow(*_window); }
 
 void Window::setup() noexcept
 {

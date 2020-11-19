@@ -3,7 +3,7 @@
 const Engine& Engine::engine() noexcept
 { static Engine engine; return engine; }
 
-void Engine::run(const Triangle& tr, const Window& window) const noexcept
+void Engine::run(const Object3D* tr, const Window& window) const noexcept
 {
     VertexShader vertex(GL_VERTEX_SHADER);
     FragmentShader frag(GL_FRAGMENT_SHADER);
@@ -17,6 +17,8 @@ void Engine::run(const Triangle& tr, const Window& window) const noexcept
     shader.attachShader(frag);
 
     shader.link();
+    
+    tr->setupBuffers();
 
     while (!glfwWindowShouldClose(window))
     {
@@ -25,8 +27,7 @@ void Engine::run(const Triangle& tr, const Window& window) const noexcept
         glClearColor(0.f, 0.f, 0.f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        tr.setupBuffers();
-        tr.render(shader);
+        tr->render(shader);
 
         glfwSwapBuffers(window);
     }
