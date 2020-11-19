@@ -4,6 +4,10 @@ OBJ=main.cpp
 OBJ+=shader.cpp
 OBJ+=shaderprogram.cpp
 # OBJ+=shadertree.cpp
+OBJ+=object3d.cpp
+OBJ+=triangle.cpp
+OBJ+=window.cpp
+OBJ+=engine.cpp
 
 all:
 	$(CXX) $(OBJ) -o VisualEngine
