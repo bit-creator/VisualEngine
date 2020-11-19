@@ -8,44 +8,12 @@ Triangle::Triangle() noexcept
     , _vert_C(std::make_shared<glm::vec3>(glm::vec3(0.0, 0.0f, 0.0f)))
 { setupBuffers(); }
 
-Triangle::Triangle(const Triangle& oth) noexcept
-    : Object3D(oth._colour)
-    , _normal(oth._normal)
-    , _vert_A(oth._vert_A)
-    , _vert_B(oth._vert_B)
-    , _vert_C(oth._vert_C)
-{ setupBuffers(); }
-
-Triangle::Triangle(Triangle&& oth) noexcept
-    : Object3D(std::move(oth._colour))
-    , _normal(std::move(oth._normal))
-    , _vert_A(std::move(oth._vert_A))
-    , _vert_B(std::move(oth._vert_B))
-    , _vert_C(std::move(oth._vert_C))
-{ setupBuffers(); }
-
-// Triangle::Triangle(colour_t colour, normal_t normal,
-//     vertex_t vert_A, vertex_t vert_B, vertex_t vert_C) noexcept
-//         : Object3D(colour)
-//         , _normal(normal)
-//         , _vert_A(vert_A)
-//         , _vert_B(vert_B)
-//         , _vert_C(vert_C)
-// {  }
-// Triangle::Triangle(normal_t normal, vertex_t vert_A, vertex_t vert_B, vertex_t vert_C) noexcept
-//     : Object3D()
-//     , _normal(normal)
-//     , _vert_A(vert_A)
-//     , _vert_B(vert_B)
-//     , _vert_C(vert_C)
-// {  }
-
 Triangle::Triangle(vertex_t vert_A, vertex_t vert_B, vertex_t vert_C) noexcept
     : Object3D()
     , _vert_A(vert_A)
     , _vert_B(vert_B)
     , _vert_C(vert_C)
-{ calculateNormal(); }
+{ calculateNormal(); setupBuffers(); }
 
 Triangle& Triangle::operator =(const Triangle& oth) noexcept
 { 

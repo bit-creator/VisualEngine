@@ -45,24 +45,9 @@ class Object3D
         Object3D& operator =(const Object3D& oth) noexcept;
         Object3D& operator =(Object3D&& oth) noexcept;
 
-        // void setColour(colour_t colour) noexcept;
-        // void setColour(GLfloat R, GLfloat G, GLfloat B, GLfloat A) noexcept;
-        // void setRed(GLfloat red) noexcept;
-        // void setGreen(GLfloat green) noexcept;
-        // void setBlue(GLfloat blue) noexcept;
-        // void setAlpha(GLfloat alpha) noexcept;
-
-        // const GLfloat& 
-        // red() const noexcept;
-        // const GLfloat& 
-        // green() const noexcept;
-        // const GLfloat& 
-        // blue() const noexcept;
-        // const GLfloat& 
-        // alpha() const noexcept;
-
-        virtual void setupBuffers() const noexcept =0;
         virtual void render(const ShaderProgram& program) const noexcept =0;
+    private:
+        virtual void setupBuffers() const noexcept =0;
 };
 
 #endif // OBJECT3D_H

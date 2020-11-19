@@ -34,14 +34,6 @@ class Triangle : public Object3D
          *        other derived default
          */
         Triangle() noexcept;
-        Triangle(const Triangle& oth) noexcept;
-        Triangle(Triangle&& oth) noexcept;
-        
-        // Triangle(colour_t color, normal_t normal, vertex_t vert_A, 
-        //     vertex_t vert_B, vertex_t vert_C) noexcept;
-
-        // Triangle(normal_t normal, vertex_t vert_A, 
-        //     vertex_t vert_B, vertex_t vert_C) noexcept;
         
         Triangle(vertex_t vert_A, vertex_t vert_B, vertex_t vert_C) noexcept;
 
@@ -53,9 +45,9 @@ class Triangle : public Object3D
         // impl vertex, normal geter
 
         void render(const ShaderProgram& shader) const noexcept override;
-        void setupBuffers() const noexcept override;
 
     private:
+        void setupBuffers() const noexcept override;
         /**
          * @brief claculate normal use 3 vertex
          */
