@@ -17,8 +17,18 @@
 class Quad : public Object3D
 {
     private:
-        Triangle            _first;
-        Triangle            _second;
+        // Triangle            _first;
+        // Triangle            _second;
+
+        mutable GLuint                  VAO;
+        mutable GLuint                  VBO;
+
+    protected:
+        normal_t                       _normal;
+        vertex_t                       _vert_A;
+        vertex_t                       _vert_B;
+        vertex_t                       _vert_C;
+        vertex_t                       _vert_D;
 
     public:
         Quad(const vertex_t& first,

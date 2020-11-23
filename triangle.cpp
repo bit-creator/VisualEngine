@@ -93,5 +93,5 @@ void Triangle::render(const ShaderProgram& shader) const noexcept
 
 void Triangle::calculateNormal() noexcept
 {
-
+    _normal = glm::normalize(glm::cross(*_vert_B - *_vert_A, *_vert_C - *_vert_A));
 }
