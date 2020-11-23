@@ -6,7 +6,9 @@ Quad::Quad(const vertex_t& first,
              const vertex_t& four) 
     // : _first(first, second, third)
     // , _second(second, third, four)
-    : _vert_A(first)
+    : VBO(GL_ARRAY_BUFFER)
+    , EBO(GL_ELEMENT_ARRAY_BUFFER)
+    , _vert_A(first)
     , _vert_B(second)
     , _vert_C(third)
     , _vert_D(four)
@@ -40,34 +42,36 @@ void Quad::render(const ShaderProgram& program) const noexcept
     program.setUniform("offset", offset);
 
     glBindVertexArray(VAO);
-    glDrawArrays(GL_TRIANGLES, 0, 6);
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
 }
 
 void Quad::setupBuffers() const noexcept
 {
     glGenVertexArrays(1, &VAO);
-    glGenBuffers(1, &VBO);
-
+    
     glBindVertexArray(VAO);
 
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-
-    GLfloat vertices[] = {
-        _vert_A -> x, _vert_A -> y, _vert_A -> z,  
-        _vert_B -> x, _vert_B -> y, _vert_B -> z,
-        _vert_C -> x, _vert_C -> y, _vert_C -> z,  
-        _vert_B -> x, _vert_B -> y, _vert_B -> z,
-        _vert_C -> x, _vert_C -> y, _vert_C -> z,
-        _vert_D -> x, _vert_D -> y, _vert_D -> z,
+    VBO.bind();
+    EBO.bind();
+    
+    std::vector<glm::vec3> vertices = {
+        *_vert_A, *_vert_B, *_vert_C, *_vert_D
     };
 
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    std::vector<GLuint> indices = {
+        1, 2, 3,
+        2, 3, 4  
+    };
+
+    VBO.loadRawData(vertices.data());
+    EBO.loadRawData(indices.data());
 
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
     glEnableVertexAttribArray(0);
 
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    VBO.unbind();
+    EBO.unbind();
 
     glBindVertexArray(0);
 }

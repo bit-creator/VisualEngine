@@ -13,6 +13,7 @@
 #define QUAD_H
 
 #include "triangle.h"
+#include "GL/buffer.h"
 
 class Quad : public Object3D
 {
@@ -21,7 +22,8 @@ class Quad : public Object3D
         // Triangle            _second;
 
         mutable GLuint                  VAO;
-        mutable GLuint                  VBO;
+        mutable Buffer                  VBO;
+        mutable Buffer                  EBO;
 
     protected:
         normal_t                       _normal;

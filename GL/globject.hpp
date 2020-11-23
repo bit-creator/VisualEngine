@@ -32,9 +32,11 @@ class GLObject
          * @brief Construct a new GLObject object 
          *        use tparam create()
          */
-        explicit GLObject(ObjectID obj) noexcept
+        explicit GLObject(ObjectID obj = 0) noexcept
             : _object(obj)
         {  }
+
+
         
         /**
          * @brief Construct a new GLObject object

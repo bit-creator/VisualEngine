@@ -26,7 +26,6 @@ public:
     void onRender() noexcept override
     {
         static double time =0;
-        static double time_ =0;
         // auto current_time = ch::high_resolution_clock().now();
         // auto count = duration_cast<ch::seconds>((time_point)current_time).count();
 
