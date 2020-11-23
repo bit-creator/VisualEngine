@@ -70,7 +70,21 @@ void Triangle::render(const ShaderProgram& shader) const noexcept
 {
     shader.enable();
 
-    shader.setUniform("Color", 1.0, 1.0, 1.0, 1.0);
+    auto color = getColor();
+
+    auto scale = getScale();
+
+    glm::mat3x3 ms(scale.x, 0.,      0.,
+                   0.,      scale.y, 0.,
+                   0.,      0.,      scale.z);
+
+
+    // glm::mat3x3 mr(  )
+    
+
+    shader.setUniform("Color", color.r, color.g, color.b, color.w );
+    shader.setUniform("scale", ms);
+    shader.setUniform("rotate", generateRotateMatrix(getRotate()));
 
     glBindVertexArray(VAO);
     glDrawArrays(GL_TRIANGLES, 0, 3);

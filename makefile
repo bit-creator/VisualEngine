@@ -8,6 +8,7 @@ OBJ+=object3d.cpp
 OBJ+=triangle.cpp
 OBJ+=window.cpp
 OBJ+=engine.cpp
+OBJ+=quad.cpp
 
 all:
 	$(CXX) $(OBJ) -o VisualEngine

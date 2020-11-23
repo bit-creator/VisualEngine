@@ -51,3 +51,10 @@ void ShaderProgram::setUniform(const std::string& name,
 
     glUniform4f(loc, f1, f2, f3, f4);
 }
+
+void ShaderProgram::setUniform(const std::string& name, const glm::mat3x3& mat) const noexcept
+{
+    GLint loc = glGetUniformLocation(getID(), name.c_str());
+
+    glUniformMatrix3fv(loc, 1, false, glm::value_ptr(mat));
+}
