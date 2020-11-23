@@ -1,8 +1,9 @@
 #include "buffer.h"
 
 Buffer::Buffer(GLuint type) noexcept
-    : _type(type)
-{ auto ID = getID(); glGenBuffers(1, &ID); }
+    : GLObject(genBuff())
+    , _type(type)
+{  }
 
 Buffer::~Buffer() noexcept
 { glDeleteBuffers(1, &getID()); }
@@ -13,6 +14,12 @@ void Buffer::bind() noexcept
 void Buffer::unbind() noexcept
 { glBindBuffer(_type, 0); }
 
-void Buffer::loadRawData(GLvoid* data) noexcept
-{ glBufferData(_type, sizeof(data), data, GL_STATIC_DRAW); }
+void Buffer::loadRawData(GLvoid* data, size_t size) noexcept
+{ glBufferData(_type, size, data, GL_STATIC_DRAW); }
 
+GLuint Buffer::genBuff()
+{
+    GLuint ID;
+    glGenBuffers(1, &ID);
+    return ID;
+}

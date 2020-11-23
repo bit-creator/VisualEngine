@@ -29,7 +29,10 @@ class Buffer : public GLObject
 
         void bind() noexcept;
         void unbind() noexcept;
-        void loadRawData(GLvoid* data) noexcept;
+        void loadRawData(GLvoid* data, size_t size) noexcept;
+    
+    private:
+        GLuint genBuff();
 };
 
 #endif // BUFFER_H
