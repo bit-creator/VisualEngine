@@ -38,10 +38,29 @@ glm::vec3 Object3D::getScale() const noexcept
 { return _scale; }
 
 void Object3D::setRotate(const Quaternion& rotate) noexcept
-{ _rotate = rotate; }
+{ 
+    auto vec = glm::normalize(glm::vec3(rotate.x, rotate.y, rotate.z));  
+    
+    _rotate.x = vec.x;
+    _rotate.y = vec.y;
+    _rotate.z = vec.z; 
+    _rotate.w = rotate.w;
+
+    _rotate.x *=  sin(_rotate.w / 2);
+    _rotate.y *=  sin(_rotate.w / 2);
+    _rotate.z *=  sin(_rotate.w / 2);
+    _rotate.w = cos(_rotate.w/2);
+
+}
 
 Quaternion Object3D::getRotate() const noexcept
 { return _rotate; }
+
+void Object3D::setOffset(const glm::vec3& offset) noexcept
+{ _offset = offset; }
+
+glm::vec3 Object3D::getOffset() const noexcept
+{ return _offset; }
 
 glm::mat3x3 generateRotateMatrix(Quaternion rotate) noexcept
 {

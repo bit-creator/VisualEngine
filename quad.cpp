@@ -23,17 +23,21 @@ void Quad::render(const ShaderProgram& program) const noexcept
 
     auto scale = getScale();
 
-    glm::mat3x3 ms(scale.x, 0.,      0.,
+    auto offset = getOffset();
+
+    glm::mat3 mat;
+
+    glm::mat3 mRotate = generateRotateMatrix(getRotate());
+
+    glm::mat3x3 mScale(scale.x, 0.,      0.,
                    0.,      scale.y, 0.,
                    0.,      0.,      scale.z);
 
-
-    // glm::mat3x3 mr(  )
-    
+    mat = mRotate * mScale;
 
     program.setUniform("Color", color.r, color.g, color.b, color.w );
-    program.setUniform("scale", ms);
-    program.setUniform("rotate", generateRotateMatrix(getRotate()));
+    program.setUniform("mat", mat);
+    program.setUniform("offset", offset);
 
     glBindVertexArray(VAO);
     glDrawArrays(GL_TRIANGLES, 0, 6);

@@ -1,13 +1,11 @@
 #version 460 core
 
-layout(location = 0)
+layout(location = 0) in vec3 pos;
 
-uniform mat3 scale;
-uniform mat3 rotate;
-
-in vec3 pos;
+uniform mat3 mat;
+uniform vec3 offset;
 
 void main()
 {
-    gl_Position = vec4(rotate * pos, 1);
+    gl_Position = vec4(mat * pos + offset, 1);
 }

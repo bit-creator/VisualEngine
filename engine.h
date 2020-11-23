@@ -42,7 +42,7 @@ class Engine
         // Engine& operator =(const Engine&) =delete;
 
         // std::vector<Window>    _window_array;
-        inline static const Window     _mainWindow = Window(4.6f, "Visual Engine");
+        inline static const Window     _mainWindow = Window(4.6f, 720u, 720u, "Visual Engine");
 
     public:
         static Engine& 

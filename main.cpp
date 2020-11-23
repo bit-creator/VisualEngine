@@ -39,9 +39,11 @@ public:
 
         _object.setColor(colour_t(f1, f2, f3, 1.0));
 
-        _object.setScale(glm::vec3(f1, f2, f3));
+        _object.setScale(glm::vec3(1.0f, 0.5f, 0.5f));
 
-        _object.setRotate(glm::vec4(1., 0., 0., f4));
+        _object.setRotate(glm::vec4(0., 0., 1., f4));
+
+        _object.setOffset(glm::vec3(0., 0.5, 0.));
     }
 
     ~MyListener() override {

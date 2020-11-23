@@ -35,6 +35,7 @@ class Object3D
     protected:
         colour_t                       _colour;      
         glm::vec3                      _scale;
+        glm::vec3                      _offset;
         Quaternion                     _rotate;
 
     public:
@@ -57,6 +58,8 @@ class Object3D
         void setRotate(const Quaternion& scale) noexcept;
         Quaternion getRotate() const noexcept;
 
+        void setOffset(const glm::vec3& offset) noexcept;
+        glm::vec3 getOffset() const noexcept;
 
         virtual void render(const ShaderProgram& program) const noexcept =0;
     private:

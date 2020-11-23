@@ -39,7 +39,7 @@ Triangle& Triangle::operator =(Triangle&& oth) noexcept
 }
 
 Triangle::~Triangle() noexcept
-{ glDeleteVertexArrays(1, &VBO); glDeleteBuffers(1, &VBO); }
+{ glDeleteVertexArrays(1, &VAO); glDeleteBuffers(1, &VBO); }
 
 void Triangle::setupBuffers() const noexcept
 {
