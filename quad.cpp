@@ -41,10 +41,11 @@ void Quad::render(const ShaderProgram& program) const noexcept
     program.setUniform("mat", mat);
     program.setUniform("offset", offset);
 
+    EBO.bind();
     glBindVertexArray(VAO);
-    std::cout << "OK" << std::endl;
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
+    EBO.unbind();
 }
 
 void Quad::setupBuffers() const noexcept
@@ -61,19 +62,18 @@ void Quad::setupBuffers() const noexcept
     };
 
     std::vector<GLuint> indices = {
-        1, 2, 3,
-        2, 3, 4  
+        0, 1, 2,
+        1, 2, 3  
     };
 
 
-    VBO.loadRawData(vertices.data(), vertices.size()*3);
-    EBO.loadRawData(indices.data(), indices.size());
+    VBO.loadRawData(vertices.data(), vertices.size() * 3 * sizeof(GLfloat));
+    EBO.loadRawData(indices.data(), indices.size() * sizeof(GLuint));
 
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
     glEnableVertexAttribArray(0);
 
     VBO.unbind();
-    EBO.unbind();
 
     glBindVertexArray(0);
 }
