@@ -1,9 +1,14 @@
 #include "engine.h"
 
-const Engine& Engine::engine() noexcept
+Engine& Engine::engine() noexcept
 { static Engine engine; return engine; }
 
-void Engine::run(const Object3D* tr, const Window& window) const noexcept
+void Engine::addEventListener(EventPointer eventListener)
+{
+    _eventListener = eventListener;
+}
+
+void Engine::run(const Object3D* tr, const Window& window) noexcept
 {
     VertexShader vertex(GL_VERTEX_SHADER);
     FragmentShader frag(GL_FRAGMENT_SHADER);
@@ -17,11 +22,11 @@ void Engine::run(const Object3D* tr, const Window& window) const noexcept
     shader.attachShader(frag);
 
     shader.link();
-    
-    tr->setupBuffers();
 
     while (!glfwWindowShouldClose(window))
     {
+        if(_eventListener) _eventListener -> onRender();
+
         glfwPollEvents();
 
         glClearColor(0.f, 0.f, 0.f, 1.0f);

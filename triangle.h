@@ -44,7 +44,7 @@ class Triangle : public Object3D
 
         // impl vertex, normal geter
 
-        void render(const ShaderProgram& shader) const noexcept override;
+        void render(const ShaderProgram& program) const noexcept override;
 
     private:
         void setupBuffers() const noexcept override;

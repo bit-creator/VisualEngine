@@ -1,10 +1,11 @@
 #version 460 core
 
-layout(location = 0)
+layout(location = 0) in vec3 aCoord;
 
-in vec3 pos;
+uniform mat3 uModelMat;
+uniform vec3 uPosition;
 
 void main()
 {
-    gl_Position = vec4(pos, 1);
+    gl_Position = vec4(uModelMat * aCoord + uPosition, 1);
 }
