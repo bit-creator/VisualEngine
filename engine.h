@@ -48,7 +48,7 @@ class Engine
         static Engine& 
         engine() noexcept;
 
-        void addEventListener(EventPointer event);
+        void addEventListener(EventPointer eventListener);
 
         void run(const Object3D* tr, const Window& window = _mainWindow) noexcept;
 

@@ -102,23 +102,13 @@ void Sphere::render(const ShaderProgram& program) const noexcept
 
     auto color = getColor();
 
-    auto scale = getScale();
-
     auto offset = getOffset();
 
-    glm::mat3 mat;
+    glm::mat3 mat = getModelMat();
 
-    glm::mat3 mRotate = generateRotateMatrix(getRotate());
-
-    glm::mat3x3 mScale(scale.x, 0.,      0.,
-                   0.,      scale.y, 0.,
-                   0.,      0.,      scale.z);
-
-    mat = mRotate * mScale;
-
-    program.setUniform("Color", color.r, color.g, color.b, color.w );
-    program.setUniform("mat", mat);
-    program.setUniform("offset", offset);
+    program.setUniform("uColor", color.r, color.g, color.b, color.w );
+    program.setUniform("uModelMat", mat);
+    program.setUniform("uPosition", offset);
 
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 

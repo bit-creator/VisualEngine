@@ -3,9 +3,9 @@
 Triangle::Triangle() noexcept
     : Object3D()
     , _normal(glm::vec3(0.0f, 0.0f, 0.0f))
-    , _vert_A(std::make_shared<glm::vec3>(glm::vec3(0.0, 0.0f, 0.0f)))
-    , _vert_B(std::make_shared<glm::vec3>(glm::vec3(0.0, 0.0f, 0.0f)))
-    , _vert_C(std::make_shared<glm::vec3>(glm::vec3(0.0, 0.0f, 0.0f)))
+    , _vert_A(glm::vec3(0.0f, 0.0f, 0.0f))
+    , _vert_B(glm::vec3(0.0f, 0.0f, 0.0f))
+    , _vert_C(glm::vec3(0.0f, 0.0f, 0.0f))
 { setupBuffers(); }
 
 Triangle::Triangle(vertex_t vert_A, vertex_t vert_B, vertex_t vert_C) noexcept
@@ -50,10 +50,8 @@ void Triangle::setupBuffers() const noexcept
 
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
 
-    GLfloat vertices[] = {
-        _vert_A -> x, _vert_A -> y, _vert_A -> z,  
-        _vert_B -> x, _vert_B -> y, _vert_B -> z,
-        _vert_C -> x, _vert_C -> y, _vert_C -> z,
+    glm::vec3 vertices[] = {
+        _vert_A, _vert_B, _vert_C
     };
 
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
@@ -66,25 +64,19 @@ void Triangle::setupBuffers() const noexcept
     glBindVertexArray(0);
 }
 
-void Triangle::render(const ShaderProgram& shader) const noexcept
+void Triangle::render(const ShaderProgram& program) const noexcept
 {
-    shader.enable();
+    program.enable();
 
     auto color = getColor();
 
-    auto scale = getScale();
+    auto offset = getOffset();
 
-    glm::mat3x3 ms(scale.x, 0.,      0.,
-                   0.,      scale.y, 0.,
-                   0.,      0.,      scale.z);
+    glm::mat3 mat = getModelMat();
 
-
-    // glm::mat3x3 mr(  )
-    
-
-    shader.setUniform("Color", color.r, color.g, color.b, color.w );
-    shader.setUniform("scale", ms);
-    shader.setUniform("rotate", generateRotateMatrix(getRotate()));
+    program.setUniform("uColor", color.r, color.g, color.b, color.w );
+    program.setUniform("uModelMat", mat);
+    program.setUniform("uPosition", offset);
 
     glBindVertexArray(VAO);
     glDrawArrays(GL_TRIANGLES, 0, 3);
@@ -93,5 +85,5 @@ void Triangle::render(const ShaderProgram& shader) const noexcept
 
 void Triangle::calculateNormal() noexcept
 {
-    _normal = glm::normalize(glm::cross(*_vert_B - *_vert_A, *_vert_C - *_vert_A));
+    _normal = glm::normalize(glm::cross(_vert_B - _vert_A, _vert_C - _vert_A));
 }

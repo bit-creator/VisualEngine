@@ -37,19 +37,14 @@ void Object3D::setScale(const glm::vec3& scale) noexcept
 glm::vec3 Object3D::getScale() const noexcept
 { return _scale; }
 
-void Object3D::setRotate(const Quaternion& rotate) noexcept
+void Object3D::setRotate(const glm::vec3& axis, const GLfloat& angle) noexcept
 { 
-    auto vec = glm::normalize(glm::vec3(rotate.x, rotate.y, rotate.z));  
+    auto _axis = glm::normalize(axis);  
     
-    _rotate.x = vec.x;
-    _rotate.y = vec.y;
-    _rotate.z = vec.z; 
-    _rotate.w = rotate.w;
-
-    _rotate.x *=  sin(_rotate.w / 2);
-    _rotate.y *=  sin(_rotate.w / 2);
-    _rotate.z *=  sin(_rotate.w / 2);
-    _rotate.w = cos(_rotate.w/2);
+    _rotate.x = _axis.x * sin(angle / 2);
+    _rotate.y = _axis.y * sin(angle / 2);
+    _rotate.z = _axis.z * sin(angle / 2);
+    _rotate.w = cos(angle / 2);
 
 }
 
@@ -61,6 +56,17 @@ void Object3D::setOffset(const glm::vec3& offset) noexcept
 
 glm::vec3 Object3D::getOffset() const noexcept
 { return _offset; }
+
+glm::mat3 Object3D::getModelMat() const noexcept
+{
+    glm::mat3 mRotate = generateRotateMatrix(_rotate);
+
+    glm::mat3 mScale(_scale.x, 0.,      0.,
+                       0.,      _scale.y, 0.,
+                       0.,      0.,      _scale.z);
+
+    return mRotate * mScale;
+}
 
 glm::mat3x3 generateRotateMatrix(Quaternion rotate) noexcept
 {

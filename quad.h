@@ -12,7 +12,7 @@
 #ifndef QUAD_H
 #define QUAD_H
 
-#include "triangle.h"
+#include "object3d.h"
 #include "GL/buffer.h"
 
 class Quad : public Object3D
