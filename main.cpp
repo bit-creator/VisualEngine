@@ -41,7 +41,7 @@ public:
 
         _object.setScale(glm::vec3(1.0f, 0.5f, 0.5f));
 
-        _object.setRotate(glm::vec4(0., 0., 1., f4));
+        _object.setRotate(glm::vec3(1., 1., 1.), f4);
 
         _object.setOffset(glm::vec3(0., 0.5, 0.));
     }
@@ -59,10 +59,10 @@ int main()
 
     auto& eng = Engine::engine();
 
-    vertex_t vert_1 = std::make_shared<glm::vec3>(glm::vec3(-0.5f, -0.5f, 0.0f));
-    vertex_t vert_2 = std::make_shared<glm::vec3>(glm::vec3(0.5f, -0.5f, 0.0f));
-    vertex_t vert_3 = std::make_shared<glm::vec3>(glm::vec3(-0.5f, 0.5f, 0.0f));
-    vertex_t vert_4 = std::make_shared<glm::vec3>(glm::vec3(0.5f, 0.5f, 0.0f));
+    vertex_t vert_1 = glm::vec3(-0.5f, -0.5f, 0.0f);
+    vertex_t vert_2 = glm::vec3(0.5f, -0.5f, 0.0f);
+    vertex_t vert_3 = glm::vec3(-0.5f, 0.5f, 0.0f);
+    vertex_t vert_4 = glm::vec3(0.5f, 0.5f, 0.0f);
     
 
     Quad tr1(vert_1, vert_2, vert_3, vert_4);

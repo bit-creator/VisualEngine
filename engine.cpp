@@ -3,9 +3,9 @@
 Engine& Engine::engine() noexcept
 { static Engine engine; return engine; }
 
-void Engine::addEventListener(EventPointer event)
+void Engine::addEventListener(EventPointer eventListener)
 {
-    _eventListener = event;
+    _eventListener = eventListener;
 }
 
 void Engine::run(const Object3D* tr, const Window& window) noexcept

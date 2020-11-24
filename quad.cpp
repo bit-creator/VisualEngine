@@ -14,30 +14,17 @@ Quad::Quad(const vertex_t& first,
 
 void Quad::render(const ShaderProgram& program) const noexcept
 {
-    // _first.render(program);
-    // _second.render(program);
-
     program.enable();
 
     auto color = getColor();
 
-    auto scale = getScale();
-
     auto offset = getOffset();
 
-    glm::mat3 mat;
+    glm::mat3 mat = getModelMat();
 
-    glm::mat3 mRotate = generateRotateMatrix(getRotate());
-
-    glm::mat3x3 mScale(scale.x, 0.,      0.,
-                   0.,      scale.y, 0.,
-                   0.,      0.,      scale.z);
-
-    mat = mRotate * mScale;
-
-    program.setUniform("Color", color.r, color.g, color.b, color.w );
-    program.setUniform("mat", mat);
-    program.setUniform("offset", offset);
+    program.setUniform("uColor", color.r, color.g, color.b, color.w );
+    program.setUniform("uModelMat", mat);
+    program.setUniform("uPosition", offset);
 
     glBindVertexArray(VAO);
     glDrawArrays(GL_TRIANGLES, 0, 6);
@@ -51,7 +38,12 @@ void Quad::setupBuffers() const noexcept
 
     glBindVertexArray(VAO);
 
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    VBO.bind();
+    EBO.bind();
+    
+    std::vector<glm::vec3> vertices = {
+        _vert_A, _vert_B, _vert_C, _vert_D
+    };
 
     GLfloat vertices[] = {
         _vert_A -> x, _vert_A -> y, _vert_A -> z,  

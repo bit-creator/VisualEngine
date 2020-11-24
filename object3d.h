@@ -20,7 +20,7 @@
 
 using colour_t   = glm::vec4;
 using normal_t   = glm::vec3;
-using vertex_t   = std::shared_ptr<glm::vec3>;
+using vertex_t   = glm::vec3;
 using Quaternion = glm::vec4;
 
 /**
@@ -55,11 +55,13 @@ class Object3D
         void setScale(const glm::vec3& scale) noexcept;
         glm::vec3 getScale() const noexcept;
 
-        void setRotate(const Quaternion& scale) noexcept;
+        void setRotate(const glm::vec3& axis, const GLfloat& angle) noexcept;
         Quaternion getRotate() const noexcept;
 
         void setOffset(const glm::vec3& offset) noexcept;
         glm::vec3 getOffset() const noexcept;
+
+        glm::mat3 getModelMat() const noexcept;
 
         virtual void render(const ShaderProgram& program) const noexcept =0;
     private:
