@@ -65,3 +65,10 @@ void ShaderProgram::setUniform(const std::string& name, const glm::vec3& vec) co
 
     glUniform3f(loc, vec.x, vec.y, vec.z);
 }
+
+void ShaderProgram::setUniform(const std::string& name, const float& flt) const noexcept
+{
+    GLint loc = glGetUniformLocation(getID(), name.c_str());
+
+    glUniform1f(loc, flt);
+}

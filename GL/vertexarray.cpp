@@ -35,10 +35,10 @@ void VertexArray::disableAll() noexcept
 GLuint VertexArray::genVAO() noexcept
 { GLuint VAO; glGenVertexArrays(1, &VAO); return VAO; }
 
-GLuint VertexArray::getAttribSize(Attribute attr) noexcept
+GLuint VertexArray::getAttribSize(Attribute attr) const noexcept
 { return 3; }
 
-GLuint VertexArray::getAttribDataType(Attribute attr) noexcept
+GLuint VertexArray::getAttribDataType(Attribute attr) const noexcept
 { return GL_FLOAT; }
 
 
@@ -50,5 +50,5 @@ void VertexArray::addAttribute(Attribute attr, GLsizei stride, GLsizei offset) n
     _atributes[static_cast<int>(attr)] = attr;
 }
 
-bool VertexArray::hasAttribute(Attribute attr)
+bool VertexArray::hasAttribute(Attribute attr) const noexcept
 { return static_cast<bool>(_atributes[static_cast<int>(attr)]); }

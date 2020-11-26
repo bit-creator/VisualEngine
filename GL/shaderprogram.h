@@ -41,6 +41,8 @@ class ShaderProgram : public GLObject
         void setUniform(const std::string& name, const glm::mat3x3& mat) const noexcept; 
 
         void setUniform(const std::string& name, const glm::vec3& vec) const noexcept; 
+
+        void setUniform(const std::string& name, const float& flt) const noexcept; 
 };
 
 #endif // SHADERPROGRAM_H

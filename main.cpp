@@ -31,18 +31,27 @@ public:
         // auto current_time = ch::high_resolution_clock().now();
         // auto count = duration_cast<ch::seconds>((time_point)current_time).count();
 
-        // float f1 = std::abs(std::sin(1 * time));
-        // float f2 = std::abs(std::sin(2 * time));
-        // float f3 = std::abs(std::sin(3 * time));
-        // float f4 = time;
+        float f1 = std::abs(std::sin(1 * time));
+        float f2 = std::abs(std::sin(2 * time));
+        float f3 = std::abs(std::sin(3 * time));
+        float f4 = time;
 
         time += 0.001;
 
-        _object.setColor(colour_t(1., 0.2, 0.2, 1.0));
+        auto color = glm::vec4(1.0, 0.2, 0.2, 1.0);
+
+        MaterialPtr simple = std::make_shared<Material>();
+
+        simple -> setColor(ColorType::Ambient, color);
+        simple -> setColor(ColorType::Diffuse, color);
+        simple -> setColor(ColorType::Specular, color);
+        simple -> setRoughness(0.2);
+        
+        _object.setMaterial(simple);
 
         _object.setScale(glm::vec3(0.5f, 0.5f, 0.5f));
 
-        _object.setRotate(glm::vec3(0., 1., 0.), 0.);
+        _object.setRotate(glm::vec3(1., 1., 1.), f4);
 
         _object.setOffset(glm::vec3(0., 0., 0.));
     }

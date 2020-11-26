@@ -46,12 +46,12 @@ class VertexArray : public GLObject
 
         void addAttribute(Attribute attr, GLsizei stride, GLsizei offset) noexcept;
 
-        bool hasAttribute(Attribute attr);
+        bool hasAttribute(Attribute attr) const noexcept;
 
     private:
         GLuint genVAO() noexcept;
-        GLuint getAttribSize(Attribute attr) noexcept;
-        GLuint getAttribDataType(Attribute attr) noexcept;
+        GLuint getAttribSize(Attribute attr) const noexcept;
+        GLuint getAttribDataType(Attribute attr) const noexcept;
 };
 
 #endif //  VERTEXARRAY_H

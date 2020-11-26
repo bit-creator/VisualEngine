@@ -16,6 +16,8 @@
 
 #include <glm/glm.hpp>
 
+#include "material.h"
+
 #include "GL/shaderprogram.h"
 
 using colour_t   = glm::vec4;
@@ -33,24 +35,23 @@ using Quaternion = glm::vec4;
 class Object3D
 {
     protected:
-        colour_t                       _colour;      
+        MaterialPtr                    _material;      
         glm::vec3                      _scale;
         glm::vec3                      _offset;
         Quaternion                     _rotate;
 
     public:
         Object3D() noexcept;
-        Object3D(colour_t colour) noexcept;
-        // Object3D(GLfloat R, GLfloat G, GLfloat B, GLfloat A) noexcept;
+        Object3D(MaterialPtr material) noexcept;
         Object3D(const Object3D& oth) noexcept;
         Object3D(Object3D&& oth) noexcept;
         virtual ~Object3D() noexcept;
 
-        Object3D& operator =(const Object3D& oth) noexcept;
-        Object3D& operator =(Object3D&& oth) noexcept;
+        Object3D& operator =(const Object3D& oth) noexcept =default;
+        Object3D& operator =(Object3D&& oth) noexcept =default;
 
-        void setColor(const colour_t& colour) noexcept;
-        colour_t getColor() const noexcept; 
+        void setMaterial(MaterialPtr material) noexcept;
+        MaterialPtr getMaterial() const noexcept; 
 
         void setScale(const glm::vec3& scale) noexcept;
         glm::vec3 getScale() const noexcept;

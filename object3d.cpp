@@ -1,35 +1,35 @@
 #include "object3d.h"
 
 Object3D::Object3D() noexcept
-    : _colour(glm::vec4(1.0, 1.0, 1.0, 1.0))
+    : _material(std::make_shared<Material>())
 {  }
 
-Object3D::Object3D(colour_t colour) noexcept
-    : _colour(colour)
+Object3D::Object3D(MaterialPtr material) noexcept
+    : _material(material)
 {  }
 
 Object3D::Object3D(const Object3D& oth) noexcept
-    : _colour(oth._colour)
+    : _material(oth._material)
+    , _scale(oth._scale)
+    , _rotate(oth._rotate)
+    , _offset(oth._offset)
 {  }
 
 Object3D::Object3D(Object3D&& oth) noexcept
-    : _colour(std::move(oth._colour))
+    : _material(std::move(oth._material))
+    , _scale(std::move(oth._scale))
+    , _rotate(std::move(oth._rotate))
+    , _offset(std::move(oth._offset))
 {  }
 
 Object3D::~Object3D() noexcept 
 {  }
 
-Object3D& Object3D::operator =(const Object3D& oth) noexcept
-{ if(&oth != this) _colour = oth._colour; return *this; }
+void Object3D::setMaterial(MaterialPtr material) noexcept
+{ _material = material; }
 
-Object3D& Object3D::operator =(Object3D&& oth) noexcept
-{ if(&oth != this) _colour = std::move(oth._colour); return *this; }
-
-void Object3D::setColor(const colour_t& colour) noexcept
-{ _colour = colour; }
-
-colour_t Object3D::getColor() const noexcept
-{ return _colour; }
+MaterialPtr Object3D::getMaterial() const noexcept
+{ return _material; }
 
 void Object3D::setScale(const glm::vec3& scale) noexcept
 { _scale = scale; }

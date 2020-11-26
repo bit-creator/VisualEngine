@@ -100,7 +100,7 @@ void Sphere::render(const ShaderProgram& program) const noexcept
 {
     program.enable();
 
-    auto color = getColor();
+    auto material = getMaterial();
 
     auto offset = getOffset();
 
@@ -108,11 +108,17 @@ void Sphere::render(const ShaderProgram& program) const noexcept
 
     glm::mat3 nMat = glm::inverse(glm::transpose(mat));
 
-    program.setUniform("uColor", color.r, color.g, color.b, color.w );
+    program.setUniform("uAmbientColor", material->getColor(ColorType::Ambient));
+    program.setUniform("uDiffuseColor", material->getColor(ColorType::Diffuse));
+    program.setUniform("uSpecularColor", material->getColor(ColorType::Specular));
+    program.setUniform("uRoughness", material->getRoughness());
+    
     program.setUniform("uModelMat", mat);
     program.setUniform("uPosition", offset);
-    program.setUniform("uLightDir", glm::vec3(0., 0., 1.) * mat);
+    program.setUniform("uLightDir", glm::vec3(0., 1., 1.) * mat);
     program.setUniform("uNormalMat", nMat);
+
+// glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
     EBO.bind();
     VAO.bind();
