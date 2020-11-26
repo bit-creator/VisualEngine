@@ -3,10 +3,10 @@
 #include <cmath>
 
 // #include "GL/shadertree.h"
-#include "triangle.h"
+#include "Primitive/triangle.h"
 #include "engine.h"
-#include "quad.h"
-#include "sphere.h"
+#include "Primitive/rect.h"
+#include "Primitive/sphere.h"
 
 namespace ch = std::chrono;
 
@@ -37,11 +37,11 @@ public:
 
         time += 0.001;
 
-        _object.setColor(colour_t(f1, f2, f3, 1.0));
+        _object.setColor(colour_t(1., 0.2, 0.2, 1.0));
 
-        _object.setScale(glm::vec3(0.5f, 0.5f, 0.5f));
+        _object.setScale(glm::vec3(1.f, 1.f, 1.f));
 
-        _object.setRotate(glm::vec3(1., 1., 1.), f4);
+        _object.setRotate(glm::vec3(0., 1., 0.), 0.);
 
         _object.setOffset(glm::vec3(0., 0., 0.));
     }
@@ -65,9 +65,9 @@ int main()
     vertex_t vert_4 = glm::vec3(0.5f, 0.5f, 0.0f);
     
 
-    // Quad tr1(vert_1, vert_2, vert_3, vert_4);
+    // Rect tr1;
 
-    Sphere tr1(0.5, 5);
+    Sphere tr1(0.5, 1);
 
     MyListener listener(tr1);
 

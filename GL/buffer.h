@@ -29,9 +29,17 @@ class Buffer : public GLObject
 
         void bind() noexcept;
         void unbind() noexcept;
-        void loadRawData(GLvoid* data, size_t size) noexcept;
     
+        template < typename Tp >
+            void loadData(Tp data, GLenum usage)
+            { loadRawData(std::data(data), std::size(data) * sizeof(typename Tp::value_type), usage); }
+
+        template <class T, unsigned int size>
+            void loadData(T (&data)[size], GLenum usage) 
+            { loadRawData(data, sizeof(data), usage); }
+
     private:
+        void loadRawData(GLvoid* data, size_t size, GLenum usage) noexcept;
         GLuint genBuff();
 };
 

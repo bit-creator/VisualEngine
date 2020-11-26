@@ -22,6 +22,8 @@ void Engine::run(const Object3D* tr, const Window& window) noexcept
     shader.attachShader(frag);
 
     shader.link();
+    
+    glEnable(GL_DEPTH_TEST);
 
     while (!glfwWindowShouldClose(window))
     {
@@ -31,6 +33,7 @@ void Engine::run(const Object3D* tr, const Window& window) noexcept
 
         glClearColor(0.f, 0.f, 0.f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
+        glClear(GL_DEPTH_BUFFER_BIT);
 
         tr->render(shader);
 
