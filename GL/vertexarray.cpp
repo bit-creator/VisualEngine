@@ -14,8 +14,23 @@ void VertexArray::bind() noexcept
 void VertexArray::unbind() noexcept
 { glBindVertexArray(0); }
 
-void VertexArray::enable() noexcept
-{ glEnableVertexAttribArray(0); }
+void VertexArray::enable(Attribute attr) noexcept
+{ glEnableVertexAttribArray(static_cast<int>(attr)); }
+
+void VertexArray::enableAll() noexcept
+{
+    for(auto& attr : _atributes)
+        if(attr) enable(*attr);
+}
+
+void VertexArray::disable(Attribute attr) noexcept
+{ glDisableVertexAttribArray(static_cast<int>(attr)); }
+
+void VertexArray::disableAll() noexcept
+{
+    for(auto& attr : _atributes)
+        if(attr) disable(*attr); 
+}
 
 GLuint VertexArray::genVAO() noexcept
 { GLuint VAO; glGenVertexArrays(1, &VAO); return VAO; }
@@ -29,7 +44,8 @@ GLuint VertexArray::getAttribDataType(Attribute attr) noexcept
 
 void VertexArray::addAttribute(Attribute attr, GLsizei stride, GLsizei offset) noexcept{
     glVertexAttribPointer(
-        0, getAttribSize(attr), getAttribDataType(attr), GL_FALSE, stride, (GLvoid*)offset
+        static_cast<int>(attr), getAttribSize(attr), getAttribDataType(attr),
+        GL_FALSE, stride, (GLvoid*)offset
     ); 
     _atributes[static_cast<int>(attr)] = attr;
 }

@@ -39,7 +39,10 @@ class VertexArray : public GLObject
 
         void bind() noexcept;
         void unbind() noexcept;
-        void enable() noexcept;
+        void enable(Attribute attr) noexcept;
+        void enableAll() noexcept;
+        void disable(Attribute attr) noexcept;
+        void disableAll() noexcept;
 
         void addAttribute(Attribute attr, GLsizei stride, GLsizei offset) noexcept;
 

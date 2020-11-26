@@ -135,7 +135,7 @@ void Sphere::setupBuffers() const noexcept
     VAO.addAttribute(Attribute::VERT_ATTRIB_POSITION, 3 * sizeof(GLfloat), 0);
     VAO.addAttribute(Attribute::VERT_ATTRIB_NORMAL, 3 * sizeof(GLfloat), 0);
 
-    VAO.enable();
+    VAO.enableAll();
 
     VBO.unbind();
     VAO.unbind();
