@@ -12,14 +12,15 @@
 #ifndef TRIANGLE_H
 #define TRIANGLE_H
 
-#include "object3d.h"
-#include "GL/shaderprogram.h"
+#include "../object3d.h"
+#include "../GL/shaderprogram.h"
+#include "../GL/buffer.h"
 
 class Triangle : public Object3D
 {
     private:
         mutable GLuint                          VAO;
-        mutable GLuint                          VBO;        
+        mutable Buffer                          VBO;        
 
     protected:
         normal_t                       _normal;

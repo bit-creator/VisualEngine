@@ -14,8 +14,8 @@ void Buffer::bind() noexcept
 void Buffer::unbind() noexcept
 { glBindBuffer(_type, 0); }
 
-void Buffer::loadRawData(GLvoid* data, size_t size) noexcept
-{ glBufferData(_type, size, data, GL_STATIC_DRAW); }
+void Buffer::loadRawData(GLvoid* data, size_t size, GLenum usage) noexcept
+{ glBufferData(_type, size, data, usage); }
 
 GLuint Buffer::genBuff()
 {

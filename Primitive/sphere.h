@@ -11,14 +11,25 @@
 
 #include <memory>
 #include <unordered_set>
+#include <algorithm>
 
 #include <boost/functional/hash.hpp>
 
-#include "object3d.h"
-#include "GL/buffer.h"
+#include "../object3d.h"
+#include "../GL/buffer.h"
 
 using indexArray    = std::vector<glm::uvec3>;
+
 using indexArrayPtr = std::unique_ptr<indexArray>;
+
+using indexOktant = std::vector <glm::uvec3>;
+// using allIndexOktant = std::array <indexOktant, 8>;
+using allIndexOktant = std::vector <glm::uvec3>;
+
+using vertexOktant = std::vector <glm::vec3>;
+// using allVertexOktant = std::array <vertexOktant, 8>;
+using allVertexOktant = std::vector <glm::vec3>;
+
 
 // struct _hasher { int64_t operator ()(glm::vec3 vertex) { 
 //     size_t hash = *(int32_t*)&vertex.x; 
@@ -45,8 +56,11 @@ class Sphere : public Object3D
         mutable Buffer                                                  VBO;
         mutable Buffer                                                  EBO;
 
-        mutable std::vector<glm::vec3>                                  _vertices;
-        mutable std::unique_ptr<std::vector<glm::uvec3>>                _indices;
+        mutable vertexOktant                                            _vertices;
+        mutable allVertexOktant                                         _sphereVertex;
+        mutable std::unique_ptr<indexOktant>                            _indices;
+        mutable allIndexOktant                                          _sphereIndex;
+        mutable std::vector<glm::vec3>                               _SymetryPattern;
         // mutable vertexTree                                              _tree;  
 
     public:
@@ -57,7 +71,7 @@ class Sphere : public Object3D
         void setupBuffers() const noexcept override;
         
     private:
-        // void flipAndPush() noexcept;
+        void flipAndPush() noexcept;
         void div(GLuint sub) noexcept;
-        std::array<glm::uvec3, 4> divTriangle(glm::uvec3 triangle);
+        std::array<glm::uvec3, 4> divTriangle(glm::uvec3 triangle, GLint pos);
 };
