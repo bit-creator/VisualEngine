@@ -7,6 +7,7 @@
 #include "engine.h"
 #include "Primitive/rect.h"
 #include "Primitive/sphere.h"
+#include "GL/vertexarray.h"
 
 namespace ch = std::chrono;
 
@@ -30,16 +31,16 @@ public:
         // auto current_time = ch::high_resolution_clock().now();
         // auto count = duration_cast<ch::seconds>((time_point)current_time).count();
 
-        float f1 = std::abs(std::sin(1 * time));
-        float f2 = std::abs(std::sin(2 * time));
-        float f3 = std::abs(std::sin(3 * time));
-        float f4 = time;
+        // float f1 = std::abs(std::sin(1 * time));
+        // float f2 = std::abs(std::sin(2 * time));
+        // float f3 = std::abs(std::sin(3 * time));
+        // float f4 = time;
 
         time += 0.001;
 
         _object.setColor(colour_t(1., 0.2, 0.2, 1.0));
 
-        _object.setScale(glm::vec3(1.f, 1.f, 1.f));
+        _object.setScale(glm::vec3(0.5f, 0.5f, 0.5f));
 
         _object.setRotate(glm::vec3(0., 1., 0.), 0.);
 
@@ -59,15 +60,15 @@ int main()
 
     auto& eng = Engine::engine();
 
-    vertex_t vert_1 = glm::vec3(-0.5f, -0.5f, 0.0f);
-    vertex_t vert_2 = glm::vec3(0.5f, -0.5f, 0.0f);
-    vertex_t vert_3 = glm::vec3(-0.5f, 0.5f, 0.0f);
-    vertex_t vert_4 = glm::vec3(0.5f, 0.5f, 0.0f);
+    // vertex_t vert_1 = glm::vec3(-0.5f, -0.5f, 0.0f);
+    // vertex_t vert_2 = glm::vec3(0.5f, -0.5f, 0.0f);
+    // vertex_t vert_3 = glm::vec3(-0.5f, 0.5f, 0.0f);
+    // vertex_t vert_4 = glm::vec3(0.5f, 0.5f, 0.0f);
     
 
     // Rect tr1;
 
-    Sphere tr1(0.5, 1);
+    Sphere tr1(0.5, 5);
 
     MyListener listener(tr1);
 

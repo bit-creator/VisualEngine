@@ -11,6 +11,7 @@ OBJ+=engine.cpp
 OBJ+=Primitive/rect.cpp
 OBJ+=GL/buffer.cpp
 OBJ+=Primitive/sphere.cpp
+OBJ+=GL/vertexarray.cpp
 
 all:
 	$(CXX) $(OBJ) -o VisualEngine
