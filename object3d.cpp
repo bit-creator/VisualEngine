@@ -43,7 +43,7 @@ void Object3D::setScale(const glm::vec3& scale) noexcept
 glm::vec3 Object3D::getScale() const noexcept
 { return _scale; }
 
-void Object3D::setRotate(const glm::vec3& axis, const GLfloat& angle) noexcept
+void Object3D::setRotate(const glm::vec3& axis, const GLfloat angle) noexcept
 { 
     auto _axis = glm::normalize(axis);  
     
@@ -74,11 +74,17 @@ glm::mat3 Object3D::getModelMat() const noexcept
     return mRotate * mScale;
 }
 
+void Object3D::setNum(size_t index, size_t vertex) noexcept
+{ _numIndex = index; _numVertex = vertex; }
+
 size_t Object3D::getNumIndices() const noexcept
 { return _numIndex; }
 
 size_t Object3D::getNumVertexes() const noexcept
 { return _numVertex;}
+
+bool Object3D::hasIndexes() const noexcept
+{ return _useIndex; }
 
 glm::mat3x3 generateRotateMatrix(Quaternion rotate) noexcept
 {

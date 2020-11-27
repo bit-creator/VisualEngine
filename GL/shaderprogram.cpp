@@ -44,8 +44,8 @@ bool ShaderProgram::link() const noexcept
 }
 
 void ShaderProgram::setUniform(const std::string& name,
-    const float& f1, const float& f2, 
-    const float& f3, const float& f4) const noexcept
+    const float f1, const float f2, 
+    const float f3, const float f4) const noexcept
 {
     GLint loc = glGetUniformLocation(getID(), name.c_str());
 
@@ -66,7 +66,7 @@ void ShaderProgram::setUniform(const std::string& name, const glm::vec3& vec) co
     glUniform3f(loc, vec.x, vec.y, vec.z);
 }
 
-void ShaderProgram::setUniform(const std::string& name, const float& flt) const noexcept
+void ShaderProgram::setUniform(const std::string& name, const float flt) const noexcept
 {
     GLint loc = glGetUniformLocation(getID(), name.c_str());
 

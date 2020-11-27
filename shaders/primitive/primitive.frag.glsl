@@ -17,8 +17,9 @@ void main()
   
   float specFactor = pow(max(dot(r, vec3(0.0, 0.0, 1.0)), 0.0), uRoughness);
 
+  float ambiFactor = 0.1; 
   diffFactor = clamp(diffFactor, 0.0, 1.0);
   specFactor = clamp(specFactor, 0.0, 1.0);
 
-  color = uDiffuseColor * diffFactor + uSpecularColor * specFactor;
+  color = ambiFactor * uAmbientColor + uDiffuseColor * diffFactor + uSpecularColor * specFactor;
 }

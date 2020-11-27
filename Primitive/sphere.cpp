@@ -22,12 +22,12 @@ Sphere::Sphere(GLuint subdivision) noexcept
         glm::uvec3(3, 4, 5),            // 7
         glm::uvec3(0, 4, 5)             // 8
     }))
-{ div(_subdiv); setupBuffers(); }
+{ div(_subdiv); setNums(); setupBuffers(); }
 
 Sphere::~Sphere() noexcept {  }
 
 void Sphere::setNums() noexcept
-{ _numIndex = _indices->size() * 3; _numVertex = _vertices.size(); }
+{ setNum(_indices->size() * 3,  _vertices.size()); }
 
 // void Sphere::flipAndPush() noexcept
 // {
@@ -121,11 +121,13 @@ void Sphere::render(const ShaderProgram& program) noexcept
 
     EBO.bind();
     VAO.bind();
-    glDrawElements(GL_TRIANGLES, _indices->size() * 3, GL_UNSIGNED_INT, 0);
+
+    if (hasIndexes()) glDrawElements(GL_TRIANGLES, getNumIndices(), GL_UNSIGNED_INT, 0);
+    else glDrawArrays(GL_TRIANGLES, 0, getNumVertexes());
+
     VAO.unbind();
     EBO.unbind();
 }
-
 
 void Sphere::setupBuffers() noexcept
 {

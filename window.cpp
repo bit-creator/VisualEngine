@@ -7,7 +7,7 @@ Window::Window() noexcept
     , _title("default window")
 { setup(); }
 
-Window::Window(const GLfloat& version) noexcept
+Window::Window(const GLfloat version) noexcept
     : _version(version)
     , _width(1366u)
     , _height(720u)
@@ -28,14 +28,14 @@ Window::Window(const std::string& title) noexcept
     , _title(title)
 { setup(); }
 
-Window::Window(const GLfloat& version, const std::string& title) noexcept
+Window::Window(const GLfloat version, const std::string& title) noexcept
     : _version(version)
     , _width(1366u)
     , _height(720u)
     , _title(title)
 { setup(); }
 
-Window::Window(const GLfloat& version, const GLint& width, const GLint& height) noexcept
+Window::Window(const GLfloat version, const GLint& width, const GLint& height) noexcept
     : _version(version)
     , _width(width)
     , _height(height)
@@ -49,7 +49,7 @@ Window::Window(const GLint& width, const GLint& height, const std::string& title
     , _title(title)
 { setup(); }
 
-Window::Window(const GLfloat& version, const GLint& width, const GLint& height, const std::string& title) noexcept
+Window::Window(const GLfloat version, const GLint& width, const GLint& height, const std::string& title) noexcept
     : _version(version)
     , _width(width)
     , _height(height)

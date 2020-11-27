@@ -38,7 +38,6 @@ class Object3D
         VertexArray                                             VAO;
         Buffer                                                  VBO;
         Buffer                                                  EBO;
-        bool                                                    _useIndex;
 
     protected:          //  Material & position
         MaterialPtr                                             _material;      
@@ -46,9 +45,10 @@ class Object3D
         Vector                                                  _offset;
         Vector                                                  _scale;
 
-    protected:         //  Num of elements
+    private:         //  Num of elements
         size_t                                                  _numVertex;
         size_t                                                  _numIndex;
+        bool                                                    _useIndex;
 
     public:
         Object3D() noexcept;
@@ -63,7 +63,7 @@ class Object3D
         void setMaterial(MaterialPtr material) noexcept;
         MaterialPtr getMaterial() const noexcept; 
         
-        void setRotate(const glm::vec3& axis, const GLfloat& angle) noexcept;
+        void setRotate(const glm::vec3& axis, const GLfloat angle) noexcept;
         Quaternion getRotate() const noexcept;
 
         void setScale(const glm::vec3& scale) noexcept;
@@ -74,12 +74,15 @@ class Object3D
 
         size_t getNumIndices() const noexcept;
         size_t getNumVertexes() const noexcept;
+        bool hasIndexes() const noexcept;
 
         glm::mat3 getModelMat() const noexcept;
 
         virtual void render(const ShaderProgram& program) noexcept =0;
 
     protected:
+        void setNum(size_t index, size_t vertex) noexcept;
+
         virtual void setupBuffers() noexcept =0;
 };
 

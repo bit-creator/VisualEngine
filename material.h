@@ -41,13 +41,13 @@ class Material
         ~Material() noexcept;
 
         void setColor(ColorTarget type, const glm::vec4& color) noexcept;
-        void setColor(ColorTarget type, const float& r, const float& g, 
-            const float& b, const float& a) noexcept;
+        void setColor(ColorTarget type, const float r, const float g, 
+            const float b, const float a) noexcept;
 
         const glm::vec4& getColor(ColorTarget type) const noexcept;
 
-        void setRoughness(const float& roughness) noexcept;
-        const float& getRoughness() const noexcept;
+        void setRoughness(const float roughness) noexcept;
+        const float getRoughness() const noexcept;
         
         void setFill(const GLenum mode) noexcept;
         const GLenum getFill() const noexcept;

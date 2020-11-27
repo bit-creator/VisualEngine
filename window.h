@@ -40,12 +40,12 @@ private:
 
 public:
     Window() noexcept;
-    Window(const GLfloat& version) noexcept;
+    Window(const GLfloat version) noexcept;
     Window(const GLint& width, const GLint& height) noexcept;
     Window(const std::string& title) noexcept;
-    Window(const GLfloat& version, const std::string& title) noexcept;
+    Window(const GLfloat version, const std::string& title) noexcept;
 
-    Window(const GLfloat& version,
+    Window(const GLfloat version,
            const GLint&   width,
            const GLint&   height) noexcept;
 
@@ -53,7 +53,7 @@ public:
            const GLint&       height,
            const std::string& title) noexcept;
 
-    Window(const GLfloat&     version,
+    Window(const GLfloat     version,
            const GLint&       width,
            const GLint&       height,
            const std::string& title) noexcept;
