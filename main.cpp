@@ -3,9 +3,9 @@
 #include <cmath>
 
 // #include "GL/shadertree.h"
-#include "Primitive/triangle.h"
+// #include "Primitive/triangle.h"
 #include "engine.h"
-#include "Primitive/rect.h"
+// #include "Primitive/rect.h"
 #include "Primitive/sphere.h"
 #include "GL/vertexarray.h"
 
@@ -42,10 +42,11 @@ public:
 
         MaterialPtr simple = std::make_shared<Material>();
 
-        simple -> setColor(ColorType::Ambient, color);
-        simple -> setColor(ColorType::Diffuse, color);
-        simple -> setColor(ColorType::Specular, color);
-        simple -> setRoughness(0.2);
+        simple -> setColor(ColorTarget::Ambient, color);
+        simple -> setColor(ColorTarget::Diffuse, color);
+        simple -> setColor(ColorTarget::Specular, color);
+        simple -> setRoughness(0.1);
+        simple -> setFill(GL_FILL);
         
         _object.setMaterial(simple);
 
@@ -65,19 +66,20 @@ int main()
 {
     system("clear");
 
+
     // ShaderTree::get().initShaderTree("shaders");
 
     auto& eng = Engine::engine();
 
-    // vertex_t vert_1 = glm::vec3(-0.5f, -0.5f, 0.0f);
-    // vertex_t vert_2 = glm::vec3(0.5f, -0.5f, 0.0f);
-    // vertex_t vert_3 = glm::vec3(-0.5f, 0.5f, 0.0f);
-    // vertex_t vert_4 = glm::vec3(0.5f, 0.5f, 0.0f);
+    // vertex_t 1 = glm::vec3(-0.5f, -0.5f, 0.0f);
+    // vertex_t 2 = glm::vec3(0.5f, -0.5f, 0.0f);
+    // vertex_t 3 = glm::vec3(-0.5f, 0.5f, 0.0f);
+    // vertex_t 4 = glm::vec3(0.5f, 0.5f, 0.0f);
     
 
     // Rect tr1;
 
-    Sphere tr1(0.5, 5);
+    Sphere tr1(5);
 
     MyListener listener(tr1);
 

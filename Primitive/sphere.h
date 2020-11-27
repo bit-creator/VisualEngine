@@ -15,8 +15,6 @@
 #include <boost/functional/hash.hpp>
 
 #include "../object3d.h"
-#include "../GL/buffer.h"
-#include "../GL/vertexarray.h"
 
 using indexArray    = std::vector<glm::uvec3>;
 using indexArrayPtr = std::unique_ptr<indexArray>;
@@ -24,22 +22,19 @@ using indexArrayPtr = std::unique_ptr<indexArray>;
 class Sphere : public Object3D
 {
     private:
-        GLuint                                                          _radius;
         GLuint                                                          _subdiv;
 
-        mutable VertexArray                                             VAO;
-        mutable Buffer                                                  VBO;
-        mutable Buffer                                                  EBO;
-
-        mutable std::vector<glm::vec3>                                  _vertices;
-        mutable std::unique_ptr<std::vector<glm::uvec3>>                _indices;
+        std::vector<glm::vec3>                                          _vertices;
+        std::unique_ptr<std::vector<glm::uvec3>>                        _indices;
 
     public:
-        Sphere(GLuint radius, GLuint subdivision) noexcept;
+        Sphere(GLuint subdivision) noexcept;
         ~Sphere() noexcept;
 
-        void render(const ShaderProgram& program) const noexcept override;
-        void setupBuffers() const noexcept override;
+        void setNums() noexcept;
+
+        void render(const ShaderProgram& program) noexcept override;
+        void setupBuffers() noexcept override;
         
     private:
         // void flipAndPush() noexcept;

@@ -15,7 +15,7 @@ void VertexArray::unbind() noexcept
 { glBindVertexArray(0); }
 
 void VertexArray::enable(Attribute attr) noexcept
-{ glEnableVertexAttribArray(static_cast<int>(attr)); }
+{ glEnableVertexAttribArray(getAttribLocation(attr)); }
 
 void VertexArray::enableAll() noexcept
 {
@@ -24,7 +24,7 @@ void VertexArray::enableAll() noexcept
 }
 
 void VertexArray::disable(Attribute attr) noexcept
-{ glDisableVertexAttribArray(static_cast<int>(attr)); }
+{ glDisableVertexAttribArray(getAttribLocation(attr)); }
 
 void VertexArray::disableAll() noexcept
 {
@@ -41,14 +41,17 @@ GLuint VertexArray::getAttribSize(Attribute attr) const noexcept
 GLuint VertexArray::getAttribDataType(Attribute attr) const noexcept
 { return GL_FLOAT; }
 
+GLuint VertexArray::getAttribLocation(Attribute attr) const noexcept
+{ return static_cast<int>(attr); }
+
 
 void VertexArray::addAttribute(Attribute attr, GLsizei stride, GLsizei offset) noexcept{
     glVertexAttribPointer(
-        static_cast<int>(attr), getAttribSize(attr), getAttribDataType(attr),
+        getAttribLocation(attr), getAttribSize(attr), getAttribDataType(attr),
         GL_FALSE, stride, (GLvoid*)offset
     ); 
-    _atributes[static_cast<int>(attr)] = attr;
+    _atributes[getAttribLocation(attr)] = attr;
 }
 
 bool VertexArray::hasAttribute(Attribute attr) const noexcept
-{ return static_cast<bool>(_atributes[static_cast<int>(attr)]); }
+{ return static_cast<bool>(_atributes[getAttribLocation(attr)]); }

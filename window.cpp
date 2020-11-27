@@ -104,6 +104,8 @@ void Window::setup() noexcept
     glViewport(0, 0, _width, _height);
 
     glfwSetKeyCallback(_window, callBack);
+
+    std::cout << std::endl;
 }
 
 Window::pointer Window::get() noexcept

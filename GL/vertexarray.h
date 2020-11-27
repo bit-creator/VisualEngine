@@ -23,9 +23,9 @@
 
 enum class Attribute
 {
-   VERT_ATTRIB_POSITION = 0,
-   VERT_ATTRIB_NORMAL = 1,
-   VERT_ATTRIB_COLOR = 2,
+   ATTRIB_POSITION = 0,
+   ATTRIB_NORMAL = 1,
+   ATTRIB_COLOR = 2,
 };
 
 class VertexArray : public GLObject
@@ -52,6 +52,7 @@ class VertexArray : public GLObject
         GLuint genVAO() noexcept;
         GLuint getAttribSize(Attribute attr) const noexcept;
         GLuint getAttribDataType(Attribute attr) const noexcept;
+        GLuint getAttribLocation(Attribute attr) const noexcept;
 };
 
 #endif //  VERTEXARRAY_H

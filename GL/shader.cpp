@@ -40,8 +40,12 @@ std::string loadShaderFromFile(const std::string& path) noexcept
             std::string source = "", sourceline = "\n";
             while (getline(in, sourceline, '\n'))
                 {
-                    if(!sourceline.empty()) source.append(sourceline);
-                    else source.push_back('\n');
+                    if(!sourceline.empty())
+                    {
+                        source.append(sourceline);
+
+                    } 
+                    source.push_back('\n');
                 }
             std::cout << "\t\t| SUCCSESSFUL | load shader source\n";
             return source.c_str();

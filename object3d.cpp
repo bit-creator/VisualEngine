@@ -1,26 +1,32 @@
 #include "object3d.h"
 
 Object3D::Object3D() noexcept
-    : _material(std::make_shared<Material>())
+    : VAO       (  )
+    , VBO       ( GL_ARRAY_BUFFER )
+    , EBO       ( GL_ELEMENT_ARRAY_BUFFER ) 
+    , _material ( std::make_shared<Material>() )
+    , _rotate   ( Quaternion(1.0f, 1.0f, 1.0f, 1.0f) )
+    , _offset   ( Vector(0.0f, 0.0f, 0.0f) )
+    , _scale    ( Vector(1.0f, 1.0f, 1.0f) )
 {  }
 
 Object3D::Object3D(MaterialPtr material) noexcept
-    : _material(material)
-{  }
+    : Object3D()
+{ _material = material; }
 
-Object3D::Object3D(const Object3D& oth) noexcept
-    : _material(oth._material)
-    , _scale(oth._scale)
-    , _rotate(oth._rotate)
-    , _offset(oth._offset)
-{  }
+// Object3D::Object3D(const Object3D& oth) noexcept
+//     : _material(oth._material)
+//     , _scale(oth._scale)
+//     , _rotate(oth._rotate)
+//     , _offset(oth._offset)
+// {  }
 
-Object3D::Object3D(Object3D&& oth) noexcept
-    : _material(std::move(oth._material))
-    , _scale(std::move(oth._scale))
-    , _rotate(std::move(oth._rotate))
-    , _offset(std::move(oth._offset))
-{  }
+// Object3D::Object3D(Object3D&& oth) noexcept
+//     : _material(std::move(oth._material))
+//     , _scale(std::move(oth._scale))
+//     , _rotate(std::move(oth._rotate))
+//     , _offset(std::move(oth._offset))
+// {  }
 
 Object3D::~Object3D() noexcept 
 {  }
@@ -67,6 +73,12 @@ glm::mat3 Object3D::getModelMat() const noexcept
 
     return mRotate * mScale;
 }
+
+size_t Object3D::getNumIndices() const noexcept
+{ return _numIndex; }
+
+size_t Object3D::getNumVertexes() const noexcept
+{ return _numVertex;}
 
 glm::mat3x3 generateRotateMatrix(Quaternion rotate) noexcept
 {

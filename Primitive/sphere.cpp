@@ -1,10 +1,8 @@
 #include "sphere.h"
 
-Sphere::Sphere(GLuint radius, GLuint subdivision) noexcept
-    : _radius(radius)
+Sphere::Sphere(GLuint subdivision) noexcept
+    : Object3D()
     , _subdiv(subdivision)
-    , VBO(GL_ARRAY_BUFFER)
-    , EBO(GL_ELEMENT_ARRAY_BUFFER)
     , _vertices({
         glm::vec3(1., 0., 0.),          // 0 
         glm::vec3(0., 1., 0.),          // 1    
@@ -24,11 +22,12 @@ Sphere::Sphere(GLuint radius, GLuint subdivision) noexcept
         glm::uvec3(3, 4, 5),            // 7
         glm::uvec3(0, 4, 5)             // 8
     }))
-{ setScale(glm::vec3(_radius, _radius, _radius)); div(_subdiv); setupBuffers(); }
+{ div(_subdiv); setupBuffers(); }
 
 Sphere::~Sphere() noexcept {  }
 
-
+void Sphere::setNums() noexcept
+{ _numIndex = _indices->size() * 3; _numVertex = _vertices.size(); }
 
 // void Sphere::flipAndPush() noexcept
 // {
@@ -81,7 +80,7 @@ std::array<glm::uvec3, 4> Sphere::divTriangle(glm::uvec3 triangle)
     point_2_3 = glm::normalize(point_2_3);
 
     _vertices.push_back(point_1_2);
-    _vertices.push_back(point_1_3);
+    _vertices.push_back(point_1_3); 
     _vertices.push_back(point_2_3);
 
     GLuint index_2_3 = _vertices.size() - 1;
@@ -96,7 +95,7 @@ std::array<glm::uvec3, 4> Sphere::divTriangle(glm::uvec3 triangle)
     });
 }
 
-void Sphere::render(const ShaderProgram& program) const noexcept
+void Sphere::render(const ShaderProgram& program) noexcept
 {
     program.enable();
 
@@ -108,17 +107,17 @@ void Sphere::render(const ShaderProgram& program) const noexcept
 
     glm::mat3 nMat = glm::inverse(glm::transpose(mat));
 
-    program.setUniform("uAmbientColor", material->getColor(ColorType::Ambient));
-    program.setUniform("uDiffuseColor", material->getColor(ColorType::Diffuse));
-    program.setUniform("uSpecularColor", material->getColor(ColorType::Specular));
-    program.setUniform("uRoughness", material->getRoughness());
+    program.setUniform("uAmbientColor", material->getColor(ColorTarget::Ambient));
+    program.setUniform("uDiffuseColor", material->getColor(ColorTarget::Diffuse));
+    program.setUniform("uSpecularColor", material->getColor(ColorTarget::Specular));
+    program.setUniform("uRoughness", 1 / material->getRoughness());
     
     program.setUniform("uModelMat", mat);
     program.setUniform("uPosition", offset);
     program.setUniform("uLightDir", glm::vec3(0., 1., 1.) * mat);
     program.setUniform("uNormalMat", nMat);
 
-// glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    glPolygonMode(GL_FRONT_AND_BACK, material->getFill());
 
     EBO.bind();
     VAO.bind();
@@ -128,9 +127,8 @@ void Sphere::render(const ShaderProgram& program) const noexcept
 }
 
 
-void Sphere::setupBuffers() const noexcept
+void Sphere::setupBuffers() noexcept
 {
-
     VAO.bind();
     VBO.bind();
     EBO.bind();
@@ -138,9 +136,9 @@ void Sphere::setupBuffers() const noexcept
     VBO.loadData(_vertices, GL_STATIC_DRAW);
     EBO.loadData(*_indices, GL_STATIC_DRAW);
     
-    VAO.addAttribute(Attribute::VERT_ATTRIB_POSITION, 3 * sizeof(GLfloat), 0);
-    VAO.addAttribute(Attribute::VERT_ATTRIB_NORMAL, 3 * sizeof(GLfloat), 0);
-
+    VAO.addAttribute(Attribute::ATTRIB_POSITION, 3 * sizeof(GLfloat), 0);
+    VAO.addAttribute(Attribute::ATTRIB_NORMAL, 3 * sizeof(GLfloat), 0);
+    
     VAO.enableAll();
 
     VBO.unbind();

@@ -11,8 +11,14 @@ uniform float uRoughness;
 
 void main()
 {
-  float factor = -dot(normalize(vNormal), uLightDir);
-  vec3 r = normalize(reflect(-uLightDir, normalize(vNormal)));;
-  float factorWhite = pow(max(dot(r, vec3(0.0, 0.0, 1.0)), 0.0), 1 / uRoughness);
-  color = 0.8 * factorWhite * vec4(1.0, 1.0, 1.0, 1.0) + factor * uAmbientColor;
+  float diffFactor = -dot(normalize(vNormal), uLightDir);
+
+  vec3 r = normalize(reflect(-uLightDir, normalize(vNormal)));
+  
+  float specFactor = pow(max(dot(r, vec3(0.0, 0.0, 1.0)), 0.0), uRoughness);
+
+  diffFactor = clamp(diffFactor, 0.0, 1.0);
+  specFactor = clamp(specFactor, 0.0, 1.0);
+
+  color = uDiffuseColor * diffFactor + uSpecularColor * specFactor;
 }

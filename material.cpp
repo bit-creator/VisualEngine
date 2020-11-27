@@ -9,26 +9,26 @@ Material::Material() noexcept
 
 Material::~Material() noexcept {  }
 
-void Material::setColor(ColorType type, const glm::vec4& color) noexcept
+void Material::setColor(ColorTarget type, const glm::vec4& color) noexcept
 {
-    if(type == ColorType::Ambient) _ambientColor = color;
-    if(type == ColorType::Diffuse) _diffuseColor = color;
-    if(type == ColorType::Specular) _specularColor = color;
+    if(type == ColorTarget::Ambient) _ambientColor = color;
+    if(type == ColorTarget::Diffuse) _diffuseColor = color;
+    if(type == ColorTarget::Specular) _specularColor = color;
 }
 
-void Material::setColor(ColorType type, const float& r, const float& g, 
+void Material::setColor(ColorTarget type, const float& r, const float& g, 
             const float& b, const float& a) noexcept
 {
-    if(type == ColorType::Ambient) _ambientColor = glm::vec4(r, g, b, a);
-    if(type == ColorType::Diffuse) _diffuseColor = glm::vec4(r, g, b, a);
-    if(type == ColorType::Specular) _specularColor = glm::vec4(r, g, b, a);
+    if(type == ColorTarget::Ambient) _ambientColor = glm::vec4(r, g, b, a);
+    if(type == ColorTarget::Diffuse) _diffuseColor = glm::vec4(r, g, b, a);
+    if(type == ColorTarget::Specular) _specularColor = glm::vec4(r, g, b, a);
 }
 
-const glm::vec4& Material::getColor(ColorType type) const noexcept
+const glm::vec4& Material::getColor(ColorTarget type) const noexcept
 {
-    if(type == ColorType::Ambient) return _ambientColor;
-    if(type == ColorType::Diffuse) return _diffuseColor;
-    if(type == ColorType::Specular) return _specularColor;
+    if(type == ColorTarget::Ambient) return _ambientColor;
+    if(type == ColorTarget::Diffuse) return _diffuseColor;
+    if(type == ColorTarget::Specular) return _specularColor;
 }
 
 void Material::setRoughness(const float& roughness) noexcept
@@ -36,6 +36,13 @@ void Material::setRoughness(const float& roughness) noexcept
 
 const float& Material::getRoughness() const noexcept
 { return _roughness; }
+
+void Material::setFill(const GLenum mode) noexcept
+{ _fillMode = mode; }
+
+const GLenum Material::getFill() const noexcept
+{ return _fillMode; }
+
 
 
 
