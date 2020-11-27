@@ -95,40 +95,6 @@ std::array<glm::uvec3, 4> Sphere::divTriangle(glm::uvec3 triangle)
     });
 }
 
-void Sphere::render(const ShaderProgram& program) noexcept
-{
-    program.enable();
-
-    auto material = getMaterial();
-
-    auto offset = getOffset();
-
-    glm::mat3 mat = getModelMat();
-
-    glm::mat3 nMat = glm::inverse(glm::transpose(mat));
-
-    program.setUniform("uAmbientColor", material->getColor(ColorTarget::Ambient));
-    program.setUniform("uDiffuseColor", material->getColor(ColorTarget::Diffuse));
-    program.setUniform("uSpecularColor", material->getColor(ColorTarget::Specular));
-    program.setUniform("uRoughness", 1 / material->getRoughness());
-    
-    program.setUniform("uModelMat", mat);
-    program.setUniform("uPosition", offset);
-    program.setUniform("uLightDir", glm::vec3(0., 1., 1.) * mat);
-    program.setUniform("uNormalMat", nMat);
-
-    glPolygonMode(GL_FRONT_AND_BACK, material->getPolygonsFillMode());
-
-    EBO.bind();
-    VAO.bind();
-
-    if (hasIndexes()) glDrawElements(GL_TRIANGLES, getNumIndices(), GL_UNSIGNED_INT, 0);
-    else glDrawArrays(GL_TRIANGLES, 0, getNumVertexes());
-
-    VAO.unbind();
-    EBO.unbind();
-}
-
 void Sphere::setupBuffers() noexcept
 {
     VAO.bind();
