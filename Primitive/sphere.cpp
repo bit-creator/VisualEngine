@@ -1,7 +1,7 @@
 #include "sphere.h"
 
 Sphere::Sphere(GLuint subdivision) noexcept
-    : Object3D()
+    : Geometry()
     , _subdiv(subdivision)
     , _vertices({
         glm::vec3(1., 0., 0.),          // 0 

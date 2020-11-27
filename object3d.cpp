@@ -63,6 +63,12 @@ void Object3D::setOffset(const glm::vec3& offset) noexcept
 glm::vec3 Object3D::getOffset() const noexcept
 { return _offset; }
 
+void Object3D::setGeometry(GeometryPtr geometry) noexcept
+{ _geom = geometry; }
+
+GeometryPtr Object3D::getGeometry() const noexcept
+{ return _geom; }
+
 glm::mat3 Object3D::getModelMat() const noexcept
 {
     glm::mat3 mRotate = generateRotateMatrix(_rotate);
@@ -73,18 +79,6 @@ glm::mat3 Object3D::getModelMat() const noexcept
 
     return mRotate * mScale;
 }
-
-void Object3D::setNum(size_t index, size_t vertex) noexcept
-{ _numIndex = index; _numVertex = vertex; }
-
-size_t Object3D::getNumIndices() const noexcept
-{ return _numIndex; }
-
-size_t Object3D::getNumVertexes() const noexcept
-{ return _numVertex;}
-
-bool Object3D::hasIndexes() const noexcept
-{ return _useIndex; }
 
 void Object3D::render(const ShaderProgram& program) noexcept
 {
@@ -110,14 +104,12 @@ void Object3D::render(const ShaderProgram& program) noexcept
 
     glPolygonMode(GL_FRONT_AND_BACK, material->getPolygonsFillMode());
 
-    EBO.bind();
-    VAO.bind();
+    _geom->bindBuffers();
 
-    if (hasIndexes()) glDrawElements(GL_TRIANGLES, getNumIndices(), GL_UNSIGNED_INT, 0);
-    else glDrawArrays(GL_TRIANGLES, 0, getNumVertexes());
+    if (_geom->hasIndexes()) glDrawElements(GL_TRIANGLES, _geom->getNumIndices(), GL_UNSIGNED_INT, 0);
+    else glDrawArrays(GL_TRIANGLES, 0, _geom->getNumVertexes());
 
-    VAO.unbind();
-    EBO.unbind();
+    _geom->unbindBuffers();
 }
 
 glm::mat3x3 generateRotateMatrix(Quaternion rotate) noexcept

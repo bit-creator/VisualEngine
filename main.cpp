@@ -78,15 +78,19 @@ int main()
     
     MaterialPtr simple = std::make_shared<Material>();
         
-    Sphere sphere(5);
-    
-    sphere.setMaterial(simple);
+    GeometryPtr sphere = std::make_shared<Sphere>(Sphere(5));
 
-    MyListener listener(sphere);
+    Object3D obj;
+
+    obj.setGeometry(sphere);
+
+    obj.setMaterial(simple);
+
+    MyListener listener(obj);
 
     eng.addEventListener(std::make_shared<MyListener>(listener));
 
-    eng.engine().run(&sphere);
+    eng.engine().run(&obj);
 
     return 0;
 }

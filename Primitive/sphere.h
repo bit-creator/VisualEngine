@@ -14,12 +14,14 @@
 
 #include <boost/functional/hash.hpp>
 
+#include "../geometry.h"
+
 #include "../object3d.h"
 
 using indexArray    = std::vector<glm::uvec3>;
 using indexArrayPtr = std::unique_ptr<indexArray>;
 
-class Sphere : public Object3D
+class Sphere : public Geometry
 {
     private:
         GLuint                                                          _subdiv;
