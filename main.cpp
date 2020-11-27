@@ -3,10 +3,11 @@
 #include <cmath>
 
 // #include "GL/shadertree.h"
-#include "Primitive/triangle.h"
+// #include "Primitive/triangle.h"
 #include "engine.h"
-#include "Primitive/rect.h"
+// #include "Primitive/rect.h"
 #include "Primitive/sphere.h"
+#include "GL/vertexarray.h"
 
 namespace ch = std::chrono;
 
@@ -36,12 +37,19 @@ public:
         float f4 = time;
 
         time += 0.001;
+        
+        auto color = glm::vec4(f1, f2, f3, 1.0);
+        auto color_ = glm::vec4(f2, f1, f3, 1.0); 
+        
+        _object.getMaterial() -> setColor(ColorTarget::Ambient, color);
+        _object.getMaterial() -> setColor(ColorTarget::Diffuse, color);
+        _object.getMaterial() -> setColor(ColorTarget::Specular, color_);
+        _object.getMaterial() -> setRoughness(0.1);
+        _object.getMaterial() -> setPolygonsFillMode(GL_FILL);
 
-        _object.setColor(colour_t(1., 0.2, 0.2, 1.0));
+        _object.setScale(glm::vec3(0.5f, 0.5f, 0.5f));
 
-        _object.setScale(glm::vec3(1.f, 1.f, 1.f));
-
-        _object.setRotate(glm::vec3(0., 1., 0.), 0.);
+        _object.setRotate(glm::vec3(1., 1., 1.), f4);
 
         _object.setOffset(glm::vec3(0., 0., 0.));
     }
@@ -55,27 +63,30 @@ int main()
 {
     system("clear");
 
+
     // ShaderTree::get().initShaderTree("shaders");
 
     auto& eng = Engine::engine();
 
-    vertex_t vert_1 = glm::vec3(-0.5f, -0.5f, 0.0f);
-    vertex_t vert_2 = glm::vec3(0.5f, -0.5f, 0.0f);
-    vertex_t vert_3 = glm::vec3(-0.5f, 0.5f, 0.0f);
-    vertex_t vert_4 = glm::vec3(0.5f, 0.5f, 0.0f);
+    // vertex_t 1 = glm::vec3(-0.5f, -0.5f, 0.0f);
+    // vertex_t 2 = glm::vec3(0.5f, -0.5f, 0.0f);
+    // vertex_t 3 = glm::vec3(-0.5f, 0.5f, 0.0f);
+    // vertex_t 4 = glm::vec3(0.5f, 0.5f, 0.0f);
     
 
-    // Rect tr1;
 
-    Sphere tr1(0.5, 1);
+    
+    MaterialPtr simple = std::make_shared<Material>();
+        
+    Sphere sphere(5);
+    
+    sphere.setMaterial(simple);
 
-    MyListener listener(tr1);
+    MyListener listener(sphere);
 
     eng.addEventListener(std::make_shared<MyListener>(listener));
 
-    // eng._eventListener = std::make_shared<MyListener>(MyListener(tr1));
-
-    eng.engine().run(&tr1);
+    eng.engine().run(&sphere);
 
     return 0;
 }

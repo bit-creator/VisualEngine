@@ -16,12 +16,14 @@
 
 #include <glm/glm.hpp>
 
+#include "material.h"
+
+#include "GL/buffer.h"
+#include "GL/vertexarray.h"
 #include "GL/shaderprogram.h"
 
-using colour_t   = glm::vec4;
-using normal_t   = glm::vec3;
-using vertex_t   = glm::vec3;
-using Quaternion = glm::vec4;
+using Vector      = glm::vec3;
+using Quaternion  = glm::vec4;
 
 /**
  * @brief 
@@ -32,40 +34,56 @@ using Quaternion = glm::vec4;
  */
 class Object3D
 {
-    protected:
-        colour_t                       _colour;      
-        glm::vec3                      _scale;
-        glm::vec3                      _offset;
-        Quaternion                     _rotate;
+    protected:          //  OpenGL Buffers
+        VertexArray                                             VAO;
+        Buffer                                                  VBO;
+        Buffer                                                  EBO;
+
+    protected:          //  Material & position
+        MaterialPtr                                             _material;      
+        Quaternion                                              _rotate;
+        Vector                                                  _offset;
+        Vector                                                  _scale;
+
+    private:         //  Num of elements
+        size_t                                                  _numVertex;
+        size_t                                                  _numIndex;
+        bool                                                    _useIndex;
 
     public:
         Object3D() noexcept;
-        Object3D(colour_t colour) noexcept;
-        // Object3D(GLfloat R, GLfloat G, GLfloat B, GLfloat A) noexcept;
-        Object3D(const Object3D& oth) noexcept;
-        Object3D(Object3D&& oth) noexcept;
+        Object3D(MaterialPtr material) noexcept;
+        // Object3D(const Object3D& oth) noexcept;
+        // Object3D(Object3D&& oth) noexcept;
         virtual ~Object3D() noexcept;
 
-        Object3D& operator =(const Object3D& oth) noexcept;
-        Object3D& operator =(Object3D&& oth) noexcept;
+        // Object3D& operator =(const Object3D& oth) noexcept =default;
+        // Object3D& operator =(Object3D&& oth) noexcept =default;
 
-        void setColor(const colour_t& colour) noexcept;
-        colour_t getColor() const noexcept; 
+        void setMaterial(MaterialPtr material) noexcept;
+        MaterialPtr getMaterial() const noexcept; 
+        
+        void setRotate(const glm::vec3& axis, const GLfloat angle) noexcept;
+        Quaternion getRotate() const noexcept;
 
         void setScale(const glm::vec3& scale) noexcept;
         glm::vec3 getScale() const noexcept;
 
-        void setRotate(const glm::vec3& axis, const GLfloat& angle) noexcept;
-        Quaternion getRotate() const noexcept;
-
         void setOffset(const glm::vec3& offset) noexcept;
         glm::vec3 getOffset() const noexcept;
 
+        size_t getNumIndices() const noexcept;
+        size_t getNumVertexes() const noexcept;
+        bool hasIndexes() const noexcept;
+
         glm::mat3 getModelMat() const noexcept;
 
-        virtual void render(const ShaderProgram& program) const noexcept =0;
-    private:
-        virtual void setupBuffers() const noexcept =0;
+        virtual void render(const ShaderProgram& program) noexcept =0;
+
+    protected:
+        void setNum(size_t index, size_t vertex) noexcept;
+
+        virtual void setupBuffers() noexcept =0;
 };
 
 glm::mat3x3 generateRotateMatrix(Quaternion rotate) noexcept;

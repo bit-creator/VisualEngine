@@ -1,35 +1,41 @@
 #include "object3d.h"
 
 Object3D::Object3D() noexcept
-    : _colour(glm::vec4(1.0, 1.0, 1.0, 1.0))
+    : VAO       (  )
+    , VBO       ( GL_ARRAY_BUFFER )
+    , EBO       ( GL_ELEMENT_ARRAY_BUFFER ) 
+    , _material ( std::make_shared<Material>() )
+    , _rotate   ( Quaternion(1.0f, 1.0f, 1.0f, 1.0f) )
+    , _offset   ( Vector(0.0f, 0.0f, 0.0f) )
+    , _scale    ( Vector(1.0f, 1.0f, 1.0f) )
 {  }
 
-Object3D::Object3D(colour_t colour) noexcept
-    : _colour(colour)
-{  }
+Object3D::Object3D(MaterialPtr material) noexcept
+    : Object3D()
+{ _material = material; }
 
-Object3D::Object3D(const Object3D& oth) noexcept
-    : _colour(oth._colour)
-{  }
+// Object3D::Object3D(const Object3D& oth) noexcept
+//     : _material(oth._material)
+//     , _scale(oth._scale)
+//     , _rotate(oth._rotate)
+//     , _offset(oth._offset)
+// {  }
 
-Object3D::Object3D(Object3D&& oth) noexcept
-    : _colour(std::move(oth._colour))
-{  }
+// Object3D::Object3D(Object3D&& oth) noexcept
+//     : _material(std::move(oth._material))
+//     , _scale(std::move(oth._scale))
+//     , _rotate(std::move(oth._rotate))
+//     , _offset(std::move(oth._offset))
+// {  }
 
 Object3D::~Object3D() noexcept 
 {  }
 
-Object3D& Object3D::operator =(const Object3D& oth) noexcept
-{ if(&oth != this) _colour = oth._colour; return *this; }
+void Object3D::setMaterial(MaterialPtr material) noexcept
+{ _material = material; }
 
-Object3D& Object3D::operator =(Object3D&& oth) noexcept
-{ if(&oth != this) _colour = std::move(oth._colour); return *this; }
-
-void Object3D::setColor(const colour_t& colour) noexcept
-{ _colour = colour; }
-
-colour_t Object3D::getColor() const noexcept
-{ return _colour; }
+MaterialPtr Object3D::getMaterial() const noexcept
+{ return _material; }
 
 void Object3D::setScale(const glm::vec3& scale) noexcept
 { _scale = scale; }
@@ -37,7 +43,7 @@ void Object3D::setScale(const glm::vec3& scale) noexcept
 glm::vec3 Object3D::getScale() const noexcept
 { return _scale; }
 
-void Object3D::setRotate(const glm::vec3& axis, const GLfloat& angle) noexcept
+void Object3D::setRotate(const glm::vec3& axis, const GLfloat angle) noexcept
 { 
     auto _axis = glm::normalize(axis);  
     
@@ -67,6 +73,18 @@ glm::mat3 Object3D::getModelMat() const noexcept
 
     return mRotate * mScale;
 }
+
+void Object3D::setNum(size_t index, size_t vertex) noexcept
+{ _numIndex = index; _numVertex = vertex; }
+
+size_t Object3D::getNumIndices() const noexcept
+{ return _numIndex; }
+
+size_t Object3D::getNumVertexes() const noexcept
+{ return _numVertex;}
+
+bool Object3D::hasIndexes() const noexcept
+{ return _useIndex; }
 
 glm::mat3x3 generateRotateMatrix(Quaternion rotate) noexcept
 {

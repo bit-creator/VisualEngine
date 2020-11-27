@@ -8,7 +8,7 @@ void Engine::addEventListener(EventPointer eventListener)
     _eventListener = eventListener;
 }
 
-void Engine::run(const Object3D* tr, const Window& window) noexcept
+void Engine::run(Object3D* tr, const Window& window) noexcept
 {
     VertexShader vertex(GL_VERTEX_SHADER);
     FragmentShader frag(GL_FRAGMENT_SHADER);
