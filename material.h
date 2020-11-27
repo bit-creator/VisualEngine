@@ -49,8 +49,8 @@ class Material
         void setRoughness(const float roughness) noexcept;
         const float getRoughness() const noexcept;
         
-        void setFill(const GLenum mode) noexcept;
-        const GLenum getFill() const noexcept;
+        void setPolygonsFillMode(const GLenum mode) noexcept;
+        const GLenum getPolygonsFillMode() const noexcept;
 };
 
 using MaterialPtr = std::shared_ptr<Material>;

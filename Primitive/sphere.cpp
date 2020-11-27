@@ -117,7 +117,7 @@ void Sphere::render(const ShaderProgram& program) noexcept
     program.setUniform("uLightDir", glm::vec3(0., 1., 1.) * mat);
     program.setUniform("uNormalMat", nMat);
 
-    glPolygonMode(GL_FRONT_AND_BACK, material->getFill());
+    glPolygonMode(GL_FRONT_AND_BACK, material->getPolygonsFillMode());
 
     EBO.bind();
     VAO.bind();

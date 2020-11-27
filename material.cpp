@@ -37,10 +37,10 @@ void Material::setRoughness(const float roughness) noexcept
 const float Material::getRoughness() const noexcept
 { return _roughness; }
 
-void Material::setFill(const GLenum mode) noexcept
+void Material::setPolygonsFillMode(const GLenum mode) noexcept
 { _fillMode = mode; }
 
-const GLenum Material::getFill() const noexcept
+const GLenum Material::getPolygonsFillMode() const noexcept
 { return _fillMode; }
 
 

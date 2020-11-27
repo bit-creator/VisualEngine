@@ -37,18 +37,15 @@ public:
         float f4 = time;
 
         time += 0.001;
-
-        auto color = glm::vec4(1.0, 0.2, 0.2, 1.0);
-
-        MaterialPtr simple = std::make_shared<Material>();
-
-        simple -> setColor(ColorTarget::Ambient, color);
-        simple -> setColor(ColorTarget::Diffuse, color);
-        simple -> setColor(ColorTarget::Specular, color);
-        simple -> setRoughness(0.1);
-        simple -> setFill(GL_FILL);
         
-        _object.setMaterial(simple);
+        auto color = glm::vec4(f1, f2, f3, 1.0);
+        auto color_ = glm::vec4(f2, f1, f3, 1.0); 
+        
+        _object.getMaterial() -> setColor(ColorTarget::Ambient, color);
+        _object.getMaterial() -> setColor(ColorTarget::Diffuse, color);
+        _object.getMaterial() -> setColor(ColorTarget::Specular, color_);
+        _object.getMaterial() -> setRoughness(0.1);
+        _object.getMaterial() -> setPolygonsFillMode(GL_FILL);
 
         _object.setScale(glm::vec3(0.5f, 0.5f, 0.5f));
 
@@ -77,17 +74,19 @@ int main()
     // vertex_t 4 = glm::vec3(0.5f, 0.5f, 0.0f);
     
 
-    // Rect tr1;
 
-    Sphere tr1(5);
+    
+    MaterialPtr simple = std::make_shared<Material>();
+        
+    Sphere sphere(5);
+    
+    sphere.setMaterial(simple);
 
-    MyListener listener(tr1);
+    MyListener listener(sphere);
 
     eng.addEventListener(std::make_shared<MyListener>(listener));
 
-    // eng._eventListener = std::make_shared<MyListener>(MyListener(tr1));
-
-    eng.engine().run(&tr1);
+    eng.engine().run(&sphere);
 
     return 0;
 }
