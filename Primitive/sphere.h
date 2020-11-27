@@ -18,9 +18,6 @@
 
 #include "../object3d.h"
 
-using indexArray    = std::vector<glm::uvec3>;
-using indexArrayPtr = std::unique_ptr<indexArray>;
-
 class Sphere : public Geometry
 {
     private:
@@ -32,8 +29,6 @@ class Sphere : public Geometry
     public:
         explicit Sphere(GLuint subdivision) noexcept;
         ~Sphere() noexcept;
-
-        void setNums() noexcept;
 
         void setupBuffers() noexcept override;
         
