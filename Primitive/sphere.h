@@ -30,7 +30,7 @@ class Sphere : public Geometry
         std::unique_ptr<std::vector<glm::uvec3>>                        _indices;
 
     public:
-        Sphere(GLuint subdivision) noexcept;
+        explicit Sphere(GLuint subdivision) noexcept;
         ~Sphere() noexcept;
 
         void setNums() noexcept;

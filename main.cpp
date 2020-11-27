@@ -78,7 +78,7 @@ int main()
     
     MaterialPtr simple = std::make_shared<Material>();
         
-    GeometryPtr sphere = std::make_shared<Sphere>(Sphere(5));
+    GeometryPtr sphere = std::make_shared<Sphere>(5);
 
     Object3D obj;
 
