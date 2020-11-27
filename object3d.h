@@ -78,7 +78,7 @@ class Object3D
 
         glm::mat3 getModelMat() const noexcept;
 
-        virtual void render(const ShaderProgram& program) noexcept =0;
+        void render(const ShaderProgram& program) noexcept;
 
     protected:
         void setNum(size_t index, size_t vertex) noexcept;

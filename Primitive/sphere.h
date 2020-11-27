@@ -33,7 +33,6 @@ class Sphere : public Object3D
 
         void setNums() noexcept;
 
-        void render(const ShaderProgram& program) noexcept override;
         void setupBuffers() noexcept override;
         
     private:
