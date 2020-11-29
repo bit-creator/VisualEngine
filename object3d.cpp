@@ -106,8 +106,8 @@ void Object3D::render(const ShaderProgram& program) noexcept
 
     _geom->bindBuffers();
 
-    if (_geom->hasIndexes()) glDrawElements(GL_TRIANGLES, _geom->getNumIndices(), GL_UNSIGNED_INT, 0);
-    else glDrawArrays(GL_TRIANGLES, 0, _geom->getNumVertexes());
+    if (_geom->hasIndexes()) glDrawElements(_geom->getPoligonConnectMode(), _geom->getNumIndices(), GL_UNSIGNED_INT, 0);
+    else glDrawArrays(_geom->getPoligonConnectMode() , 0, _geom->getNumVertexes());
 
     _geom->unbindBuffers();
 }

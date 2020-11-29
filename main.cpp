@@ -5,7 +5,7 @@
 // #include "GL/shadertree.h"
 // #include "Primitive/triangle.h"
 #include "engine.h"
-// #include "Primitive/rect.h"
+#include "Primitive/rect.h"
 #include "Primitive/sphere.h"
 #include "GL/vertexarray.h"
 #include "Primitive/circle.h"
@@ -81,10 +81,12 @@ int main()
     MaterialPtr simple = std::make_shared<Material>();
         
     // GeometryPtr sphere = std::make_shared<Sphere>(5);
-    GeometryPtr circle = std::make_shared<Circle>(10);
+    // GeometryPtr circle = std::make_shared<Circle>(10);
+    GeometryPtr rect = std::make_shared<Rect>();
 
     // obj.setGeometry(sphere);
-    obj.setGeometry(circle);
+    // obj.setGeometry(circle);
+    obj.setGeometry(rect);
 
     obj.setMaterial(simple);
 

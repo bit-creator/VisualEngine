@@ -23,6 +23,7 @@ class Geometry
         size_t                                                  _numVertex;
         size_t                                                  _numIndex;
         bool                                                    _useIndex;
+        GLenum                                                  _conectionMode;
 
     protected:          //  OpenGL Buffers
         VertexArray                                             VAO;
@@ -35,6 +36,10 @@ class Geometry
 
         size_t getNumIndices() const noexcept;
         size_t getNumVertexes() const noexcept;
+        
+        void setPoligonConnectMode(const GLenum) noexcept;
+        const GLenum getPoligonConnectMode() const noexcept;
+        
         bool hasIndexes() const noexcept;
 
         void bindBuffers() noexcept;

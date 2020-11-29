@@ -1,9 +1,10 @@
 #include "geometry.h"
 
 Geometry::Geometry() noexcept    
-    : VAO       (  )
+    : _conectionMode ( GL_TRIANGLES )
+    , VAO       (  )
     , VBO       ( GL_ARRAY_BUFFER )
-    , EBO       ( GL_ELEMENT_ARRAY_BUFFER ) 
+    , EBO       ( GL_ELEMENT_ARRAY_BUFFER )
 {  }
 
 Geometry::~Geometry() noexcept {  }
@@ -32,4 +33,8 @@ void Geometry::unbindBuffers() noexcept
     EBO.unbind();
 }
 
+void Geometry::setPoligonConnectMode(const GLenum mode) noexcept
+{ _conectionMode = mode; }
 
+const GLenum Geometry::getPoligonConnectMode() const noexcept
+{ return _conectionMode; }

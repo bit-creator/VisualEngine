@@ -12,22 +12,17 @@
 #ifndef RECT_H
 #define RECT_H
 
-#include "../object3d.h"
-#include "../GL/buffer.h"
+#include <glm/glm.hpp>
 
-class Rect : public Object3D
+#include "../geometry.h"
+
+class Rect : public Geometry
 {
-    private:
-        mutable GLuint                  VAO;
-        mutable Buffer                  VBO;
-        mutable Buffer                  EBO;
-
     public:
-        Rect();
+        Rect() noexcept;
+        ~Rect() noexcept;
 
-        void render(const ShaderProgram& program) const noexcept;
-    private:
-        void setupBuffers() const noexcept;
+        void setupBuffers() noexcept override;
 
 };
 
