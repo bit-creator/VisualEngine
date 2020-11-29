@@ -12,47 +12,26 @@
 #ifndef TRIANGLE_H
 #define TRIANGLE_H
 
-#include "../object3d.h"
-#include "../GL/shaderprogram.h"
-#include "../GL/buffer.h"
+#include <glm/glm.hpp>
 
-class Triangle : public Object3D
-{
-    private:
-        mutable GLuint                          VAO;
-        mutable Buffer                          VBO;        
+#include "../geometry.h"
 
+class Triangle : public Geometry
+{      
     protected:
-        normal_t                       _normal;
-        vertex_t                       _vert_A;
-        vertex_t                       _vert_B;
-        vertex_t                       _vert_C;
+        glm::vec3                       _vert_A;
+        glm::vec3                       _vert_B;
+        glm::vec3                       _vert_C;
 
     public:
-        /**
-         * @brief Construct a new Triangle object
-         *        default (constructor) allocate vertex
-         *        other derived default
-         */
         Triangle() noexcept;
         
-        Triangle(vertex_t vert_A, vertex_t vert_B, vertex_t vert_C) noexcept;
+        Triangle(const glm::vec3& vert_A, const glm::vec3& vert_B, const glm::vec3& vert_C) noexcept;
 
-        Triangle& operator =(const Triangle& oth) noexcept;
-        Triangle& operator =(Triangle&& oth) noexcept;    
+        ~Triangle() noexcept;
 
-        virtual ~Triangle() noexcept override;
-
-        // impl vertex, normal geter
-
-        void render(const ShaderProgram& program) const noexcept override;
-
-    private:
-        void setupBuffers() const noexcept override;
-        /**
-         * @brief claculate normal use 3 vertex
-         */
-        void calculateNormal() noexcept;
+        void setupBuffers() noexcept override;
+        glm::vec3 calculateNormal() noexcept;
 };
 
 

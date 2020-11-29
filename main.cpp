@@ -3,7 +3,7 @@
 #include <cmath>
 
 // #include "GL/shadertree.h"
-// #include "Primitive/triangle.h"
+#include "Primitive/triangle.h"
 #include "engine.h"
 #include "Primitive/rect.h"
 #include "Primitive/sphere.h"
@@ -69,24 +69,19 @@ int main()
 
     auto& eng = Engine::engine();
 
-    // vertex_t 1 = glm::vec3(-0.5f, -0.5f, 0.0f);
-    // vertex_t 2 = glm::vec3(0.5f, -0.5f, 0.0f);
-    // vertex_t 3 = glm::vec3(-0.5f, 0.5f, 0.0f);
-    // vertex_t 4 = glm::vec3(0.5f, 0.5f, 0.0f);
-    
-
     Object3D obj;
-
     
     MaterialPtr simple = std::make_shared<Material>();
         
     // GeometryPtr sphere = std::make_shared<Sphere>(5);
     // GeometryPtr circle = std::make_shared<Circle>(10);
-    GeometryPtr rect = std::make_shared<Rect>();
+    // GeometryPtr rect = std::make_shared<Rect>();
+    GeometryPtr triangle = std::make_shared<Triangle>();
 
     // obj.setGeometry(sphere);
     // obj.setGeometry(circle);
-    obj.setGeometry(rect);
+    // obj.setGeometry(rect);
+    obj.setGeometry(triangle);
 
     obj.setMaterial(simple);
 

@@ -23,14 +23,14 @@ bool Geometry::hasIndexes() const noexcept
 
 void Geometry::bindBuffers() noexcept
 {
-    EBO.bind();
+    if(_useIndex) EBO.bind();
     VAO.bind();
 }
 
 void Geometry::unbindBuffers() noexcept
 {
     VAO.unbind();
-    EBO.unbind();
+    if(_useIndex) EBO.unbind();
 }
 
 void Geometry::setPoligonConnectMode(const GLenum mode) noexcept
