@@ -104,3 +104,6 @@ void Circle::setupBuffers() noexcept
     VAO.unbind();
 }
 
+std::pair < const std::vector<glm::vec3>&, const std::vector<glm::uvec3>& > 
+Circle::extractData() noexcept
+{ return std::make_pair(_vertices, _indices); }

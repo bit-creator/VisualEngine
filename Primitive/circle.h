@@ -34,6 +34,9 @@ class Circle : public Geometry
     
         void setupBuffers() noexcept override;
 
+        std::pair < const std::vector<glm::vec3>&, const std::vector<glm::uvec3>& > 
+        extractData() noexcept;
+
     private:
         void div(GLuint sub) noexcept;
         void firstDiv() noexcept;
