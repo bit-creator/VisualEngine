@@ -9,7 +9,7 @@ Geometry::Geometry() noexcept
 Geometry::~Geometry() noexcept {  }
 
 void Geometry::setNum(size_t index, size_t vertex) noexcept
-{ _numIndex = index; _numVertex = vertex; }
+{ _numIndex = index; _numVertex = vertex; _useIndex = index == 0 ? false : true; }
 
 size_t Geometry::getNumIndices() const noexcept
 { return _numIndex; }

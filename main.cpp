@@ -8,6 +8,7 @@
 // #include "Primitive/rect.h"
 #include "Primitive/sphere.h"
 #include "GL/vertexarray.h"
+#include "Primitive/circle.h"
 
 namespace ch = std::chrono;
 
@@ -49,7 +50,7 @@ public:
 
         _object.setScale(glm::vec3(0.5f, 0.5f, 0.5f));
 
-        _object.setRotate(glm::vec3(1., 1., 1.), f4);
+        _object.setRotate(glm::vec3(1., 1., 1.), 0.0f);
 
         _object.setOffset(glm::vec3(0., 0., 0.));
     }
@@ -74,15 +75,16 @@ int main()
     // vertex_t 4 = glm::vec3(0.5f, 0.5f, 0.0f);
     
 
+    Object3D obj;
 
     
     MaterialPtr simple = std::make_shared<Material>();
         
-    GeometryPtr sphere = std::make_shared<Sphere>(5);
+    // GeometryPtr sphere = std::make_shared<Sphere>(5);
+    GeometryPtr circle = std::make_shared<Circle>(10);
 
-    Object3D obj;
-
-    obj.setGeometry(sphere);
+    // obj.setGeometry(sphere);
+    obj.setGeometry(circle);
 
     obj.setMaterial(simple);
 
