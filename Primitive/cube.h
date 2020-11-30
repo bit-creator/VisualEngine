@@ -20,7 +20,7 @@ class Cube : public Geometry
 {
     public:
         Cube() noexcept;
-        ~Cube() noexcept;
+        virtual ~Cube() noexcept override;
 
         void setupBuffers() noexcept override;
 };

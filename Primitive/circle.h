@@ -22,7 +22,7 @@
 
 class Circle : public Geometry
 {
-    private:
+    protected:
         GLuint                                                          _subdiv;
 
         std::vector<glm::vec3>                                          _vertices;
@@ -30,9 +30,9 @@ class Circle : public Geometry
 
     public:
         explicit Circle(GLuint subdiv) noexcept;
-        ~Circle() noexcept;
+        virtual ~Circle() noexcept override;
     
-        void setupBuffers() noexcept override;
+        virtual void setupBuffers() noexcept override;
 
         std::pair < const std::vector<glm::vec3>&, const std::vector<glm::uvec3>& > 
         extractData() noexcept;

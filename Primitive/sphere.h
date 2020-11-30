@@ -28,7 +28,7 @@ class Sphere : public Geometry
 
     public:
         explicit Sphere(GLuint subdivision) noexcept;
-        ~Sphere() noexcept;
+        virtual ~Sphere() noexcept override;
 
         void setupBuffers() noexcept override;
         

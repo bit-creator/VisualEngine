@@ -20,7 +20,7 @@ class Rect : public Geometry
 {
     public:
         Rect() noexcept;
-        ~Rect() noexcept;
+        virtual ~Rect() noexcept override;
 
         void setupBuffers() noexcept override;
 

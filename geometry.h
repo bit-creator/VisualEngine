@@ -32,7 +32,7 @@ class Geometry
 
     public:
         Geometry() noexcept;
-        ~Geometry() noexcept;
+        virtual ~Geometry() noexcept;
 
         size_t getNumIndices() const noexcept;
         size_t getNumVertexes() const noexcept;

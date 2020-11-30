@@ -38,31 +38,25 @@ void Circle::div(GLuint sub) noexcept
 
 void Circle::firstDiv() noexcept
 {
-    auto point_1_2 = glm::vec3(
+    _vertices.push_back(glm::normalize(glm::vec3(
         (_vertices[0].x + _vertices[1].x) / 2,
         (_vertices[0].y + _vertices[1].y) / 2, 
-        0.0f
-        );
+        (_vertices[0].z + _vertices[1].z) / 2 
+        )));
 
-    auto point_1_3 = glm::vec3(
+
+    _vertices.push_back(glm::normalize(glm::vec3(
         (_vertices[0].x + _vertices[2].x) / 2,
         (_vertices[0].y + _vertices[2].y) / 2, 
-        0.0f
-        );
+        (_vertices[0].z + _vertices[2].z) / 2 
+        ))); 
 
-    auto point_2_3 = glm::vec3(
+
+    _vertices.push_back(glm::normalize(glm::vec3(
         (_vertices[2].x + _vertices[1].x) / 2,
         (_vertices[2].y + _vertices[1].y) / 2, 
-        0.0f
-        );
-
-    point_1_2 = glm::normalize(point_1_2);
-    point_1_3 = glm::normalize(point_1_3);
-    point_2_3 = glm::normalize(point_2_3);
-
-    _vertices.push_back(point_1_2);
-    _vertices.push_back(point_1_3); 
-    _vertices.push_back(point_2_3);
+        (_vertices[2].z + _vertices[1].z) / 2 
+        )));
 
     _indices.push_back(glm::uvec3(5, 2, 1));
     _indices.push_back(glm::uvec3(4, 0, 2));
@@ -74,13 +68,13 @@ void Circle::divTriangle(glm::uvec3 triangle) noexcept
     _vertices.push_back (glm::normalize (glm::vec3 (
         ( _vertices[triangle[0]].x + _vertices[triangle[1]].x ) / 2,
         ( _vertices[triangle[0]].y + _vertices[triangle[1]].y ) / 2, 
-        0.0f
+        ( _vertices[triangle[0]].z + _vertices[triangle[1]].z ) / 2
         )));
 
     _vertices.push_back (glm::normalize (glm::vec3 (
         ( _vertices[triangle[0]].x + _vertices[triangle[2]].x ) / 2,
-        ( _vertices[triangle[0]].y + _vertices[triangle[2]].y ) / 2, 
-        0.0f
+        ( _vertices[triangle[0]].y + _vertices[triangle[2]].y ) / 2,
+        ( _vertices[triangle[0]].z + _vertices[triangle[2]].z ) / 2
         ))); 
 
     _indices.push_back(glm::uvec3(_vertices.size() -1, triangle[0], triangle[2]));
@@ -97,6 +91,7 @@ void Circle::setupBuffers() noexcept
     EBO.loadData(_indices, GL_STATIC_DRAW);
     
     VAO.addAttribute(Attribute::ATTRIB_POSITION, 3 * sizeof(GLfloat), 0);
+    VAO.addAttribute(Attribute::ATTRIB_NORMAL, 3 * sizeof(GLfloat), 0);
     
     VAO.enableAll();
 

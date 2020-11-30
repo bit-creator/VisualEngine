@@ -28,7 +28,7 @@ class Triangle : public Geometry
         
         Triangle(const glm::vec3& vert_A, const glm::vec3& vert_B, const glm::vec3& vert_C) noexcept;
 
-        ~Triangle() noexcept;
+        virtual ~Triangle() noexcept override;
 
         void setupBuffers() noexcept override;
         glm::vec3 calculateNormal() noexcept;
