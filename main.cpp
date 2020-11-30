@@ -11,6 +11,7 @@
 #include "Primitive/circle.h"
 #include "Primitive/cube.h"
 #include "Primitive/cone.h"
+#include "Primitive/mobiusstrip.h"
 
 namespace ch = std::chrono;
 
@@ -80,13 +81,15 @@ int main()
     // GeometryPtr rect = std::make_shared<Rect>();
     // GeometryPtr triangle = std::make_shared<Triangle>();
     // GeometryPtr cube = std::make_shared<Cube>();
-    GeometryPtr cone = std::make_shared<Cone>(5);
+    // GeometryPtr cone = std::make_shared<Cone>(5);
+    GeometryPtr mobius = std::make_shared<MobiusStrip>(50);
 
     // obj.setGeometry(sphere);
     // obj.setGeometry(circle);
     // obj.setGeometry(rect);
     // obj.setGeometry(cube);
-    obj.setGeometry(cone);
+    // obj.setGeometry(cone);
+    obj.setGeometry(mobius);
 
     obj.setMaterial(simple);
 

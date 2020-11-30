@@ -17,6 +17,7 @@ OBJ+=geometry.cpp
 OBJ+=Primitive/circle.cpp
 OBJ+=Primitive/cube.cpp
 OBJ+=Primitive/cone.cpp
+OBJ+=Primitive/mobiusstrip.cpp
 
 all:
 	$(CXX) $(OBJ) -o VisualEngine
