@@ -17,6 +17,7 @@
 #include <glm/glm.hpp>
 
 #include "material.h"
+#include "geometry.h"
 
 #include "GL/buffer.h"
 #include "GL/vertexarray.h"
@@ -34,6 +35,9 @@ using Quaternion  = glm::vec4;
  */
 class Object3D
 {
+    private:
+        GeometryPtr                                             _geom;  
+
     protected:          //  OpenGL Buffers
         VertexArray                                             VAO;
         Buffer                                                  VBO;
@@ -44,11 +48,6 @@ class Object3D
         Quaternion                                              _rotate;
         Vector                                                  _offset;
         Vector                                                  _scale;
-
-    private:         //  Num of elements
-        size_t                                                  _numVertex;
-        size_t                                                  _numIndex;
-        bool                                                    _useIndex;
 
     public:
         Object3D() noexcept;
@@ -72,18 +71,12 @@ class Object3D
         void setOffset(const glm::vec3& offset) noexcept;
         glm::vec3 getOffset() const noexcept;
 
-        size_t getNumIndices() const noexcept;
-        size_t getNumVertexes() const noexcept;
-        bool hasIndexes() const noexcept;
+        void setGeometry(GeometryPtr geometry) noexcept;
+        GeometryPtr getGeometry() const noexcept;
 
         glm::mat3 getModelMat() const noexcept;
 
         void render(const ShaderProgram& program) noexcept;
-
-    protected:
-        void setNum(size_t index, size_t vertex) noexcept;
-
-        virtual void setupBuffers() noexcept =0;
 };
 
 glm::mat3x3 generateRotateMatrix(Quaternion rotate) noexcept;

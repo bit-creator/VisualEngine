@@ -14,12 +14,11 @@
 
 #include <boost/functional/hash.hpp>
 
+#include "../geometry.h"
+
 #include "../object3d.h"
 
-using indexArray    = std::vector<glm::uvec3>;
-using indexArrayPtr = std::unique_ptr<indexArray>;
-
-class Sphere : public Object3D
+class Sphere : public Geometry
 {
     private:
         GLuint                                                          _subdiv;
@@ -28,10 +27,8 @@ class Sphere : public Object3D
         std::unique_ptr<std::vector<glm::uvec3>>                        _indices;
 
     public:
-        Sphere(GLuint subdivision) noexcept;
-        ~Sphere() noexcept;
-
-        void setNums() noexcept;
+        explicit Sphere(GLuint subdivision) noexcept;
+        virtual ~Sphere() noexcept override;
 
         void setupBuffers() noexcept override;
         

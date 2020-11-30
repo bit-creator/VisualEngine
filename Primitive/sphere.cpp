@@ -1,7 +1,10 @@
 #include "sphere.h"
 
+using indexArray    = std::vector<glm::uvec3>;
+using indexArrayPtr = std::unique_ptr<indexArray>;
+
 Sphere::Sphere(GLuint subdivision) noexcept
-    : Object3D()
+    : Geometry()
     , _subdiv(subdivision)
     , _vertices({
         glm::vec3(1., 0., 0.),          // 0 
@@ -22,12 +25,9 @@ Sphere::Sphere(GLuint subdivision) noexcept
         glm::uvec3(3, 4, 5),            // 7
         glm::uvec3(0, 4, 5)             // 8
     }))
-{ div(_subdiv); setNums(); setupBuffers(); }
+{ div(_subdiv); setNum(_indices->size() * 3,  _vertices.size()); setupBuffers(); }
 
 Sphere::~Sphere() noexcept {  }
-
-void Sphere::setNums() noexcept
-{ setNum(_indices->size() * 3,  _vertices.size()); }
 
 // void Sphere::flipAndPush() noexcept
 // {

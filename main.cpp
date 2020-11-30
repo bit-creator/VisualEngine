@@ -3,11 +3,15 @@
 #include <cmath>
 
 // #include "GL/shadertree.h"
-// #include "Primitive/triangle.h"
+#include "Primitive/triangle.h"
 #include "engine.h"
-// #include "Primitive/rect.h"
+#include "Primitive/rect.h"
 #include "Primitive/sphere.h"
 #include "GL/vertexarray.h"
+#include "Primitive/circle.h"
+#include "Primitive/cube.h"
+#include "Primitive/cone.h"
+#include "Primitive/mobiusstrip.h"
 
 namespace ch = std::chrono;
 
@@ -68,25 +72,32 @@ int main()
 
     auto& eng = Engine::engine();
 
-    // vertex_t 1 = glm::vec3(-0.5f, -0.5f, 0.0f);
-    // vertex_t 2 = glm::vec3(0.5f, -0.5f, 0.0f);
-    // vertex_t 3 = glm::vec3(-0.5f, 0.5f, 0.0f);
-    // vertex_t 4 = glm::vec3(0.5f, 0.5f, 0.0f);
-    
-
-
+    Object3D obj;
     
     MaterialPtr simple = std::make_shared<Material>();
         
-    Sphere sphere(5);
-    
-    sphere.setMaterial(simple);
+    // GeometryPtr sphere = std::make_shared<Sphere>(5);
+    // GeometryPtr circle = std::make_shared<Circle>(10);
+    // GeometryPtr rect = std::make_shared<Rect>();
+    // GeometryPtr triangle = std::make_shared<Triangle>();
+    // GeometryPtr cube = std::make_shared<Cube>();
+    // GeometryPtr cone = std::make_shared<Cone>(5);
+    GeometryPtr mobius = std::make_shared<MobiusStrip>(50);
 
-    MyListener listener(sphere);
+    // obj.setGeometry(sphere);
+    // obj.setGeometry(circle);
+    // obj.setGeometry(rect);
+    // obj.setGeometry(cube);
+    // obj.setGeometry(cone);
+    obj.setGeometry(mobius);
+
+    obj.setMaterial(simple);
+
+    MyListener listener(obj);
 
     eng.addEventListener(std::make_shared<MyListener>(listener));
 
-    eng.engine().run(&sphere);
+    eng.engine().run(&obj);
 
     return 0;
 }
