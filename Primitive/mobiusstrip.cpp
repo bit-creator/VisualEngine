@@ -5,8 +5,8 @@ MobiusStrip::MobiusStrip(GLuint subdiv_l) noexcept
     : Geometry()
     , _subdiv(subdiv_l)
     , _vertices ({ 
-        parametric(0.0f, -1),
-        parametric(0.0f, 1),
+        parametric(U_MIN, V_MIN),
+        parametric(U_MIN, V_MAX),
      })
 { 
     genMobiusStrip(); 
@@ -39,22 +39,22 @@ void MobiusStrip::genMobiusStrip() noexcept
     GLfloat step = DOUBLE_PI / _subdiv;
     for(GLfloat rider = step; rider < DOUBLE_PI; rider += step )
     {
-        _vertices.push_back (parametric (rider, -1));
-        _vertices.push_back (parametric (rider, 1));
+        _vertices.push_back (parametric (rider, V_MIN));
+        _vertices.push_back (parametric (rider, V_MAX));
     }    
-        _vertices.push_back (parametric (DOUBLE_PI, -1));
-        _vertices.push_back (parametric (DOUBLE_PI, 1));    
+        _vertices.push_back (parametric (DOUBLE_PI, V_MIN));
+        _vertices.push_back (parametric (DOUBLE_PI, V_MAX));    
 }
 
 glm::vec3 MobiusStrip::parametric(GLfloat u, GLfloat v) const noexcept
 {
-    if ( u < 0 || u > DOUBLE_PI ) 
+    if ( u < U_MIN || u > U_MAX ) 
     {
         std::cout << "Mobius parametric assertion failed: value no in range" << std::endl;
         std::raise(SIGTERM);
     }
 
-    if ( v < -1 || v > 1 ) 
+    if ( v < V_MIN || v > V_MAX ) 
     {
         std::cout << "Mobius parametric assertion failed: value no in range" << std::endl;
         std::raise(SIGTERM);

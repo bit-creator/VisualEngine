@@ -21,5 +21,5 @@ void main()
   diffFactor = clamp(diffFactor, 0.0, 1.0);
   specFactor = clamp(specFactor, 0.0, 1.0);
 
-  color = ambiFactor * uAmbientColor + uDiffuseColor * diffFactor + uSpecularColor * specFactor;
+  color = uAmbientColor * ambiFactor + uDiffuseColor * diffFactor;
 }

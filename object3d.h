@@ -15,6 +15,7 @@
 #include <memory>
 
 #include <glm/glm.hpp>
+#include <glm/gtx/quaternion.hpp>
 
 #include "material.h"
 #include "geometry.h"
@@ -24,7 +25,6 @@
 #include "GL/shaderprogram.h"
 
 using Vector      = glm::vec3;
-using Quaternion  = glm::vec4;
 
 /**
  * @brief 
@@ -44,10 +44,12 @@ class Object3D
         Buffer                                                  EBO;
 
     protected:          //  Material & position
-        MaterialPtr                                             _material;      
-        Quaternion                                              _rotate;
-        Vector                                                  _offset;
+        glm::mat4                                               _modelMat;
+        MaterialPtr                                             _material;
+        glm::quat                                               _rotate;
+        Vector                                                  _position;
         Vector                                                  _scale;
+        bool                                                    _dirtyTransform;      
 
     public:
         Object3D() noexcept;
@@ -63,22 +65,20 @@ class Object3D
         MaterialPtr getMaterial() const noexcept; 
         
         void setRotate(const glm::vec3& axis, const GLfloat angle) noexcept;
-        Quaternion getRotate() const noexcept;
+        glm::quat getRotate() const noexcept;
 
         void setScale(const glm::vec3& scale) noexcept;
         glm::vec3 getScale() const noexcept;
 
-        void setOffset(const glm::vec3& offset) noexcept;
-        glm::vec3 getOffset() const noexcept;
+        void setPosition(const glm::vec3& position) noexcept;
+        glm::vec3 getPosition() const noexcept;
 
         void setGeometry(GeometryPtr geometry) noexcept;
         GeometryPtr getGeometry() const noexcept;
 
-        glm::mat3 getModelMat() const noexcept;
+        glm::mat4 getModelMat() noexcept;
 
         void render(const ShaderProgram& program) noexcept;
 };
-
-glm::mat3x3 generateRotateMatrix(Quaternion rotate) noexcept;
 
 #endif // OBJECT3D_H

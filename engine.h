@@ -18,6 +18,8 @@
 #include "object3d.h"
 #include "window.h"
 
+#include "perspectivecamera.h"
+
 
 class EventListener
 {
@@ -49,6 +51,9 @@ class Engine
         engine() noexcept;
 
         void addEventListener(EventPointer eventListener);
+
+        std::pair<int32_t, int32_t> 
+        getWindowSize() noexcept;
 
         void run(Object3D* tr, const Window& window = _mainWindow) noexcept;
 

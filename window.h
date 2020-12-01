@@ -72,6 +72,9 @@ public:
     operator pointer( ) const;
     operator pointer( );
 
+    std::pair<int32_t, int32_t> 
+    getWindowSize() const noexcept;
+
 
 private:
     static void callBack(pointer window, int key, int scancode, int action, int mode);

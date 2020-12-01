@@ -4,10 +4,12 @@ Object3D::Object3D() noexcept
     : VAO       (  )
     , VBO       ( GL_ARRAY_BUFFER )
     , EBO       ( GL_ELEMENT_ARRAY_BUFFER ) 
+    , _modelMat ( glm::mat4(1.0f) )
     , _material ( std::make_shared<Material>() )
-    , _rotate   ( Quaternion(1.0f, 1.0f, 1.0f, 1.0f) )
-    , _offset   ( Vector(0.0f, 0.0f, 0.0f) )
+    , _rotate   ( glm::quat(1.0f, 1.0f, 1.0f, 1.0f) )
+    , _position   ( Vector(0.0f, 0.0f, 0.0f) )
     , _scale    ( Vector(1.0f, 1.0f, 1.0f) )
+    , _dirtyTransform(false)
 {  }
 
 Object3D::Object3D(MaterialPtr material) noexcept
@@ -18,14 +20,14 @@ Object3D::Object3D(MaterialPtr material) noexcept
 //     : _material(oth._material)
 //     , _scale(oth._scale)
 //     , _rotate(oth._rotate)
-//     , _offset(oth._offset)
+//     , _position(oth._position)
 // {  }
 
 // Object3D::Object3D(Object3D&& oth) noexcept
 //     : _material(std::move(oth._material))
 //     , _scale(std::move(oth._scale))
 //     , _rotate(std::move(oth._rotate))
-//     , _offset(std::move(oth._offset))
+//     , _position(std::move(oth._position))
 // {  }
 
 Object3D::~Object3D() noexcept 
@@ -38,30 +40,22 @@ MaterialPtr Object3D::getMaterial() const noexcept
 { return _material; }
 
 void Object3D::setScale(const glm::vec3& scale) noexcept
-{ _scale = scale; }
+{ _scale = scale; _dirtyTransform = false; }
 
 glm::vec3 Object3D::getScale() const noexcept
 { return _scale; }
 
 void Object3D::setRotate(const glm::vec3& axis, const GLfloat angle) noexcept
-{ 
-    auto _axis = glm::normalize(axis);  
-    
-    _rotate.x = _axis.x * sin(angle / 2);
-    _rotate.y = _axis.y * sin(angle / 2);
-    _rotate.z = _axis.z * sin(angle / 2);
-    _rotate.w = cos(angle / 2);
+{ _rotate = glm::angleAxis(angle, glm::normalize(axis)); _dirtyTransform = false; }
 
-}
-
-Quaternion Object3D::getRotate() const noexcept
+glm::quat Object3D::getRotate() const noexcept
 { return _rotate; }
 
-void Object3D::setOffset(const glm::vec3& offset) noexcept
-{ _offset = offset; }
+void Object3D::setPosition(const glm::vec3& position) noexcept
+{ _position = position; _dirtyTransform = false; }
 
-glm::vec3 Object3D::getOffset() const noexcept
-{ return _offset; }
+glm::vec3 Object3D::getPosition() const noexcept
+{ return _position; }
 
 void Object3D::setGeometry(GeometryPtr geometry) noexcept
 { _geom = geometry; }
@@ -69,15 +63,20 @@ void Object3D::setGeometry(GeometryPtr geometry) noexcept
 GeometryPtr Object3D::getGeometry() const noexcept
 { return _geom; }
 
-glm::mat3 Object3D::getModelMat() const noexcept
+glm::mat4 Object3D::getModelMat() noexcept
 {
-    glm::mat3 mRotate = generateRotateMatrix(_rotate);
+    if(_dirtyTransform) return _modelMat;
 
-    glm::mat3 mScale(_scale.x, 0.,      0.,
-                       0.,      _scale.y, 0.,
-                       0.,      0.,      _scale.z);
+    _modelMat = glm::mat4(1.0f);
+    _modelMat = glm::translate(_modelMat, _position);
+    
+    _modelMat *= glm::toMat4(_rotate);
+    
+    _modelMat = glm::scale(_modelMat, _scale);
+    
+    _dirtyTransform = true;
 
-    return mRotate * mScale;
+    return _modelMat;
 }
 
 void Object3D::render(const ShaderProgram& program) noexcept
@@ -86,9 +85,17 @@ void Object3D::render(const ShaderProgram& program) noexcept
 
     auto material = getMaterial();
 
-    auto offset = getOffset();
+    glm::mat4 mat = getModelMat();
 
-    glm::mat3 mat = getModelMat();
+    // float n = 0.1;
+    // float f = 100;
+
+    // glm::mat4 matProj(
+    //     1., 0., 0., 0.,
+    //     0., 1., 0., 0.,
+    //     0., 0., (f + n) / (f - n), (- 2 * f * n) / (f - n),
+    //     0., 0., 1., 0.
+    // );
 
     glm::mat3 nMat = glm::inverse(glm::transpose(mat));
 
@@ -98,8 +105,8 @@ void Object3D::render(const ShaderProgram& program) noexcept
     program.setUniform("uRoughness", 1 / material->getRoughness());
     
     program.setUniform("uModelMat", mat);
-    program.setUniform("uPosition", offset);
-    program.setUniform("uLightDir", glm::vec3(0., 1., 1.) * mat);
+    // program.setUniform("uProjMat", matProj);
+    program.setUniform("uLightDir", glm::normalize(glm::vec3(0., 0., 1.)));
     program.setUniform("uNormalMat", nMat);
 
     glPolygonMode(GL_FRONT_AND_BACK, material->getPolygonsFillMode());
@@ -111,31 +118,3 @@ void Object3D::render(const ShaderProgram& program) noexcept
 
     _geom->unbindBuffers();
 }
-
-glm::mat3x3 generateRotateMatrix(Quaternion rotate) noexcept
-{
-    auto xy = 2 * rotate.x * rotate.y;
-    auto xz = 2 * rotate.x * rotate.z;
-    auto yz = 2 * rotate.y * rotate.z;
-    auto xx = 2 * rotate.x * rotate.x;
-    auto yy = 2 * rotate.y * rotate.y;
-    auto zz = 2 * rotate.z * rotate.z;
-    auto xw = 2 * rotate.x * rotate.w;
-    auto yw = 2 * rotate.y * rotate.w;
-    auto zw = 2 * rotate.z * rotate.w;
-
-    /**
-     * value naemed (valval) impliment aka (2valval) 
-    */
-    return glm::mat3x3
-    (
-        /**************************************************************/
-        /**/ 1 - yy - zz, /**/ xy - zw,       /**/ xz + yw,       /**/
-        /**************************************************************/
-        /**/ xy + zw,       /**/ 1 - xx - zz, /**/ yz - xw,       /**/      
-        /**************************************************************/
-        /**/ xz - yw,       /**/ yz + xw,       /**/ 1 - xx - yy  /**/
-        /**************************************************************/
-    );
-}
-
