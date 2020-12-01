@@ -19,7 +19,7 @@ void Camera::setProjection(const glm::mat4& projMatr, const float near, const fl
     _farPlane = far;
 }
 
-glm::mat4 Camera::getProjectionMatrix() noexcept
+glm::mat4 Camera::getProjectionMatrix() const noexcept
 { return _projectionMatr; }
 
 

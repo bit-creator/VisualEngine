@@ -19,6 +19,8 @@
 
 #include "material.h"
 #include "geometry.h"
+#include "perspectivecamera.h"
+#include "orthographiccamera.h"
 
 #include "GL/buffer.h"
 #include "GL/vertexarray.h"
@@ -78,7 +80,7 @@ class Object3D
 
         glm::mat4 getModelMat() noexcept;
 
-        void render(const ShaderProgram& program) noexcept;
+        void render(const Camera& camera, ShaderProgram& program) noexcept;
 };
 
 #endif // OBJECT3D_H

@@ -28,7 +28,10 @@ void Engine::run(Object3D* tr, const Window& window) noexcept
     
     glEnable(GL_DEPTH_TEST);
 
-    Camera camera = PerspectiveCamera(M_PI / 3, 1, 0.1, 100);
+    auto [width, height] = _mainWindow.getWindowSize();
+
+    Camera camera = PerspectiveCamera(M_PI / 3, width / height, 0.1, 100);
+    // Camera camera = OrthographicCamera(width, 0, height, 0, 0.1, 100);
 
     glm::mat4 projMat = camera.getProjectionMatrix();
     
@@ -44,7 +47,7 @@ void Engine::run(Object3D* tr, const Window& window) noexcept
         glClear(GL_COLOR_BUFFER_BIT);
         glClear(GL_DEPTH_BUFFER_BIT);
 
-        tr->render(shader);
+        tr->render(camera, shader);
 
         glfwSwapBuffers(window);
     }

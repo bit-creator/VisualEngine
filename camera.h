@@ -28,7 +28,7 @@ class Camera
         Camera(const glm::mat4& projMatr, const float near, const float far) noexcept;
 
         void setProjection(const glm::mat4& projMatr, const float near, const float far) noexcept;
-        glm::mat4 getProjectionMatrix() noexcept;
+        glm::mat4 getProjectionMatrix() const noexcept;
 
         float getNearPlane() const;
 

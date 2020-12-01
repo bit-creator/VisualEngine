@@ -76,18 +76,18 @@ int main()
     
     MaterialPtr simple = std::make_shared<Material>();
         
-    // GeometryPtr sphere = std::make_shared<Sphere>(5);
+    GeometryPtr sphere = std::make_shared<Sphere>(5);
     // GeometryPtr circle = std::make_shared<Circle>(10);
     // GeometryPtr rect = std::make_shared<Rect>();
     // GeometryPtr triangle = std::make_shared<Triangle>();
-    GeometryPtr cube = std::make_shared<Cube>();
+    // GeometryPtr cube = std::make_shared<Cube>();
     // GeometryPtr cone = std::make_shared<Cone>(5);
     // GeometryPtr mobius = std::make_shared<MobiusStrip>(50);
 
-    // obj.setGeometry(sphere);
+    obj.setGeometry(sphere);
     // obj.setGeometry(circle);
     // obj.setGeometry(rect);
-    obj.setGeometry(cube);
+    // obj.setGeometry(cube);
     // obj.setGeometry(cone);
     // obj.setGeometry(mobius);
 

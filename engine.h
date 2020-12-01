@@ -19,6 +19,7 @@
 #include "window.h"
 
 #include "perspectivecamera.h"
+#include "orthographiccamera.h"
 
 
 class EventListener

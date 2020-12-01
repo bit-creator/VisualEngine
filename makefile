@@ -20,6 +20,7 @@ OBJ+=Primitive/cone.cpp
 OBJ+=Primitive/mobiusstrip.cpp
 OBJ+=perspectivecamera.cpp
 OBJ+=camera.cpp
+OBJ+=orthographiccamera.cpp
 
 all:
 	$(CXX) $(OBJ) -o VisualEngine
