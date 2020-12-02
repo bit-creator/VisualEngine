@@ -8,7 +8,7 @@ ATTRIBUTE(ATTRIB_COORD_LOC) vec3 aCoord;
 ATTRIBUTE(ATTRIB_NORMAL_LOC) vec3 aNormal;
 
 uniform mat4 uModelMat;
-uniform mat4 uModelProjMat;
+uniform mat4 uMVPMat;
 uniform mat3 uNormalMat;
 uniform bool uPerspectiveCamera;
 
@@ -17,7 +17,7 @@ out vec3 vView;
 
 void main()
 {
-    gl_Position = uModelProjMat * vec4(aCoord, 1.0);
+    gl_Position = uMVPMat * vec4(aCoord, 1.0);
    
     vNormal = uNormalMat * aNormal;
     

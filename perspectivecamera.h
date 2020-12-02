@@ -18,8 +18,6 @@
 
 class PerspectiveCamera : public Camera
 {
-    private:
-    
     public:
         PerspectiveCamera(float fovy, float aspect, float near, float far);
 

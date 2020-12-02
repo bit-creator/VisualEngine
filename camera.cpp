@@ -1,25 +1,13 @@
 #include "camera.h"
 
-float Camera::getNearPlane() const
-{ return _nearPlane; }
-
-float Camera::getFarPlane() const
-{ return _farPlane; }
-
-Camera::Camera(CameraType type, const glm::mat4& projMatr, const float near, const float far) noexcept
-    : _projectionMatr(projMatr)
-    , _nearPlane(near)
-    , _farPlane(far)
+Camera::Camera(const glm::mat4& projMatr, CameraType type = CameraType::CAMERA_CUSTOM) noexcept
+    : Node(NodeType::NODE_CAMERA)
+    , _projectionMatr(projMatr)
     , _type(type)
 {  }
 
-void Camera::setProjection(CameraType type, const glm::mat4& projMatr, const float near, const float far) noexcept
-{
-    _projectionMatr = projMatr;
-    _nearPlane = near;
-    _farPlane = far;
-    _type = type;
-}
+void Camera::setProjection(const glm::mat4& projMatr) noexcept
+{ _projectionMatr = projMatr; }
 
 glm::mat4 Camera::getProjectionMatrix() const noexcept
 { return _projectionMatr; }

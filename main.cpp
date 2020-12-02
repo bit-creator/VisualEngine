@@ -21,13 +21,12 @@ using ObjPtr = std::shared_ptr<Object3D>;
 
 class MyListener : public EventListener
 {
-    Object3D& _object;
+    Scene& scene;
 
 public:
-    MyListener(Object3D& obj)
-        : _object(obj)
-    {
-    }
+    MyListener(Scene& sc)
+        : scene(sc)
+    {  }
 
     void onRender() noexcept override
     {
@@ -45,17 +44,26 @@ public:
         auto color = glm::vec4(1., 0.2, 0.2, 1.0);
         auto color_ = glm::vec4(1., 1., 1., 1.0); 
         
-        _object.getMaterial() -> setColor(ColorTarget::Ambient, color);
-        _object.getMaterial() -> setColor(ColorTarget::Diffuse, color);
-        _object.getMaterial() -> setColor(ColorTarget::Specular, color_);
-        _object.getMaterial() -> setRoughness(0.01);
-        _object.getMaterial() -> setPolygonsFillMode(GL_FILL);
+        scene._object->getMaterial() -> setColor(ColorTarget::Ambient, color);
+        scene._object->getMaterial() -> setColor(ColorTarget::Diffuse, color);
+        scene._object->getMaterial() -> setColor(ColorTarget::Specular, color_);
+        scene._object->getMaterial() -> setRoughness(0.01);
+        scene._object->getMaterial() -> setPolygonsFillMode(GL_FILL);
+        scene._object->setScale(glm::vec3(1.f, 1.0f, 1.f));
+        scene._object->setRotate(glm::vec3(1., 1., 1.), 0.8);
+        scene._object->setPosition(glm::vec3(0.0, 0.0, 3.0));
 
-        _object.setScale(glm::vec3(1.f, 1.0f, 1.f));
+        // scene._camera->setPosition(glm::vec3(0.0, 0.0, -1.0));
+        // scene._object->setRotate(glm::vec3(1., 1., 1.), 0.0);
+        // scene._object->setScale(glm::vec3(1.f, 1.0f, 1.f));
+    }
 
-        _object.setRotate(glm::vec3(1., 1., 1.), 0.8);
-
-        _object.setPosition(glm::vec3(0.0, 0.0, 3.0));
+    void onKeyPressed(int key, int scancode, int action, int mode) noexcept override
+    {
+        if(key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
+        {
+            std::cout << "|    INFO     | escape pressed\n";    
+        }
     }
 
     ~MyListener() override {
@@ -72,7 +80,9 @@ int main()
 
     auto& eng = Engine::engine();
 
-    Object3D obj;
+    Scene scene;
+
+    auto obj = std::make_shared<Object3D>();
     
     MaterialPtr simple = std::make_shared<Material>();
         
@@ -87,17 +97,29 @@ int main()
     // obj.setGeometry(sphere);
     // obj.setGeometry(circle);
     // obj.setGeometry(rect);
-    obj.setGeometry(cube);
+    obj->setGeometry(cube);
     // obj.setGeometry(cone);
     // obj.setGeometry(mobius);
 
-    obj.setMaterial(simple);
+    obj->setMaterial(simple);
 
-    MyListener listener(obj);
+    MyListener listener(scene);
+
+
+   auto [width, height] = eng.getWindowSize();
+    
+    float aspect = width / height;
+
+    // Camera camera = PerspectiveCamera(M_PI / 3, aspect, 0.1, 100);
+    scene._camera = std::make_shared<Camera>(OrthographicCamera(-5, 5, -5 * aspect, 5 * aspect, 0.1, 100));
+    
+    scene._object = obj;
+
+    eng.setScene(std::make_shared<Scene>(scene));
 
     eng.addEventListener(std::make_shared<MyListener>(listener));
 
-    eng.engine().run(&obj);
+    eng.engine().run();
 
     return 0;
 }

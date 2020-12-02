@@ -21,9 +21,10 @@ void main()
   
   float specFactor = pow(max(dot(r, normalize(vView)), 0.0), uRoughness);
 
-  float ambiFactor = 0.1; 
+  float ambiFactor = 0.5; 
   diffFactor = clamp(diffFactor, 0.0, 1.0);
   specFactor = clamp(specFactor, 0.0, 1.0);
 
-  color = uAmbientColor * ambiFactor + uDiffuseColor * diffFactor + uSpecularColor * specFactor;
+  color = uAmbientColor * ambiFactor;
+  //  + uDiffuseColor * diffFactor + uSpecularColor * specFactor;
 }

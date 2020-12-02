@@ -1,4 +1,5 @@
 #include "window.h"
+#include "engine.h"
 
 Window::Window() noexcept
     : _version(3.3f)
@@ -127,9 +128,7 @@ Window::operator Window::pointer( )
 
 void Window::callBack(pointer window, int key, int scancode, int action, int mode)
 {
-    if(key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-    {
-        glfwSetWindowShouldClose(window, GL_TRUE);
-        std::cout << "|    INFO     | escape pressed\n";    
-    }
+    auto& eng = Engine::engine();
+
+    if(eng._eventListener) eng._eventListener -> onKeyPressed(key, scancode, action, mode);
 }

@@ -17,6 +17,7 @@
 #include "GL/shaderprogram.h"
 #include "object3d.h"
 #include "window.h"
+#include "scene.h"
 
 #include "perspectivecamera.h"
 #include "orthographiccamera.h"
@@ -26,15 +27,20 @@ class EventListener
 {
     public:
         virtual void onRender() noexcept =0;
+        virtual void onKeyPressed(int key, int scancode, int action, int mode) noexcept =0;
 
         virtual ~EventListener(){
         }
 };
 
 using EventPointer = std::shared_ptr<EventListener>;
+using ScenePtr = std::shared_ptr<Scene>;
 
 class Engine
 {
+    private:
+        ScenePtr                        _scene;
+
     public:
         EventPointer                    _eventListener;
 
@@ -53,10 +59,13 @@ class Engine
 
         void addEventListener(EventPointer eventListener);
 
+        void setScene(ScenePtr scene) noexcept;
+        ScenePtr getScene() const noexcept;
+
         std::pair<int32_t, int32_t> 
         getWindowSize() noexcept;
 
-        void run(Object3D* tr, const Window& window = _mainWindow) noexcept;
+        void run(const Window& window = _mainWindow) noexcept;
 
 
 };
