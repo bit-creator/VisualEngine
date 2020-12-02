@@ -114,6 +114,11 @@ Window::pointer Window::get() noexcept
 Window::const_pointer Window::get() const noexcept
 { return _window; }
 
+std::pair<int32_t, int32_t> Window::getWindowSize() const noexcept
+{
+    return std::make_pair(_width, _height);
+}
+
 Window::operator Window::pointer( ) const
 { return _window; }
 

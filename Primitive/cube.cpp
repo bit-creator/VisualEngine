@@ -10,34 +10,58 @@ void Cube::setupBuffers() noexcept
 {
     glm::vec3 vertices[] = {
         glm::vec3( 1.,  1.,  1.),   // 1
+        glm::vec3( 0.,  1.,  0.),
         glm::vec3(-1.,  1.,  1.),   // 2
+        glm::vec3( 0.,  1.,  0.),
         glm::vec3(-1.,  1., -1.),   // 3
+        glm::vec3( 0.,  1.,  0.),
         glm::vec3( 1.,  1., -1.),   // 4
- 
-        glm::vec3( 1., -1.,  1.),   // 5
-        glm::vec3(-1., -1.,  1.),   // 6
-        glm::vec3(-1., -1., -1.),   // 7
-        glm::vec3( 1., -1., -1.),   // 8 
+        glm::vec3( 0.,  1.,  0.),
 
-        glm::vec3( 1.,  1.,  1.),   // 1
-        glm::vec3(-1.,  1.,  1.),   // 2
-        glm::vec3(-1., -1.,  1.),   // 6
         glm::vec3( 1., -1.,  1.),   // 5
-        
-        glm::vec3(-1.,  1., -1.),   // 3
-        glm::vec3( 1.,  1., -1.),   // 4
-        glm::vec3( 1., -1., -1.),   // 8 
-        glm::vec3(-1., -1., -1.),   // 7
-
-        glm::vec3(-1.,  1.,  1.),   // 2
-        glm::vec3(-1.,  1., -1.),   // 3
-        glm::vec3(-1., -1., -1.),   // 7
+        glm::vec3( 0., -1.,  0.),
         glm::vec3(-1., -1.,  1.),   // 6
+        glm::vec3( 0., -1.,  0.),
+        glm::vec3(-1., -1., -1.),   // 7
+        glm::vec3( 0., -1.,  0.),
+        glm::vec3( 1., -1., -1.),   // 8 
+        glm::vec3( 0., -1.,  0.),
         
         glm::vec3( 1.,  1.,  1.),   // 1
-        glm::vec3( 1.,  1., -1.),   // 4
-        glm::vec3( 1., -1., -1.),   // 8 
+        glm::vec3( 0.,  0.,  1.),
+        glm::vec3(-1.,  1.,  1.),   // 2
+        glm::vec3( 0.,  0.,  1.),
+        glm::vec3(-1., -1.,  1.),   // 6
+        glm::vec3( 0.,  0.,  1.),
         glm::vec3( 1., -1.,  1.),   // 5
+        glm::vec3( 0.,  0.,  1.),
+        
+        glm::vec3(-1.,  1., -1.),   // 3
+        glm::vec3( 0.,  0., -1.),
+        glm::vec3( 1.,  1., -1.),   // 4
+        glm::vec3( 0.,  0., -1.),
+        glm::vec3( 1., -1., -1.),   // 8 
+        glm::vec3( 0.,  0., -1.),
+        glm::vec3(-1., -1., -1.),   // 7
+        glm::vec3( 0.,  0., -1.),
+        
+        glm::vec3(-1.,  1.,  1.),   // 2
+        glm::vec3(-1.,  0.,  0.),
+        glm::vec3(-1.,  1., -1.),   // 3
+        glm::vec3(-1.,  0.,  0.),
+        glm::vec3(-1., -1., -1.),   // 7
+        glm::vec3(-1.,  0.,  0.),
+        glm::vec3(-1., -1.,  1.),   // 6
+        glm::vec3(-1.,  0.,  0.),
+        
+        glm::vec3( 1.,  1.,  1.),   // 1
+        glm::vec3( 1.,  0.,  0.),
+        glm::vec3( 1.,  1., -1.),   // 4
+        glm::vec3( 1.,  0.,  0.),
+        glm::vec3( 1., -1., -1.),   // 8 
+        glm::vec3( 1.,  0.,  0.),
+        glm::vec3( 1., -1.,  1.),   // 5
+        glm::vec3( 1.,  0.,  0.),
     };
 
     glm::uvec3 indices[] = {
@@ -67,8 +91,11 @@ void Cube::setupBuffers() noexcept
     VBO.loadData(vertices, GL_STATIC_DRAW);
     EBO.loadData(indices, GL_STATIC_DRAW);
     
-    VAO.addAttribute(Attribute::ATTRIB_POSITION, 3 * sizeof(GLfloat), 0);
-    VAO.addAttribute(Attribute::ATTRIB_NORMAL, 3 * sizeof(GLfloat), 0);
+    VAO.addAttribute(Attribute::ATTRIB_POSITION, 6 * sizeof(GLfloat), 0);
+    VAO.addAttribute(Attribute::ATTRIB_NORMAL, 6 * sizeof(GLfloat), 3 * sizeof(GLfloat));
+
+    // VAO.addAttribute(Attribute::ATTRIB_POSITION, 3 * sizeof(GLfloat), 0);
+    // VAO.addAttribute(Attribute::ATTRIB_NORMAL, 3 * sizeof(GLfloat), 0);
 
     VAO.enableAll();
 

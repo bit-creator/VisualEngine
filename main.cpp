@@ -40,22 +40,22 @@ public:
         float f3 = std::abs(std::sin(3 * time));
         float f4 = time;
 
-        time += 0.001;
+        time += 0.01;
         
-        auto color = glm::vec4(f1, f2, f3, 1.0);
-        auto color_ = glm::vec4(f2, f1, f3, 1.0); 
+        auto color = glm::vec4(1., 0.2, 0.2, 1.0);
+        auto color_ = glm::vec4(1., 1., 1., 1.0); 
         
         _object.getMaterial() -> setColor(ColorTarget::Ambient, color);
         _object.getMaterial() -> setColor(ColorTarget::Diffuse, color);
         _object.getMaterial() -> setColor(ColorTarget::Specular, color_);
-        _object.getMaterial() -> setRoughness(0.1);
+        _object.getMaterial() -> setRoughness(0.01);
         _object.getMaterial() -> setPolygonsFillMode(GL_FILL);
 
-        _object.setScale(glm::vec3(0.5f, 0.5f, 0.5f));
+        _object.setScale(glm::vec3(1.f, 1.0f, 1.f));
 
-        _object.setRotate(glm::vec3(1., 1., 1.), f4);
+        _object.setRotate(glm::vec3(1., 1., 1.), 0.8);
 
-        _object.setOffset(glm::vec3(0., 0., 0.));
+        _object.setPosition(glm::vec3(0.0, 0.0, 3.0));
     }
 
     ~MyListener() override {
@@ -80,16 +80,16 @@ int main()
     // GeometryPtr circle = std::make_shared<Circle>(10);
     // GeometryPtr rect = std::make_shared<Rect>();
     // GeometryPtr triangle = std::make_shared<Triangle>();
-    // GeometryPtr cube = std::make_shared<Cube>();
+    GeometryPtr cube = std::make_shared<Cube>();
     // GeometryPtr cone = std::make_shared<Cone>(5);
-    GeometryPtr mobius = std::make_shared<MobiusStrip>(50);
+    // GeometryPtr mobius = std::make_shared<MobiusStrip>(50);
 
     // obj.setGeometry(sphere);
     // obj.setGeometry(circle);
     // obj.setGeometry(rect);
-    // obj.setGeometry(cube);
+    obj.setGeometry(cube);
     // obj.setGeometry(cone);
-    obj.setGeometry(mobius);
+    // obj.setGeometry(mobius);
 
     obj.setMaterial(simple);
 

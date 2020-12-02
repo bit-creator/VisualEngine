@@ -73,9 +73,23 @@ void ShaderProgram::setUniform(const std::string& name, const float flt) const n
     glUniform1f(loc, flt);
 }
 
+void ShaderProgram::setUniform(const std::string& name, const int val) const noexcept
+{
+    GLint loc = glGetUniformLocation(getID(), name.c_str());
+
+    glUniform1ui(loc, val);
+}
+
 void ShaderProgram::setUniform(const std::string& name, const glm::vec4& vec) const noexcept
 {
     GLint loc = glGetUniformLocation(getID(), name.c_str());
 
     glUniform4f(loc, vec.x, vec.y, vec.z, vec.w);
+}
+
+void ShaderProgram::setUniform(const std::string& name, const glm::mat4& mat) const noexcept
+{
+    GLint loc = glGetUniformLocation(getID(), name.c_str());
+
+    glUniformMatrix4fv(loc, 1, false, glm::value_ptr(mat));
 }
