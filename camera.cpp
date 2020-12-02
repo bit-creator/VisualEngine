@@ -6,21 +6,25 @@ float Camera::getNearPlane() const
 float Camera::getFarPlane() const
 { return _farPlane; }
 
-Camera::Camera(const glm::mat4& projMatr, const float near, const float far) noexcept
+Camera::Camera(CameraType type, const glm::mat4& projMatr, const float near, const float far) noexcept
     : _projectionMatr(projMatr)
     , _nearPlane(near)
     , _farPlane(far)
+    , _type(type)
 {  }
 
-void Camera::setProjection(const glm::mat4& projMatr, const float near, const float far) noexcept
+void Camera::setProjection(CameraType type, const glm::mat4& projMatr, const float near, const float far) noexcept
 {
     _projectionMatr = projMatr;
     _nearPlane = near;
     _farPlane = far;
+    _type = type;
 }
 
 glm::mat4 Camera::getProjectionMatrix() const noexcept
 { return _projectionMatr; }
 
+CameraType Camera::getType() const noexcept
+{ return _type; }
 
 

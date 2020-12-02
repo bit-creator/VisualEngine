@@ -80,6 +80,7 @@ void Object3D::render(const Camera& camera, ShaderProgram& program) noexcept
     program.setUniform("uDiffuseColor", material->getColor(ColorTarget::Diffuse));
     program.setUniform("uSpecularColor", material->getColor(ColorTarget::Specular));
     program.setUniform("uRoughness", 1 / material->getRoughness());
+    program.setUniform("uPerspectiveCamera", (int)camera.getType());
     
     program.setUniform("uModelProjMat", ProjMat * ModelMat);
     program.setUniform("uModelMat", ModelMat);

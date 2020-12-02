@@ -29,17 +29,15 @@ void Engine::run(Object3D* tr, const Window& window) noexcept
     glEnable(GL_DEPTH_TEST);
 
     auto [width, height] = _mainWindow.getWindowSize();
+    
+    float aspect = width / height;
 
-    Camera camera = PerspectiveCamera(M_PI / 3, width / height, 0.1, 100);
-    // Camera camera = OrthographicCamera(width, 0, height, 0, 0.1, 100);
-
-    glm::mat4 projMat = camera.getProjectionMatrix();
+    // Camera camera = PerspectiveCamera(M_PI / 3, aspect, 0.1, 100);
+    Camera camera = OrthographicCamera(-5, 5, -5 * aspect, 5 * aspect, 0.1, 100);
     
     while (!glfwWindowShouldClose(window))
     {
         if(_eventListener) _eventListener -> onRender();
-
-        shader.setUniform("uProjMat", projMat);
 
         glfwPollEvents();
 

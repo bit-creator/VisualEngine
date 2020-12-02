@@ -1,7 +1,7 @@
 #version 460 core
 
 in vec3 vNormal;
-in vec4 vView;
+in vec3 vView;
 out vec4 color;
 
 uniform vec4 uAmbientColor;
@@ -12,11 +12,14 @@ uniform float uRoughness;
 
 void main()
 {
-  float diffFactor = -dot(normalize(vNormal), uLightDir);
+  vec3 normal = normalize(vNormal);
+  vec3 lightDir = -uLightDir;
 
-  vec3 r = normalize(reflect(-uLightDir, normalize(vNormal)));
+  float diffFactor = dot(normal, lightDir);
+
+  vec3 r = normalize(reflect(lightDir,normal));
   
-  float specFactor = pow(max(dot(vec4(r, 1.0), vView), 0.0), uRoughness);
+  float specFactor = pow(max(dot(r, normalize(vView)), 0.0), uRoughness);
 
   float ambiFactor = 0.1; 
   diffFactor = clamp(diffFactor, 0.0, 1.0);
