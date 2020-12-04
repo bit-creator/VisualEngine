@@ -21,6 +21,7 @@ OBJ+=Primitive/mobiusstrip.cpp
 OBJ+=perspectivecamera.cpp
 OBJ+=camera.cpp
 OBJ+=orthographiccamera.cpp
+OBJ+=node.cpp
 
 all:
 	$(CXX) $(OBJ) -o VisualEngine

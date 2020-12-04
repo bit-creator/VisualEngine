@@ -17,6 +17,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtx/quaternion.hpp>
 
+#include "node.h"
 #include "material.h"
 #include "geometry.h"
 #include "perspectivecamera.h"
@@ -26,7 +27,6 @@
 #include "GL/vertexarray.h"
 #include "GL/shaderprogram.h"
 
-using Vector      = glm::vec3;
 
 /**
  * @brief 
@@ -35,7 +35,7 @@ using Vector      = glm::vec3;
  * @default colour: white (1.0, 1.0, 1.0, 1.0)
  * 
  */
-class Object3D
+class Object3D : public Node
 {
     private:
         GeometryPtr                                             _geom;  
@@ -45,42 +45,22 @@ class Object3D
         Buffer                                                  VBO;
         Buffer                                                  EBO;
 
-    protected:          //  Material & position
-        glm::mat4                                               _modelMat;
+    protected:          //  Material
         MaterialPtr                                             _material;
-        glm::quat                                               _rotate;
-        Vector                                                  _position;
-        Vector                                                  _scale;
-        bool                                                    _dirtyTransform;      
 
     public:
         Object3D() noexcept;
         Object3D(MaterialPtr material) noexcept;
-        // Object3D(const Object3D& oth) noexcept;
-        // Object3D(Object3D&& oth) noexcept;
+
         virtual ~Object3D() noexcept;
-
-        // Object3D& operator =(const Object3D& oth) noexcept =default;
-        // Object3D& operator =(Object3D&& oth) noexcept =default;
-
-        void setMaterial(MaterialPtr material) noexcept;
-        MaterialPtr getMaterial() const noexcept; 
-        
-        void setRotate(const glm::vec3& axis, const GLfloat angle) noexcept;
-        glm::quat getRotate() const noexcept;
-
-        void setScale(const glm::vec3& scale) noexcept;
-        glm::vec3 getScale() const noexcept;
-
-        void setPosition(const glm::vec3& position) noexcept;
-        glm::vec3 getPosition() const noexcept;
 
         void setGeometry(GeometryPtr geometry) noexcept;
         GeometryPtr getGeometry() const noexcept;
 
-        glm::mat4 getModelMat() noexcept;
-
-        void render(const Camera& camera, ShaderProgram& program) noexcept;
+        void setMaterial(MaterialPtr material) noexcept;
+        MaterialPtr getMaterial() const noexcept; 
 };
+
+using ObjPtr = std::shared_ptr < Object3D >;
 
 #endif // OBJECT3D_H

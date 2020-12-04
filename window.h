@@ -12,14 +12,14 @@
 #ifndef WINDOW_HPP
 #define WINDOW_HPP
 
+#include <iostream>
+#include <csignal>
+#include <memory>
+
 #define GLEW_STATIC
 #include <GL/glew.h>
 #include <GL/freeglut.h>
 #include <GLFW/glfw3.h>
-
-#include <csignal>
-#include <iostream>
-#include <memory>
 
 class Window
 {
@@ -77,8 +77,10 @@ public:
 
 
 private:
-    static void callBack(pointer window, int key, int scancode, int action, int mode);
+    static void keyCallBack(pointer window, int key, int scancode, int action, int mode);
+    static void mouseCallBack(pointer window, double x, double y);
 };
 
+using WndPtr = GLFWwindow *;
 
 #endif // WINDOW_HPP

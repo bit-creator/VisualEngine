@@ -14,12 +14,12 @@ void main()
 {
   vec3 normal = normalize(vNormal);
   vec3 lightDir = -uLightDir;
+  
+  vec3 _half = normalize(lightDir + vView); 
 
   float diffFactor = dot(normal, lightDir);
-
-  vec3 r = normalize(reflect(lightDir,normal));
   
-  float specFactor = pow(max(dot(r, normalize(vView)), 0.0), uRoughness);
+  float specFactor = pow(max(-dot(_half, normal), 0.0), uRoughness);
 
   float ambiFactor = 0.1; 
   diffFactor = clamp(diffFactor, 0.0, 1.0);

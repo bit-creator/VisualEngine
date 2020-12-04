@@ -16,8 +16,6 @@
 
 class OrthographicCamera : public Camera
 {
-    private:
-
     public:
         OrthographicCamera(float left, float right, float bottom, float top, float zNear, float zFar);
 };
