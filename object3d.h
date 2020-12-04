@@ -59,8 +59,6 @@ class Object3D : public Node
 
         void setMaterial(MaterialPtr material) noexcept;
         MaterialPtr getMaterial() const noexcept; 
-
-        void render(const Camera& camera, ShaderProgram& program) noexcept;
 };
 
 using ObjPtr = std::shared_ptr < Object3D >;

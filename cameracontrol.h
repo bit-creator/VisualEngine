@@ -32,6 +32,7 @@ class CameraControl : public EventListener
 
     	void setVelocity(float velocity) noexcept;
 
+	private:
     	void onRender() noexcept override;
     	void onKeyPressed(int key, int scancode, int action, int mode) noexcept override;
     	void onMouseMove(double x, double y) noexcept override;

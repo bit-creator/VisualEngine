@@ -9,6 +9,7 @@ Node::Node(NodeType type) noexcept
     , _position ( glm::vec3(0.0f, 0.0f, 0.0f) )
     , _scale    ( glm::vec3(1.0f, 1.0f, 1.0f) )
     , _dirtyTransform(true)
+	, _dirtyWorldTransform(true)
 {  }
 
 void Node::setScale(const glm::vec3& scale) noexcept

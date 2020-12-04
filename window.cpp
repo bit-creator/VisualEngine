@@ -131,7 +131,7 @@ Window::operator Window::pointer( )
 void Window::keyCallBack(pointer window, int key, int scancode, int action, int mode)
 {
 	auto& eng = Engine::engine();
-	auto& listenerArray = eng.getListenerArray();
+	auto& listenerArray = eng.getListeners();
 
 	for(EventListenerPtr listener : listenerArray)
     if(listener) listener -> onKeyPressed(key, scancode, action, mode);
@@ -139,7 +139,7 @@ void Window::keyCallBack(pointer window, int key, int scancode, int action, int 
 
 void Window::mouseCallBack(pointer window, double x, double y) {
 	auto& eng = Engine::engine();
-	auto& listenerArray = eng.getListenerArray();
+	auto& listenerArray = eng.getListeners();
 
 	auto [width, height] = eng.getWindowSize();
 

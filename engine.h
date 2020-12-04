@@ -29,13 +29,13 @@ class Engine
         ScenePtr                        		 _scene;
 
     private:
-        std::vector < EventListenerPtr >		 _eventListenersArray;
+        std::vector < EventListenerPtr >		 _eventListeners;
 
     private:
         Engine() noexcept =default;
         ~Engine() noexcept =default;
-         Engine(const Engine&) =delete;
-         Engine& operator =(const Engine&) =delete;
+        Engine(const Engine&) =delete;
+        Engine& operator =(const Engine&) =delete;
 
         // std::vector<Window>    _window_array;
         inline static const Window     _mainWindow = Window(4.6f, 1366u, 720u, "Visual Engine");
@@ -47,7 +47,7 @@ class Engine
         void addEventListener(EventListenerPtr eventListener);
 
         std::vector < EventListenerPtr >&
-        getListenerArray() noexcept;
+        getListeners() noexcept;
 
         void setScene(ScenePtr scene) noexcept;
         ScenePtr getScene() const noexcept;
@@ -57,7 +57,7 @@ class Engine
 
         void run(const Window& window = _mainWindow) noexcept;
 
-
+        void render(const Object3D& obj, const Camera& cam, ShaderProgram& prg) noexcept;
 };
 
 #endif // ENGINE_H
