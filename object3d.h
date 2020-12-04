@@ -63,4 +63,6 @@ class Object3D : public Node
         void render(const Camera& camera, ShaderProgram& program) noexcept;
 };
 
+using ObjPtr = std::shared_ptr < Object3D >;
+
 #endif // OBJECT3D_H

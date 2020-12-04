@@ -1,24 +1,30 @@
 #include "engine.h"
 
-Engine& Engine::engine() noexcept
-{ static Engine engine; return engine; }
-
-void Engine::addEventListener(EventPointer eventListener)
-{
-    _eventListener = eventListener;
+Engine& Engine::engine() noexcept {
+	static Engine engine; return engine;
 }
 
-void Engine::setScene(ScenePtr scene) noexcept
-{ _scene = scene; }
+void Engine::addEventListener(EventListenerPtr eventListener) {
+    _eventListenersArray.push_back(eventListener);
+}
 
-ScenePtr Engine::getScene() const noexcept
-{ return _scene; }
+void Engine::setScene(ScenePtr scene) noexcept {
+	_scene = scene;
+}
 
-std::pair<int32_t, int32_t> Engine::getWindowSize() noexcept
-{ return _mainWindow.getWindowSize(); }
+ScenePtr Engine::getScene() const noexcept {
+	return _scene;
+}
 
-void Engine::run(const Window& window) noexcept
-{
+std::pair<int32_t, int32_t> Engine::getWindowSize() noexcept {
+	return _mainWindow.getWindowSize();
+}
+
+std::vector<EventListenerPtr>& Engine::getListenerArray() noexcept {
+	return _eventListenersArray;
+}
+
+void Engine::run(const Window& window) noexcept {
     VertexShader vertex(GL_VERTEX_SHADER);
     FragmentShader frag(GL_FRAGMENT_SHADER);
 
@@ -36,7 +42,8 @@ void Engine::run(const Window& window) noexcept
 
     while (!glfwWindowShouldClose(window))
     {
-        if(_eventListener) _eventListener -> onRender();
+    	for(EventListenerPtr listener : _eventListenersArray)
+        	if(listener) listener -> onRender();
 
         glfwPollEvents();
 

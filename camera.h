@@ -41,4 +41,6 @@ class Camera : public Node
         CameraType getType() const noexcept;
 };
 
+using CameraPtr = std::shared_ptr<Camera>;
+
 #endif // CAMERA_H

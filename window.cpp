@@ -104,7 +104,9 @@ void Window::setup() noexcept
 
     glViewport(0, 0, _width, _height);
 
-    glfwSetKeyCallback(_window, callBack);
+    glfwSetKeyCallback(_window, keyCallBack);
+    glfwSetCursorPos(_window, _width/2, _height/2);
+    glfwSetCursorPosCallback(_window, mouseCallBack);
 
     std::cout << std::endl;
 }
@@ -126,9 +128,23 @@ Window::operator Window::pointer( ) const
 Window::operator Window::pointer( )
 { return _window; }
 
-void Window::callBack(pointer window, int key, int scancode, int action, int mode)
+void Window::keyCallBack(pointer window, int key, int scancode, int action, int mode)
 {
-    auto& eng = Engine::engine();
+	auto& eng = Engine::engine();
+	auto& listenerArray = eng.getListenerArray();
 
-    if(eng._eventListener) eng._eventListener -> onKeyPressed(key, scancode, action, mode);
+	for(EventListenerPtr listener : listenerArray)
+    if(listener) listener -> onKeyPressed(key, scancode, action, mode);
+}
+
+void Window::mouseCallBack(pointer window, double x, double y) {
+	auto& eng = Engine::engine();
+	auto& listenerArray = eng.getListenerArray();
+
+	auto [width, height] = eng.getWindowSize();
+
+	for(EventListenerPtr listener : listenerArray)
+	if(listener) listener -> onMouseMove(x - (double)width / 2, y - (double)height / 2);
+
+	glfwSetCursorPos(window, width / 2, height / 2);
 }

@@ -33,13 +33,16 @@ void Object3D::render(const Camera& camera, ShaderProgram& program) noexcept
 
     auto material = getMaterial();
 
-    glm::mat4 ModelMat = getModelMat();
-    glm::mat4 ViewMat = glm::inverse(glm::transpose(((Node)camera).getModelMat()));
-    glm::mat4 ProjMat = camera.getProjectionMatrix();
+    glm::mat4 modelMat = getModelMat();
+    glm::mat4 viewMat = glm::inverse(((Node)camera).getModelMat());
+    glm::mat4 projMat = camera.getProjectionMatrix();
 
     // std::cout << glm::to_string(ViewMat) << std::endl << std::endl;
 
-    glm::mat3 nMat = glm::inverse(glm::transpose(ModelMat));
+    auto mVPMat = projMat * viewMat * modelMat;
+    auto modelViewMat = viewMat * modelMat;
+
+    glm::mat3 nMat = glm::inverse(glm::transpose(modelMat));
 
     program.setUniform("uAmbientColor", material->getColor(ColorTarget::Ambient));
     program.setUniform("uDiffuseColor", material->getColor(ColorTarget::Diffuse));
@@ -47,8 +50,8 @@ void Object3D::render(const Camera& camera, ShaderProgram& program) noexcept
     program.setUniform("uRoughness", 1 / material->getRoughness());
     program.setUniform("uPerspectiveCamera", (int)camera.getType());
     
-    program.setUniform("uMVPMat", ProjMat * ViewMat * ModelMat);
-    program.setUniform("uModelMat", ModelMat);
+    program.setUniform("uMVPMat", mVPMat);
+    program.setUniform("uModelViewMat", modelViewMat);
     program.setUniform("uLightDir", glm::normalize(glm::vec3(0., 0., 1.)));
     program.setUniform("uNormalMat", nMat);
 

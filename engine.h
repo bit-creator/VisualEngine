@@ -15,49 +15,39 @@
 #include <memory>
 
 #include "GL/shaderprogram.h"
+
+#include "abstracteventlistener.hpp"
+#include "orthographiccamera.h"
+#include "perspectivecamera.h"
 #include "object3d.h"
 #include "window.h"
 #include "scene.h"
 
-#include "perspectivecamera.h"
-#include "orthographiccamera.h"
-
-
-class EventListener
-{
-    public:
-        virtual void onRender() noexcept =0;
-        virtual void onKeyPressed(int key, int scancode, int action, int mode) noexcept =0;
-
-        virtual ~EventListener(){
-        }
-};
-
-using EventPointer = std::shared_ptr<EventListener>;
-using ScenePtr = std::shared_ptr<Scene>;
-
 class Engine
 {
     private:
-        ScenePtr                        _scene;
+        ScenePtr                        		 _scene;
 
-    public:
-        EventPointer                    _eventListener;
+    private:
+        std::vector < EventListenerPtr >		 _eventListenersArray;
 
     private:
         Engine() noexcept =default;
         ~Engine() noexcept =default;
-        // Engine(const Engine&) =delete;
-        // Engine& operator =(const Engine&) =delete;
+         Engine(const Engine&) =delete;
+         Engine& operator =(const Engine&) =delete;
 
         // std::vector<Window>    _window_array;
-        inline static const Window     _mainWindow = Window(4.6f, 720u, 720u, "Visual Engine");
+        inline static const Window     _mainWindow = Window(4.6f, 1366u, 720u, "Visual Engine");
 
     public:
         static Engine& 
         engine() noexcept;
 
-        void addEventListener(EventPointer eventListener);
+        void addEventListener(EventListenerPtr eventListener);
+
+        std::vector < EventListenerPtr >&
+        getListenerArray() noexcept;
 
         void setScene(ScenePtr scene) noexcept;
         ScenePtr getScene() const noexcept;

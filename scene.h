@@ -17,10 +17,13 @@
 #include "camera.h"
 #include "object3d.h"
 
+
 struct Scene
 {
     std::shared_ptr<Camera>                     _camera;
     std::shared_ptr<Object3D>                   _object;
 };
+
+using ScenePtr = std::shared_ptr < Scene >;
 
 #endif // SCENE_H
