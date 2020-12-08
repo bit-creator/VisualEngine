@@ -2,9 +2,6 @@
 
 Object3D::Object3D() noexcept
     : Node(NodeType::NODE_OBJECT)
-    , VAO       (  )
-    , VBO       ( GL_ARRAY_BUFFER )
-    , EBO       ( GL_ELEMENT_ARRAY_BUFFER ) 
     , _material ( std::make_shared<Material>() )
 {  }
 
@@ -25,4 +22,12 @@ void Object3D::setGeometry(GeometryPtr geometry) noexcept
 { _geom = geometry; }
 
 GeometryPtr Object3D::getGeometry() const noexcept
-{ return _geom; }
+{
+	return _geom;
+}
+
+Object3D::Object3D(const Object3D &oth) noexcept
+	: Node(oth)
+	, _geom(oth._geom)
+	, _material(oth._material)
+	{  }

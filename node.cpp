@@ -3,7 +3,9 @@
 #include <glm/gtc/type_ptr.hpp>
 
 Node::Node(NodeType type) noexcept
-    : _type(type)
+	: _childs({})
+	, _parent()
+    , _type(type)
     , _modelMat ( glm::mat4(1.0f) )
     , _rotate   ( glm::quat() )
     , _position ( glm::vec3(0.0f, 0.0f, 0.0f) )
@@ -50,11 +52,60 @@ glm::mat4 Node::getModelMat() noexcept
 }
 
 glm::mat4 Node::getWorldMat() noexcept {
-//	for(auto & node = )
+	if (!_dirtyWorldTransform && !_dirtyTransform) return _worldMat;
+	if (_parent.expired()) return getModelMat();
+
+	_worldMat = _parent.lock()->getWorldMat() * getModelMat();
+
+	_dirtyWorldTransform = false;
+
+	return _worldMat;
+}
+
+Node::Node(const Node &oth) noexcept
+	: _parent()
+	, _type(oth._type)
+	, _modelMat(oth._modelMat)
+	, _worldMat(oth._worldMat)
+	, _rotate(oth._rotate)
+	, _position(oth._position)
+	, _scale(oth._scale)
+	, _dirtyTransform(oth._dirtyTransform)
+	, _dirtyWorldTransform(oth._dirtyWorldTransform)
+{
+	for(auto node : oth._childs)
+	{
+		auto cp = std::make_shared<Node>(*node);
+		addChild(cp);
+	}
+}
+
+NodeType Node::getNodeType() const noexcept {
+	return _type;
 }
 
 void Node::unvalidateWorldMat() noexcept {
-	for(auto & node : _childs)
+	for (auto & node : _childs)
 		node->unvalidateWorldMat();
+
+	if (!_dirtyWorldTransform)
 	_dirtyWorldTransform = true;
+}
+
+void Node::addChild(NodePtr child) {
+	if(!child->_parent.expired()){
+		child ->_parent.lock()->removeChild(child);
+		child -> _parent.reset();
+	}
+	_childs.push_back(child);
+	child -> _parent = weak_from_this();
+}
+
+void Node::removeChild(NodePtr child) {
+	if(_childs.empty()) return;
+	_childs.remove_if([child = child](NodePtr ch){return ch.owner_before(child);});
+}
+
+std::list<std::shared_ptr<Node> >& Node::getChilds() {
+	return _childs;
 }

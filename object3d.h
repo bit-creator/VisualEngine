@@ -40,16 +40,12 @@ class Object3D : public Node
     private:
         GeometryPtr                                             _geom;  
 
-    protected:          //  OpenGL Buffers
-        VertexArray                                             VAO;
-        Buffer                                                  VBO;
-        Buffer                                                  EBO;
-
     protected:          //  Material
         MaterialPtr                                             _material;
 
     public:
         Object3D() noexcept;
+        Object3D(const Object3D& oth) noexcept;
         Object3D(MaterialPtr material) noexcept;
 
         virtual ~Object3D() noexcept;

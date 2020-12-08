@@ -13,7 +13,9 @@
 #define NODE_H
 
 #include <list>
+#include <vector>
 #include <memory>
+#include <algorithm>
 
 #include <GL/glew.h>
 #include <GL/freeglut.h>
@@ -30,9 +32,11 @@ enum class NodeType
 };
 
 class Node
+		: public std::enable_shared_from_this < Node >
 {
     protected:
-		std::list <std::shared_ptr <Node>>			     		_childs;
+		std::list < std::shared_ptr < Node > >		     		_childs;
+		std::weak_ptr < Node >									_parent;
 
         const NodeType                                          _type;
         glm::mat4                                               _modelMat;
@@ -45,6 +49,10 @@ class Node
 
     public:
         Node(NodeType type) noexcept;
+        Node(const Node& oth) noexcept;
+        Node(Node&&) noexcept = delete;
+
+        NodeType getNodeType() const noexcept;
 
         void setRotate(const glm::vec3& axis, const GLfloat angle) noexcept;
         void setRotate(const glm::vec3& angles) noexcept;
@@ -61,11 +69,16 @@ class Node
         glm::mat4 getWorldMat() noexcept;
 
     public: 		// CHILD
-//        addChild()
-//        removeChild()
-//        getChild()
-        void unvalidateWorldMat() noexcept;
+        void addChild(std::shared_ptr < Node > child);
+        void removeChild(std::shared_ptr < Node > child);
+
+        std::list < std::shared_ptr < Node > >&
+        getChilds();
+
+		void unvalidateWorldMat() noexcept;
 
 };
+
+using NodePtr = std::shared_ptr < Node >;
 
 #endif // NODE_H

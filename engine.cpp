@@ -47,25 +47,27 @@ void Engine::run(const Window& window) noexcept {
 
         glfwPollEvents();
 
-        glClearColor(0.f, 0.f, 0.f, 1.0f);
+        auto c = _scene->getBackgroundColor();
+        glClearColor(c.x, c.y, c.z, c.w);
         glClear(GL_COLOR_BUFFER_BIT);
         glClear(GL_DEPTH_BUFFER_BIT);
 
-        render(*_scene->_object, *_scene->_camera, shader);
+        for(auto obj : _scene->getDrawList())
+        	render(*obj, *_scene->getCamera(), shader);
 
         glfwSwapBuffers(window);
     }
 }
 
-void Engine::render(const Object3D &obj, const Camera &cam,
+void Engine::render(Object3D &obj, Camera &cam,
 		ShaderProgram &prg) noexcept {
 	prg.enable();
 
     auto material = obj.getMaterial();
     auto geom = obj.getGeometry();
 
-    glm::mat4 modelMat = ((Node)obj).getModelMat();
-    glm::mat4 viewMat = glm::inverse(((Node)cam).getModelMat());
+    glm::mat4 modelMat = obj.getWorldMat();
+    glm::mat4 viewMat = glm::inverse(cam.getWorldMat());
     glm::mat4 projMat = cam.getProjectionMatrix();
     glm::mat3 nMat = glm::inverse(glm::transpose(modelMat));
 

@@ -57,7 +57,7 @@ class Engine
 
         void run(const Window& window = _mainWindow) noexcept;
 
-        void render(const Object3D& obj, const Camera& cam, ShaderProgram& prg) noexcept;
+        void render(Object3D& obj, Camera& cam, ShaderProgram& prg) noexcept;
 };
 
 #endif // ENGINE_H
