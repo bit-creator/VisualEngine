@@ -28,7 +28,7 @@ public:
     void onRender() noexcept override
     {
 
-//        float f1 = std::abs(std::sin(1 * time));
+        float f1 = std::abs(std::sin(1 * time));
 //        float f2 = std::abs(std::sin(2 * time));
 //        float f3 = std::abs(std::sin(3 * time));
         float f4 = time;
@@ -71,7 +71,8 @@ public:
         salSys->setRotate(glm::vec3(0.0f, 1.0f, 0.0f), f4);
         earthSys->setRotate(glm::vec3(0.0f, 1.0f, 0.0f), f5);
 
-
+//        scene.getCamera()->setPosition(glm::vec3(0.0, 0.0, f1));
+//        (*scene.getCamera()->getChilds().begin())->setRotate(glm::vec3(1.0, 1., 1.), f4);
     }
 
     ~MyListener() noexcept override {
@@ -172,6 +173,8 @@ int main()
     float aspect = 1.0 * width / height;
 
     CameraPtr cam = std::make_shared<Camera>(PerspectiveCamera(M_PI / 3, aspect, 0.1, 100));
+
+    cam->setPosition(glm::vec3(0.0, 0.0, -5.0));
 
     cam->addChild(cubeObj);
 

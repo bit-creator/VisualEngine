@@ -15,22 +15,38 @@ Node::Node(NodeType type) noexcept
 {  }
 
 void Node::setScale(const glm::vec3& scale) noexcept
-{ _scale = scale; _dirtyTransform = true; }
+{
+	_scale = scale;
+	_dirtyTransform = true;
+	unvalidateWorldMat();
+}
 
 glm::vec3 Node::getScale() const noexcept
 { return _scale; }
 
 void Node::setRotate(const glm::vec3& axis, const GLfloat angle) noexcept
-{ _rotate = glm::angleAxis(angle, glm::normalize(axis)); _dirtyTransform = true; }
+{
+	_rotate = glm::angleAxis(angle, glm::normalize(axis));
+	_dirtyTransform = true;
+	unvalidateWorldMat();
+}
 
 void Node::setRotate(const glm::vec3& angels) noexcept
-{ _rotate = glm::quat(angels); _dirtyTransform = true; }
+{
+	_rotate = glm::quat(angels);
+	_dirtyTransform = true;
+	unvalidateWorldMat();
+}
 
 glm::quat Node::getRotate() const noexcept
 { return _rotate; }
 
 void Node::setPosition(const glm::vec3& position) noexcept
-{ _position = position; _dirtyTransform = true; }
+{
+	_position = position;
+	_dirtyTransform = true;
+	unvalidateWorldMat();
+}
 
 glm::vec3 Node::getPosition() const noexcept
 { return _position; }
@@ -55,7 +71,10 @@ glm::mat4 Node::getWorldMat() noexcept {
 	if (!_dirtyWorldTransform && !_dirtyTransform) return _worldMat;
 	if (_parent.expired()) return getModelMat();
 
-	_worldMat = _parent.lock()->getWorldMat() * getModelMat();
+	auto parentMat = _parent.lock()->getWorldMat();
+	auto modelMat = getModelMat();
+
+	_worldMat = parentMat * modelMat;
 
 	_dirtyWorldTransform = false;
 
@@ -99,6 +118,8 @@ void Node::addChild(NodePtr child) {
 	}
 	_childs.push_back(child);
 	child -> _parent = weak_from_this();
+	child->_dirtyWorldTransform = true;
+	child->_dirtyTransform = true;
 }
 
 void Node::removeChild(NodePtr child) {
