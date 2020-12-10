@@ -50,16 +50,18 @@ void Engine::run(const Window& window) noexcept {
         auto c = _scene->getBackgroundColor();
         glClearColor(c.x, c.y, c.z, c.w);
         glClear(GL_COLOR_BUFFER_BIT);
+
+        glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
         glClear(GL_DEPTH_BUFFER_BIT);
 
         for(auto obj : _scene->getDrawList())
-        	render(*obj, *_scene->getCamera(), shader);
+        	render(*obj, *_scene->getCamera(), _scene->getLightList(), shader);
 
         glfwSwapBuffers(window);
     }
 }
 
-void Engine::render(Object3D &obj, Camera &cam,
+void Engine::render(Object3D &obj, Camera &cam, LightList lights,
 		ShaderProgram &prg) noexcept {
 	prg.enable();
 
@@ -83,7 +85,24 @@ void Engine::render(Object3D &obj, Camera &cam,
     prg.setUniform("uMVPMat", mVPMat);
     prg.setUniform("uNormalMat", nMat);
     prg.setUniform("uModelViewMat", modelViewMat);
-    prg.setUniform("uLightDir", glm::normalize(glm::vec3(0., 0., 1.)));
+    prg.setUniform("uLightCount", (int)lights.size());
+
+    int ind = 0;
+
+    for(auto light : lights)
+    {
+    	auto dirName = getLightsName(ind).append("lightDir");
+    	auto colName = getLightsName(ind).append("lightColor");
+
+    	auto dir = glm::mat3(light->getWorldMat()) * glm::normalize(glm::vec3(0., 0., 1.));
+    	auto color = light->getColor();
+
+		prg.setUniform(dirName, dir);
+		prg.setUniform(colName, color);
+
+		++ind;
+    }
+
 
     glPolygonMode(GL_FRONT_AND_BACK, material->getPolygonsFillMode());
 

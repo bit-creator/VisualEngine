@@ -29,8 +29,8 @@ public:
     {
 
         float f1 = std::abs(std::sin(1 * time));
-//        float f2 = std::abs(std::sin(2 * time));
-//        float f3 = std::abs(std::sin(3 * time));
+        float f2 = std::abs(std::sin(2 * time));
+        float f3 = std::abs(std::sin(3 * time));
         float f4 = time;
         float f5 = time_;
 
@@ -71,8 +71,9 @@ public:
         salSys->setRotate(glm::vec3(0.0f, 1.0f, 0.0f), f4);
         earthSys->setRotate(glm::vec3(0.0f, 1.0f, 0.0f), f5);
 
-//        scene.getCamera()->setPosition(glm::vec3(0.0, 0.0, f1));
+        scene._light.setRotate(glm::vec3(1.0, 1.0, 0.0), f4);
 //        (*scene.getCamera()->getChilds().begin())->setRotate(glm::vec3(1.0, 1., 1.), f4);
+        scene.setBackgroundColor(glm::vec4(f1, f2, f3, 1.0));
     }
 
     ~MyListener() noexcept override {
@@ -183,8 +184,19 @@ int main()
 //    (*scene->getRoot()->getChilds().begin())->addChild(cubeObj);
 //    scene->getCamera()->addChild(cubeObj);
 
+    LightPtr light = std::make_shared<Light>(LightDirectional());
+
+    light->setColor(glm::vec4(0.0, 1.0, 1.0, 1.0));
+
+    LightPtr headLighter = std::make_shared<Light>(LightDirectional());
+
+    headLighter->setColor(glm::vec4(1.0, 1.0, 1.0, 1.0));
+
+    scene->getRoot()->addChild(light);
+
     scene->getRoot()->addChild(salarySystem);
 
+    scene->getCamera()->addChild(headLighter);
 
     // scene._camera = std::make_shared<Camera>(OrthographicCamera(-5, 5, -5 * aspect, 5 * aspect, 0.1, 100));
 
