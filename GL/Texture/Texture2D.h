@@ -5,12 +5,12 @@
  *      Author: bit_creator
  */
 
-#ifndef GL_TEXTURE2D_H_
-#define GL_TEXTURE2D_H_
+#ifndef GL_TEXTURE_TEXTURE2D_H_
+#define GL_TEXTURE_TEXTURE2D_H_
 
-#include "globject.hpp"
+#include "Texture.h"
 
-class Texture2D : public GLObject {
+class Texture2D : public Texture {
 public:
 	Texture2D();
 	~Texture2D();
@@ -18,12 +18,6 @@ public:
 	Texture2D(Texture2D &&other) = delete;
 	Texture2D& operator=(const Texture2D &other) = delete;
 	Texture2D& operator=(Texture2D &&other) = delete;
-
-	void bind(int unit);
-	loadImage(const char* name);
-
-private:
-	GLuint gentex() noexcept;
 };
 
-#endif /* GL_TEXTURE2D_H_ */
+#endif /* GL_TEXTURE_TEXTURE2D_H_ */

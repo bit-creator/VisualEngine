@@ -77,7 +77,7 @@ void ShaderProgram::setUniform(const std::string& name, const int val) const noe
 {
     GLint loc = glGetUniformLocation(getID(), name.c_str());
 
-    glUniform1ui(loc, val);
+    glUniform1i(loc, val);
 }
 
 void ShaderProgram::setUniform(const std::string& name, const glm::vec4& vec) const noexcept

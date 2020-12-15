@@ -15,6 +15,11 @@
 #include <iostream>
 #include <type_traits>
 
+#define GLEW_STATIC
+#include <GL/glew.h>
+#include <GL/freeglut.h>
+#include <GLFW/glfw3.h>
+
 using ObjectID = const GLuint;
 
 /**
@@ -35,7 +40,6 @@ class GLObject
         explicit GLObject(ObjectID obj = 0) noexcept
             : _object(obj)
         {  }
-
 
         
         /**

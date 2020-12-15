@@ -7,15 +7,9 @@
 
 #include "Texture2D.h"
 
-Texture2D::Texture2D() {
-}
+Texture2D::Texture2D()
+	: Texture(GL_TEXTURE_2D)
+{  }
 
 Texture2D::~Texture2D() {
-}
-
-GLuint Texture2D::gentex()
-{
-    GLuint ID;
-    glGenTextures(1, &ID);
-    return ID;
 }
