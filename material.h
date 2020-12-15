@@ -12,13 +12,13 @@
 #ifndef MATERIAL_H
 #define MATERIAL_H
 
-#include <memory>
-
 #include <GL/glew.h>
 #include <GL/freeglut.h>
 #include <GLFW/glfw3.h>
 
 #include <glm/glm.hpp>
+
+#include "GL/Texture/Texture.h"
 
 enum class ColorTarget
 {
@@ -27,9 +27,21 @@ enum class ColorTarget
     Specular
 };
 
+enum class MapTarget
+{
+    Ambient =0,
+    Diffuse =1,
+    Specular =2,
+	Normal
+};
+
 class Material
 {
     private:
+		TexPtr								_ambientMap;
+		TexPtr								_diffuseMap;
+		TexPtr								_specularMap;
+
         glm::vec4                           _ambientColor;
         glm::vec4                           _diffuseColor;
         glm::vec4                           _specularColor;
@@ -46,12 +58,21 @@ class Material
 
         const glm::vec4& getColor(ColorTarget type) const noexcept;
 
+        void setMap(MapTarget type, TexPtr map);
+        TexPtr getMap(MapTarget type) const noexcept;
+        bool hasMap(MapTarget type) const noexcept;
+        void bindMaps() noexcept;
+        void unbindMaps() noexcept;
+
         void setRoughness(const float roughness) noexcept;
         const float getRoughness() const noexcept;
         
         void setPolygonsFillMode(const GLenum mode) noexcept;
         const GLenum getPolygonsFillMode() const noexcept;
+
 };
+
+const int mapUnit(MapTarget type) noexcept;
 
 using MaterialPtr = std::shared_ptr<Material>;
 

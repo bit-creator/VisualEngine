@@ -12,9 +12,8 @@
 #ifndef ENGINE_H
 #define ENGINE_H
 
-#include <memory>
-
 #include "GL/shaderprogram.h"
+#include "GL/Texture/Texture.h"
 
 #include "abstracteventlistener.hpp"
 #include "orthographiccamera.h"

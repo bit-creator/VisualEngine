@@ -73,6 +73,38 @@ void Engine::render(Object3D &obj, Camera &cam, LightList lights,
     glm::mat4 projMat = cam.getProjectionMatrix();
     glm::mat3 nMat = glm::inverse(glm::transpose(modelMat));
 
+    material->bindMaps();
+
+    if (geom->hasTexCoord())
+    {
+    	if (material->hasMap(MapTarget::Ambient))
+    	{
+			prg.setUniform("uHasAmbientMap", true);
+			prg.setUniform("uTexAmbient", mapUnit(MapTarget::Ambient));
+    	}
+		else prg.setUniform("uHasAmbientMap", false);
+
+    	if (material->hasMap(MapTarget::Diffuse))
+    	{
+			prg.setUniform("uHasDiffuseMap", true);
+			prg.setUniform("uTexDiffuse", mapUnit(MapTarget::Diffuse));
+    	}
+		else prg.setUniform("uHasDiffuseMap", false);
+
+    	if (material->hasMap(MapTarget::Specular))
+    	{
+    		prg.setUniform("uHasSpecularMap", true);
+    		prg.setUniform("uTexSpecular", mapUnit(MapTarget::Specular));
+    	}
+    	else prg.setUniform("uHasSpecularMap", false);
+    }
+    else
+    {
+    	prg.setUniform("uHasAmbientMap", false);
+    	prg.setUniform("uHasDiffuseMap", false);
+    	prg.setUniform("uHasSpecularMap", false);
+    }
+
     auto mVPMat = projMat * viewMat * modelMat;
     auto modelViewMat = viewMat * modelMat;
 
@@ -112,4 +144,6 @@ void Engine::render(Object3D &obj, Camera &cam, LightList lights,
     else glDrawArrays(geom->getPoligonConnectMode() , 0, geom->getNumVertexes());
 
     geom->unbindBuffers();
+
+    material->unbindMaps();
 }
