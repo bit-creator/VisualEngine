@@ -5,32 +5,10 @@ Material::Material() noexcept
     , _diffuseColor(1.0, 1.0, 1.0, 1.0)
     , _specularColor(1.0, 1.0, 1.0, 1.0)
     , _roughness(0.0)
+	, _fillMode(GL_FILL)
 {  }
 
 Material::~Material() noexcept {  }
-
-void Material::setColor(ColorTarget type, const glm::vec4& color) noexcept
-{
-    if(type == ColorTarget::Ambient) _ambientColor = color;
-    if(type == ColorTarget::Diffuse) _diffuseColor = color;
-    if(type == ColorTarget::Specular) _specularColor = color;
-}
-
-void Material::setColor(ColorTarget type, const float r, const float g, 
-            const float b, const float a) noexcept
-{
-    if(type == ColorTarget::Ambient) _ambientColor = glm::vec4(r, g, b, a);
-    if(type == ColorTarget::Diffuse) _diffuseColor = glm::vec4(r, g, b, a);
-    if(type == ColorTarget::Specular) _specularColor = glm::vec4(r, g, b, a);
-}
-
-const glm::vec4& Material::getColor(ColorTarget type) const noexcept
-{
-    if(type == ColorTarget::Ambient) return _ambientColor;
-    if(type == ColorTarget::Diffuse) return _diffuseColor;
-    if(type == ColorTarget::Specular) return _specularColor;
-    return glm::vec4(1.0);
-}
 
 void Material::setRoughness(const float roughness) noexcept
 { _roughness = roughness; }
@@ -41,43 +19,55 @@ const float Material::getRoughness() const noexcept
 void Material::setPolygonsFillMode(const GLenum mode) noexcept
 { _fillMode = mode; }
 
-bool Material::hasMap(MapTarget type) const noexcept {
-    if(type == MapTarget::Ambient) return _ambientMap != nullptr;
-    if(type == MapTarget::Diffuse) return _diffuseMap != nullptr;
-    if(type == MapTarget::Specular) return _specularMap != nullptr;
-    return false;
+void Material::setAmbientColor(const Color color) noexcept {
+	_ambientColor = color;
 }
 
-void Material::bindMaps() noexcept {
-	if (hasMap(MapTarget::Ambient)) _ambientMap->bind(0);
-	if (hasMap(MapTarget::Diffuse)) _diffuseMap->bind(1);
-	if (hasMap(MapTarget::Specular)) _specularMap->bind(2);
+void Material::setDiffuseColor(const Color color) noexcept {
+	_diffuseColor = color;
 }
 
-void Material::unbindMaps() noexcept {
-	if (hasMap(MapTarget::Ambient)) _ambientMap->unbind();
-	if (hasMap(MapTarget::Diffuse)) _diffuseMap->unbind();
-	if (hasMap(MapTarget::Specular)) _specularMap->unbind();
+void Material::setSpecularColor(const Color color) noexcept {
+	_specularColor = color;
 }
 
-const int mapUnit(MapTarget type) noexcept {
-	return static_cast<GLuint>(type);
+const Color& Material::getAmbientColor() const noexcept {
+	return _ambientColor;
+}
+
+const Color& Material::getDiffuseColor() const noexcept {
+	return _diffuseColor;
+}
+
+const Color& Material::getSpecularColor() const noexcept {
+	return _specularColor;
+}
+
+void Material::setAmbientTexture(TexPtr map) {
+	_ambientMap = map;
+}
+
+void Material::setDiffuseTexture(TexPtr map) {
+	_diffuseMap = map;
+}
+
+void Material::setSpecularTexture(TexPtr map) {
+	_specularMap = map;
+}
+
+TexPtr Material::getAmbientTexture() const noexcept {
+	return _ambientMap;
+}
+
+TexPtr Material::getDiffuseTexture() const noexcept {
+	return _diffuseMap;
+}
+
+TexPtr Material::getSpecularTexture() const noexcept {
+	return _specularMap;
 }
 
 const GLenum Material::getPolygonsFillMode() const noexcept
 {
 	return _fillMode;
-}
-
-void Material::setMap(MapTarget type, TexPtr map) {
-    if(type == MapTarget::Ambient) _ambientMap = map;
-    if(type == MapTarget::Diffuse) _diffuseMap = map;
-    if(type == MapTarget::Specular) _specularMap = map;
-}
-
-TexPtr Material::getMap(MapTarget type) const noexcept {
-    if(type == MapTarget::Ambient) return _ambientMap;
-    if(type == MapTarget::Diffuse) return _diffuseMap;
-    if(type == MapTarget::Specular) return _specularMap;
-    return nullptr;
 }

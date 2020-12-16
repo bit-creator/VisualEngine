@@ -8,7 +8,9 @@
 #include "Texture.h"
 
 #define STB_IMAGE_IMPLEMENTATION
-#include "../../3rdparty/stb_image.h"
+#include "../3rdparty/stb_image.h"
+
+//		TEXTURE_BASE		//
 
 Texture::Texture(const GLenum target)
 	: GLObject(gentex())
@@ -68,3 +70,13 @@ GLuint Texture::gentex() noexcept {
     glGenTextures(1, &ID);
     return ID;
 }
+
+//		TEXTURE_IMPL		//
+
+Texture2D::Texture2D()
+	: Texture(GL_TEXTURE_2D)
+{  }
+
+TextureCubeMap::TextureCubeMap()
+	: Texture(GL_TEXTURE_CUBE_MAP)
+{  }

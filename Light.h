@@ -11,6 +11,7 @@
 #include <algorithm>
 
 #include "node.h"
+#include "Color.h"
 
 enum class LightType
 {
@@ -22,16 +23,16 @@ enum class LightType
 class Light: public Node {
 private:
 	LightType							_type;
-	glm::vec4							_color;
+	Color								_color;
 
 public:
 	Light(LightType type);
 
 	LightType getType() noexcept;
 
-	void setColor(const glm::vec4& color);
+	void setColor(const Color& color);
 
-	glm::vec4 getColor() const;
+	Color getColor() const;
 
 };
 

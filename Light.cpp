@@ -17,11 +17,11 @@ LightType Light::getType() noexcept {
 	return _type;
 }
 
-void Light::setColor(const glm::vec4 &color) {
+void Light::setColor(const Color &color) {
 	_color = color;
 }
 
-glm::vec4 Light::getColor() const {
+Color Light::getColor() const {
 	return _color;
 }
 

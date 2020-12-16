@@ -13,7 +13,7 @@
 #define ENGINE_H
 
 #include "GL/shaderprogram.h"
-#include "GL/Texture/Texture.h"
+#include "GL/Texture.h"
 
 #include "abstracteventlistener.hpp"
 #include "orthographiccamera.h"

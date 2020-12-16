@@ -18,22 +18,9 @@
 
 #include <glm/glm.hpp>
 
-#include "GL/Texture/Texture.h"
+#include "Color.h"
 
-enum class ColorTarget
-{
-    Ambient,
-    Diffuse,
-    Specular
-};
-
-enum class MapTarget
-{
-    Ambient =0,
-    Diffuse =1,
-    Specular =2,
-	Normal
-};
+#include "GL/Texture.h"
 
 class Material
 {
@@ -42,9 +29,9 @@ class Material
 		TexPtr								_diffuseMap;
 		TexPtr								_specularMap;
 
-        glm::vec4                           _ambientColor;
-        glm::vec4                           _diffuseColor;
-        glm::vec4                           _specularColor;
+        Color       	                    _ambientColor;
+        Color   	                        _diffuseColor;
+        Color	                            _specularColor;
         float                               _roughness;
         GLenum                              _fillMode;
 
@@ -52,17 +39,21 @@ class Material
         Material() noexcept;
         ~Material() noexcept;
 
-        void setColor(ColorTarget type, const glm::vec4& color) noexcept;
-        void setColor(ColorTarget type, const float r, const float g, 
-            const float b, const float a) noexcept;
+        void setAmbientColor(const Color color) noexcept;
+        void setDiffuseColor(const Color color) noexcept;
+        void setSpecularColor(const Color color) noexcept;
 
-        const glm::vec4& getColor(ColorTarget type) const noexcept;
+        const Color& getAmbientColor() const noexcept;
+        const Color& getDiffuseColor() const noexcept;
+        const Color& getSpecularColor() const noexcept;
 
-        void setMap(MapTarget type, TexPtr map);
-        TexPtr getMap(MapTarget type) const noexcept;
-        bool hasMap(MapTarget type) const noexcept;
-        void bindMaps() noexcept;
-        void unbindMaps() noexcept;
+        void setAmbientTexture(TexPtr map);
+        void setDiffuseTexture(TexPtr map);
+        void setSpecularTexture(TexPtr map);
+
+        TexPtr getAmbientTexture() const noexcept;
+        TexPtr getDiffuseTexture() const noexcept;
+        TexPtr getSpecularTexture() const noexcept;
 
         void setRoughness(const float roughness) noexcept;
         const float getRoughness() const noexcept;
@@ -71,8 +62,6 @@ class Material
         const GLenum getPolygonsFillMode() const noexcept;
 
 };
-
-const int mapUnit(MapTarget type) noexcept;
 
 using MaterialPtr = std::shared_ptr<Material>;
 

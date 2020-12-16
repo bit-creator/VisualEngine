@@ -73,28 +73,35 @@ void Engine::render(Object3D &obj, Camera &cam, LightList lights,
     glm::mat4 projMat = cam.getProjectionMatrix();
     glm::mat3 nMat = glm::inverse(glm::transpose(modelMat));
 
-    material->bindMaps();
+    enum class TextureUnit {
+    	Ambient =0,
+    	Diffuse =1,
+    	Specular =2,
+    };
 
     if (geom->hasTexCoord())
     {
-    	if (material->hasMap(MapTarget::Ambient))
+    	if (material->getAmbientTexture() != nullptr)
     	{
+    		material->getAmbientTexture()->bind((int)TextureUnit::Ambient);
 			prg.setUniform("uHasAmbientMap", true);
-			prg.setUniform("uTexAmbient", mapUnit(MapTarget::Ambient));
+			prg.setUniform("uTexAmbient", (int)TextureUnit::Ambient);
     	}
 		else prg.setUniform("uHasAmbientMap", false);
 
-    	if (material->hasMap(MapTarget::Diffuse))
+    	if (material->getDiffuseTexture() != nullptr)
     	{
+    		material->getDiffuseTexture()->bind((int)TextureUnit::Diffuse);
 			prg.setUniform("uHasDiffuseMap", true);
-			prg.setUniform("uTexDiffuse", mapUnit(MapTarget::Diffuse));
+			prg.setUniform("uTexDiffuse", (int)TextureUnit::Diffuse);
     	}
 		else prg.setUniform("uHasDiffuseMap", false);
 
-    	if (material->hasMap(MapTarget::Specular))
+    	if (material->getSpecularTexture() != nullptr)
     	{
+    		material->getSpecularTexture()->bind((int)TextureUnit::Specular);
     		prg.setUniform("uHasSpecularMap", true);
-    		prg.setUniform("uTexSpecular", mapUnit(MapTarget::Specular));
+    		prg.setUniform("uTexSpecular", (int)TextureUnit::Specular);
     	}
     	else prg.setUniform("uHasSpecularMap", false);
     }
@@ -108,9 +115,9 @@ void Engine::render(Object3D &obj, Camera &cam, LightList lights,
     auto mVPMat = projMat * viewMat * modelMat;
     auto modelViewMat = viewMat * modelMat;
 
-    prg.setUniform("uAmbientColor", material->getColor(ColorTarget::Ambient));
-    prg.setUniform("uDiffuseColor", material->getColor(ColorTarget::Diffuse));
-    prg.setUniform("uSpecularColor", material->getColor(ColorTarget::Specular));
+    prg.setUniform("uAmbientColor", material->getAmbientColor().getColorSource());
+    prg.setUniform("uDiffuseColor", material->getDiffuseColor().getColorSource());
+    prg.setUniform("uSpecularColor", material->getSpecularColor().getColorSource());
     prg.setUniform("uRoughness", 1 / material->getRoughness());
     prg.setUniform("uPerspectiveCamera", (int)cam.getType());
 
@@ -127,10 +134,10 @@ void Engine::render(Object3D &obj, Camera &cam, LightList lights,
     	auto colName = getLightsName(ind).append("lightColor");
 
     	auto dir = glm::mat3(light->getWorldMat()) * glm::normalize(glm::vec3(0., 0., 1.));
-    	auto color = light->getColor();
+    	Color color = light->getColor();
 
 		prg.setUniform(dirName, dir);
-		prg.setUniform(colName, color);
+		prg.setUniform(colName, color.getColorSource());
 
 		++ind;
     }
@@ -144,6 +151,4 @@ void Engine::render(Object3D &obj, Camera &cam, LightList lights,
     else glDrawArrays(geom->getPoligonConnectMode() , 0, geom->getNumVertexes());
 
     geom->unbindBuffers();
-
-    material->unbindMaps();
 }

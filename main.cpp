@@ -5,6 +5,8 @@
 #include "cameracontrol.h"
 #include "engine.h"
 
+#include "GL/Texture.h"
+
 #include "Primitive/triangle.h"
 #include "Primitive/rect.h"
 #include "Primitive/sphere.h"
@@ -13,8 +15,6 @@
 #include "Primitive/cone.h"
 #include "Primitive/mobiusstrip.h"
 
-#include "GL/Texture/Texture2D.h"
-#include "GL/Texture/TextureCubeMap.h"
 
 class MyListener : public EventListener
 {
@@ -45,9 +45,9 @@ public:
         auto SpecularColor = glm::vec4(1., 0., 0., 1.0);
 
 
-        _cube->getMaterial()->setColor(ColorTarget::Ambient, color );
-        _cube->getMaterial()->setColor(ColorTarget::Diffuse, color );
-        _cube->getMaterial()->setColor(ColorTarget::Specular, SpecularColor);
+        _cube->getMaterial()->setAmbientColor(color);
+        _cube->getMaterial()->setDiffuseColor(color);
+        _cube->getMaterial()->setSpecularColor(SpecularColor);
         _cube->getMaterial()->setRoughness(1);
 
         _cube->setRotate(glm::vec3(1.0, 1.0, 0.0), f4);
@@ -112,7 +112,6 @@ int main()
     TexPtr diffMoon = std::make_shared<Texture>(Texture2D());
     TexPtr skyBox = std::make_shared<Texture>(TextureCubeMap());
 
-
     cubicTex->loadImage("cube.jpg");
     titleTex->loadImage("spec.png");
     diffEarth->loadImage("diff_earth.jpg");
@@ -122,38 +121,38 @@ int main()
     
     MaterialPtr simple = std::make_shared < Material > ();
 
-    simple->setColor(ColorTarget::Ambient, glm::vec4(1., 0.2, 0.2, 1.0));
-    simple->setColor(ColorTarget::Diffuse, glm::vec4(1., 0.2, 0.2, 1.0));
-    simple->setColor(ColorTarget::Specular, glm::vec4(1., 1., 1., 1.0));
+    simple->setAmbientColor(glm::vec4(1., 0.2, 0.2, 1.0));
+    simple->setDiffuseColor(glm::vec4(1., 0.2, 0.2, 1.0));
+    simple->setSpecularColor(glm::vec4(1., 1., 1., 1.0));
     simple->setRoughness(0.001f);
 
-    simple->setMap(MapTarget::Diffuse, cubicTex);
-    simple->setMap(MapTarget::Specular, titleTex);
+    simple->setDiffuseTexture(cubicTex);
+    simple->setSpecularTexture(titleTex);
 
     MaterialPtr sun = std::make_shared < Material > ();
 
-    sun->setColor(ColorTarget::Ambient, glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
-    sun->setColor(ColorTarget::Diffuse, glm::vec4(1.0f, 0.5f, 0.0f, 1.0f));
-    sun->setColor(ColorTarget::Specular, glm::vec4(1.0f, 1.0f, 0.0f, 1.0f));
+    sun->setAmbientColor(glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
+    sun->setDiffuseColor(glm::vec4(1.0f, 0.5f, 0.0f, 1.0f));
+    sun->setSpecularColor(glm::vec4(1.0f, 1.0f, 0.0f, 1.0f));
     sun->setRoughness(0.3f);
-    sun->setMap(MapTarget::Diffuse, diffSun);
+    sun->setDiffuseTexture(diffSun);
 
     MaterialPtr earth = std::make_shared < Material > ();
 
-    earth->setColor(ColorTarget::Ambient, glm::vec4(0.2f, 0.2f, 0.2f, 1.0f));
-    earth->setColor(ColorTarget::Diffuse, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
-    earth->setColor(ColorTarget::Specular, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+    earth->setAmbientColor(glm::vec4(0.2f, 0.2f, 0.2f, 1.0f));
+    earth->setDiffuseColor(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+    earth->setSpecularColor(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
     earth->setRoughness(0.10f);
-    earth->setMap(MapTarget::Diffuse, diffEarth);
-    earth->setMap(MapTarget::Specular, specEarth);
+    earth->setDiffuseTexture(diffEarth);
+    earth->setSpecularTexture(specEarth);
 
     MaterialPtr moon = std::make_shared < Material > ();
 
-    moon->setColor(ColorTarget::Ambient, glm::vec4(0.5f, 0.5f, 0.5f, 1.0f));
-    moon->setColor(ColorTarget::Diffuse, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
-    moon->setColor(ColorTarget::Specular, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+    moon->setAmbientColor(glm::vec4(0.5f, 0.5f, 0.5f, 1.0f));
+    moon->setDiffuseColor(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+    moon->setSpecularColor(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
     moon->setRoughness(0.0000001f);
-    moon->setMap(MapTarget::Diffuse, diffMoon);
+    moon->setDiffuseTexture(diffMoon);
         
     GeometryPtr sphereGeom = std::make_shared<Sphere>(5);
 //     GeometryPtr circle = std::make_shared<Circle>(10);
