@@ -55,3 +55,11 @@ std::string loadShaderFromFile(const std::string& path) noexcept
     else  std::cout << "\t\t|    EROR     | Shader source file not open\n";
     return std::string("").c_str();
 }
+
+VertexShader::VertexShader()
+	: Shader(GL_VERTEX_SHADER)
+{  }
+
+FragmentShader::FragmentShader()
+	: Shader(GL_FRAGMENT_SHADER)
+{  }

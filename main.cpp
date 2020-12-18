@@ -3,6 +3,7 @@
 #include <cstdlib>
 
 #include "cameracontrol.h"
+#include "ShaderFactory.h"
 #include "engine.h"
 
 #include "GL/Texture.h"
@@ -96,6 +97,8 @@ public:
 int main()
 {
     auto& eng = Engine::engine();
+
+    ShaderFactory::getInstance();
 
     ScenePtr scene = std::make_shared<Scene>();
 

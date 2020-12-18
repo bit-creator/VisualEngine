@@ -1,4 +1,5 @@
 #include "engine.h"
+#include "ShaderFactory.h"
 
 Engine& Engine::engine() noexcept {
 	static Engine engine; return engine;
@@ -25,20 +26,22 @@ std::vector<EventListenerPtr>& Engine::getListeners() noexcept {
 }
 
 void Engine::run(const Window& window) noexcept {
-    VertexShader vertex(GL_VERTEX_SHADER);
-    FragmentShader frag(GL_FRAGMENT_SHADER);
+//	VertexShader vertex;
+//	FragmentShader frag;
+//
+//    vertex.addSource(loadShaderFromFile("shaders/primitive/primitive.vert.glsl"));
+//    frag.addSource(loadShaderFromFile("shaders/primitive/primitive.frag.glsl"));
+//
+//    ShaderProgram shader;
+//
+//    shader.attachShader(vertex);
+//    shader.attachShader(frag);
+//
+//    shader.link();
 
-    vertex.addSource(loadShaderFromFile("shaders/primitive/primitive.vert.glsl"));
-    frag.addSource(loadShaderFromFile("shaders/primitive/primitive.frag.glsl"));
+	auto& shader = ShaderFactory::getInstance().getShader(ShaderType::SHADER_PHONG);
 
-    ShaderProgram shader;
-   
-    shader.attachShader(vertex);
-    shader.attachShader(frag);
-
-    shader.link();
-    
-    glEnable(GL_DEPTH_TEST);
+	glEnable(GL_DEPTH_TEST);
 
     while (!glfwWindowShouldClose(window))
     {
