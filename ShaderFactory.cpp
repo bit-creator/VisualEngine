@@ -40,6 +40,7 @@ ShaderFactory& ShaderFactory::getInstance() noexcept {
 ShaderProgram& ShaderFactory::getShader(ShaderType type) {
 	if (_shaders[type] == nullptr) {
 	    auto shader = createShader(type);
+	    _shaders[type] = std::move(shader);
 	}
 	return *_shaders[type];
 }
@@ -56,9 +57,10 @@ PrgPtr ShaderFactory::createShader(ShaderType type) {
 		vert.addSource(loadShaderFromFile("shaders/skybox/skybox.vert.glsl"));
 		frag.addSource(loadShaderFromFile("shaders/skybox/skybox.frag.glsl"));
 	}
-	_shaders[type].reset();
-	_shaders[type] = std::make_shared<ShaderProgram>();
-	_shaders[type]->attachShader(vert);
-	_shaders[type]->attachShader(frag);
-	_shaders[type]->link();
+
+	auto shaderPrg = std::make_unique<ShaderProgram>();
+	shaderPrg -> attachShader(vert);
+	shaderPrg -> attachShader(frag);
+	shaderPrg -> link();
+	return shaderPrg;
 }

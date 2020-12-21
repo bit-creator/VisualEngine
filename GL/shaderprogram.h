@@ -49,6 +49,6 @@ class ShaderProgram : public GLObject
 
 };
 
-using PrgPtr = std::shared_ptr < ShaderProgram >;
+using PrgPtr = std::unique_ptr < ShaderProgram >;
 
 #endif // SHADERPROGRAM_H
