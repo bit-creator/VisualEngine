@@ -4,7 +4,6 @@ Geometry::Geometry() noexcept
 	: _numVertex   (0)
 	, _numIndex    (0)
 	, _useIndex    (false)
-	, _useTexCoord (false)
     , _conectionMode ( GL_TRIANGLES )
     , VAO          (  )
     , VBO          ( GL_ARRAY_BUFFER )
@@ -13,10 +12,9 @@ Geometry::Geometry() noexcept
 
 Geometry::~Geometry() noexcept {  }
 
-void Geometry::setNum(size_t index, size_t vertex, bool useTexCoord) noexcept {
+void Geometry::setNum(size_t index, size_t vertex) noexcept {
 	_numIndex = index;
 	_numVertex = vertex;
-	_useTexCoord = useTexCoord;
 	_useIndex = index == 0 ? false : true;
 }
 
@@ -50,5 +48,5 @@ const GLenum Geometry::getPoligonConnectMode() const noexcept
 }
 
 bool Geometry::hasTexCoord() const noexcept {
-	return _useTexCoord;
+	return VAO.hasAttribute(Attribute::ATTRIB_TEX);
 }

@@ -31,8 +31,6 @@ private:
     NodePtr			                             _root;
 
 public:
-    Light										 _light;
-
     Scene() noexcept;
     Scene(const Scene&) noexcept =delete;
     Scene& operator =(const Scene&) noexcept =delete;

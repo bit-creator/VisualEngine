@@ -12,6 +12,16 @@
 
 #include "globject.hpp"
 
+enum class SkyBox
+{
+	right = GL_TEXTURE_CUBE_MAP_POSITIVE_X,
+	left = GL_TEXTURE_CUBE_MAP_NEGATIVE_X,
+	sky = GL_TEXTURE_CUBE_MAP_POSITIVE_Y,
+	ground = GL_TEXTURE_CUBE_MAP_NEGATIVE_Y,
+	near = GL_TEXTURE_CUBE_MAP_POSITIVE_Z,
+	far = GL_TEXTURE_CUBE_MAP_NEGATIVE_Z
+};
+
 class Texture : public GLObject {
 protected:
 	Texture(const GLenum target);
@@ -31,7 +41,9 @@ public:
 	void bind();
 	void unbind();
 
-	void loadImage(const char* name);
+protected:
+	void loadImage(const char* name, const GLenum target);
+	void discard();
 
 private:
 	GLuint gentex() noexcept;
@@ -50,6 +62,8 @@ public:
 
 	Texture2D& operator=(const Texture2D &other) =delete;
 	Texture2D& operator=(Texture2D &&other) =default;
+
+	void loadImage(const char* name, const GLenum target = GL_TEXTURE_2D);
 };	// CLASS_TEXTURE2D
 
 class TextureCubeMap final : public Texture {
@@ -62,8 +76,13 @@ public:
 
 	TextureCubeMap& operator=(const TextureCubeMap &other) =delete;
 	TextureCubeMap& operator=(TextureCubeMap &&other) =default;
+
+	void loadImage(const char* name, const GLenum target);
 }; 	// CLASS_TEXTURECUBEMAP
 
 using TexPtr = std::shared_ptr < Texture >;
+using Tex2DPtr = std::shared_ptr < Texture2D >;
+using CubeMapPtr = std::shared_ptr < TextureCubeMap >;
+
 
 #endif /* GL_TEXTURE_TEXTURE_H_ */

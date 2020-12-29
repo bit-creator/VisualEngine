@@ -59,8 +59,10 @@ PrgPtr ShaderFactory::createShader(ShaderType type) {
 	}
 
 	auto shaderPrg = std::make_unique<ShaderProgram>();
+
 	shaderPrg -> attachShader(vert);
 	shaderPrg -> attachShader(frag);
 	shaderPrg -> link();
+
 	return shaderPrg;
 }

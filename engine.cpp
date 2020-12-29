@@ -89,6 +89,7 @@ void Engine::render(Object3D &obj, Camera &cam, LightList lights,
     		material->getAmbientTexture()->bind((int)TextureUnit::Ambient);
 			prg.setUniform("uHasAmbientMap", true);
 			prg.setUniform("uTexAmbient", (int)TextureUnit::Ambient);
+			material->getAmbientTexture()->unbind();
     	}
 		else prg.setUniform("uHasAmbientMap", false);
 
@@ -97,6 +98,7 @@ void Engine::render(Object3D &obj, Camera &cam, LightList lights,
     		material->getDiffuseTexture()->bind((int)TextureUnit::Diffuse);
 			prg.setUniform("uHasDiffuseMap", true);
 			prg.setUniform("uTexDiffuse", (int)TextureUnit::Diffuse);
+			material->getDiffuseTexture()->unbind();
     	}
 		else prg.setUniform("uHasDiffuseMap", false);
 
@@ -105,6 +107,7 @@ void Engine::render(Object3D &obj, Camera &cam, LightList lights,
     		material->getSpecularTexture()->bind((int)TextureUnit::Specular);
     		prg.setUniform("uHasSpecularMap", true);
     		prg.setUniform("uTexSpecular", (int)TextureUnit::Specular);
+    		material->getSpecularTexture()->unbind();
     	}
     	else prg.setUniform("uHasSpecularMap", false);
     }
@@ -154,4 +157,29 @@ void Engine::render(Object3D &obj, Camera &cam, LightList lights,
     else glDrawArrays(geom->getPoligonConnectMode() , 0, geom->getNumVertexes());
 
     geom->unbindBuffers();
+
+    if (geom->hasTexCoord())
+    {
+    	if (material->getAmbientTexture() != nullptr)
+    	{
+    		material->getAmbientTexture()->unbind();
+    	}
+
+    	if (material->getDiffuseTexture() != nullptr)
+    	{
+    		material->getDiffuseTexture()->unbind();
+    	}
+
+    	if (material->getSpecularTexture() != nullptr)
+    	{
+    		material->getSpecularTexture()->unbind();
+    	}
+    }
 }
+
+std::string getLightsName(const int index) {
+	std::string patern = "uLights[%].";
+	std::replace(patern.begin(), patern.end(), '%', (char)(index + '0'));
+	return patern;
+}
+

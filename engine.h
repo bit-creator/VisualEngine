@@ -59,4 +59,6 @@ class Engine
         void render(Object3D& obj, Camera& cam, LightList lights, ShaderProgram& prg) noexcept;
 };
 
+std::string getLightsName(const int index);
+
 #endif // ENGINE_H

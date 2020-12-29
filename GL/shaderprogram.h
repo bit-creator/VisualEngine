@@ -32,6 +32,7 @@ class ShaderProgram : public GLObject
         bool link() const noexcept;
         void enable() const noexcept;
 
+
         // set Uniform //
 
         void setUniform(const std::string& name,
