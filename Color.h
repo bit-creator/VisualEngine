@@ -2,8 +2,7 @@
  * Color.h
  *
  *  Created on: Dec 16, 2020
- *      Author: bit_creator
- */
+*/
 
 #ifndef COLOR_H_
 #define COLOR_H_

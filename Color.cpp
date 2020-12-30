@@ -2,8 +2,7 @@
  * Color.cpp
  *
  *  Created on: Dec 16, 2020
- *      Author: bit_creator
- */
+*/
 
 #include "Color.h"
 

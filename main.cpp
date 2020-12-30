@@ -39,8 +39,8 @@ public:
         float f4 = time;
         float f5 = time_;
 
-        time_ += 0.1;
-        time += 0.01;
+        time_ += 0.01;
+        time += 0.001;
         
         auto color = glm::vec4(1., 1., 1., 1.0);
         auto SpecularColor = glm::vec4(1., 0., 0., 1.0);
@@ -107,30 +107,23 @@ int main()
     auto moonObj = std::make_shared<Object3D>();
     auto cubeObj = std::make_shared<Object3D>();
 
-    Tex2DPtr cubicTex  = std::make_shared<Texture2D>(Texture2D());
-    Tex2DPtr titleTex  = std::make_shared<Texture2D>(Texture2D());
-    Tex2DPtr diffEarth = std::make_shared<Texture2D>(Texture2D());
-    Tex2DPtr specEarth = std::make_shared<Texture2D>(Texture2D());
-    Tex2DPtr diffSun   = std::make_shared<Texture2D>(Texture2D());
-    Tex2DPtr diffMoon  = std::make_shared<Texture2D>(Texture2D());
-    CubeMapPtr skyBox = std::make_shared<TextureCubeMap>(TextureCubeMap());
+    Tex2DPtr cubicTex = std::make_shared<Texture2D>();
+    Tex2DPtr titleTex = std::make_shared<Texture2D>();
+    Tex2DPtr diffEarth = std::make_shared<Texture2D>();
+    Tex2DPtr specEarth = std::make_shared<Texture2D>();
+    Tex2DPtr diffSun = std::make_shared<Texture2D>();
+    Tex2DPtr diffMoon = std::make_shared<Texture2D>();
 
-    cubicTex->loadImage("cube.jpg");
-    titleTex->loadImage("spec.png");
-    diffEarth->loadImage("diff_earth.jpg");
-    specEarth->loadImage("scec_earth.jpg");
-    diffSun->loadImage("diff_sun.jpg");
-    diffMoon->loadImage("diff_moon.jpg");
-//    skyBox->loadImage("skybox.jpg", (int)SkyBox::far);
-//    skyBox->loadImage("skybox.jpg", (int)SkyBox::ground);
-//    skyBox->loadImage("skybox.jpg", (int)SkyBox::left);
-//    skyBox->loadImage("skybox.jpg", (int)SkyBox::near);
-//    skyBox->loadImage("skybox.jpg", (int)SkyBox::right);
-//    skyBox->loadImage("skybox.jpg", (int)SkyBox::sky);
+    cubicTex->loadImage("resource/cube.jpg");
+    titleTex->loadImage("resource/spec.png");
+    diffEarth->loadImage("resource/diff_earth.jpg");
+    specEarth->loadImage("resource/scec_earth.jpg");
+    diffSun->loadImage("resource/diff_sun.jpg");
+    diffMoon->loadImage("resource/diff_moon.jpg");
     
     MaterialPtr simple = std::make_shared < Material > ();
 
-    simple->setAmbientColor(glm::vec4(1., 0.2, 0.2, 1.0));
+    simple->setAmbientColor(glm::vec4(0., 0., 0., 1.0));
     simple->setDiffuseColor(glm::vec4(1., 0.2, 0.2, 1.0));
     simple->setSpecularColor(glm::vec4(1., 1., 1., 1.0));
     simple->setRoughness(0.001f);
@@ -140,7 +133,7 @@ int main()
 
     MaterialPtr sun = std::make_shared < Material > ();
 
-//    sun->setAmbientColor(glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
+    sun->setAmbientColor(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
 //    sun->setDiffuseColor(glm::vec4(1.0f, 0.5f, 0.0f, 1.0f));
 //    sun->setSpecularColor(glm::vec4(1.0f, 1.0f, 0.0f, 1.0f));
     sun->setRoughness(0.3f);
@@ -148,16 +141,16 @@ int main()
 
     MaterialPtr earth = std::make_shared < Material > ();
 
-//    earth->setAmbientColor(glm::vec4(0.2f, 0.2f, 0.2f, 1.0f));
+    earth->setAmbientColor(glm::vec4(0.f, 0.f, 0.f, 1.0f));
 //    earth->setDiffuseColor(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
 //    earth->setSpecularColor(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
-    earth->setRoughness(0.10f);
+    earth->setRoughness(0.010f);
     earth->setDiffuseTexture(diffEarth);
     earth->setSpecularTexture(specEarth);
 
     MaterialPtr moon = std::make_shared < Material > ();
 
-    moon->setAmbientColor(glm::vec4(0.5f, 0.5f, 0.5f, 1.0f));
+    moon->setAmbientColor(glm::vec4(0.f, 0.f, 0.f, 1.0f));
     moon->setDiffuseColor(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
     moon->setSpecularColor(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
     moon->setRoughness(0.0000001f);

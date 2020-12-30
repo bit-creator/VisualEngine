@@ -89,7 +89,6 @@ void Engine::render(Object3D &obj, Camera &cam, LightList lights,
     		material->getAmbientTexture()->bind((int)TextureUnit::Ambient);
 			prg.setUniform("uHasAmbientMap", true);
 			prg.setUniform("uTexAmbient", (int)TextureUnit::Ambient);
-			material->getAmbientTexture()->unbind();
     	}
 		else prg.setUniform("uHasAmbientMap", false);
 
@@ -98,7 +97,6 @@ void Engine::render(Object3D &obj, Camera &cam, LightList lights,
     		material->getDiffuseTexture()->bind((int)TextureUnit::Diffuse);
 			prg.setUniform("uHasDiffuseMap", true);
 			prg.setUniform("uTexDiffuse", (int)TextureUnit::Diffuse);
-			material->getDiffuseTexture()->unbind();
     	}
 		else prg.setUniform("uHasDiffuseMap", false);
 
@@ -107,7 +105,6 @@ void Engine::render(Object3D &obj, Camera &cam, LightList lights,
     		material->getSpecularTexture()->bind((int)TextureUnit::Specular);
     		prg.setUniform("uHasSpecularMap", true);
     		prg.setUniform("uTexSpecular", (int)TextureUnit::Specular);
-    		material->getSpecularTexture()->unbind();
     	}
     	else prg.setUniform("uHasSpecularMap", false);
     }
@@ -147,6 +144,7 @@ void Engine::render(Object3D &obj, Camera &cam, LightList lights,
 
 		++ind;
     }
+
 
 
     glPolygonMode(GL_FRONT_AND_BACK, material->getPolygonsFillMode());
