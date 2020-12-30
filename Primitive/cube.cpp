@@ -2,66 +2,50 @@
 
 Cube::Cube() noexcept
     : Geometry()
-{ setNum(36, 8); setupBuffers(); }
+{ setNum(36, 24, true); setupBuffers(); }
 
 Cube::~Cube() noexcept {  }
 
+
 void Cube::setupBuffers() noexcept
 {
-    glm::vec3 vertices[] = {
-        glm::vec3( 1.,  1.,  1.),   // 1
-        glm::vec3( 0.,  1.,  0.),
-        glm::vec3(-1.,  1.,  1.),   // 2
-        glm::vec3( 0.,  1.,  0.),
-        glm::vec3(-1.,  1., -1.),   // 3
-        glm::vec3( 0.,  1.,  0.),
-        glm::vec3( 1.,  1., -1.),   // 4
-        glm::vec3( 0.,  1.,  0.),
+	struct Vertex
+	{
+		glm::vec3			_coord;
+		glm::vec3			_normal;
+		glm::vec2			_texCoord;
+	};
 
-        glm::vec3( 1., -1.,  1.),   // 5
-        glm::vec3( 0., -1.,  0.),
-        glm::vec3(-1., -1.,  1.),   // 6
-        glm::vec3( 0., -1.,  0.),
-        glm::vec3(-1., -1., -1.),   // 7
-        glm::vec3( 0., -1.,  0.),
-        glm::vec3( 1., -1., -1.),   // 8 
-        glm::vec3( 0., -1.,  0.),
+	Vertex vertices[] = {
+        { glm::vec3( 1.,  1.,  1.), glm::vec3( 0.,  1.,  0.), glm::vec2(1, 1) },
+		{ glm::vec3(-1.,  1.,  1.), glm::vec3( 0.,  1.,  0.), glm::vec2(0, 1) },
+        { glm::vec3(-1.,  1., -1.), glm::vec3( 0.,  1.,  0.), glm::vec2(0, 0) },
+        { glm::vec3( 1.,  1., -1.), glm::vec3( 0.,  1.,  0.), glm::vec2(1, 0) },
+
+		{ glm::vec3( 1., -1.,  1.), glm::vec3( 0., -1.,  0.), glm::vec2(1, 1) },
+		{ glm::vec3(-1., -1.,  1.), glm::vec3( 0., -1.,  0.), glm::vec2(0, 1) },
+		{ glm::vec3(-1., -1., -1.), glm::vec3( 0., -1.,  0.), glm::vec2(0, 0) },
+		{ glm::vec3( 1., -1., -1.), glm::vec3( 0., -1.,  0.), glm::vec2(1, 0) },
         
-        glm::vec3( 1.,  1.,  1.),   // 1
-        glm::vec3( 0.,  0.,  1.),
-        glm::vec3(-1.,  1.,  1.),   // 2
-        glm::vec3( 0.,  0.,  1.),
-        glm::vec3(-1., -1.,  1.),   // 6
-        glm::vec3( 0.,  0.,  1.),
-        glm::vec3( 1., -1.,  1.),   // 5
-        glm::vec3( 0.,  0.,  1.),
+		{ glm::vec3( 1.,  1.,  1.), glm::vec3( 0.,  0.,  1.), glm::vec2(1, 1) },
+		{ glm::vec3(-1.,  1.,  1.), glm::vec3( 0.,  0.,  1.), glm::vec2(0, 1) },
+		{ glm::vec3(-1., -1.,  1.), glm::vec3( 0.,  0.,  1.), glm::vec2(0, 0) },
+		{ glm::vec3( 1., -1.,  1.), glm::vec3( 0.,  0.,  1.), glm::vec2(1, 0) },
         
-        glm::vec3(-1.,  1., -1.),   // 3
-        glm::vec3( 0.,  0., -1.),
-        glm::vec3( 1.,  1., -1.),   // 4
-        glm::vec3( 0.,  0., -1.),
-        glm::vec3( 1., -1., -1.),   // 8 
-        glm::vec3( 0.,  0., -1.),
-        glm::vec3(-1., -1., -1.),   // 7
-        glm::vec3( 0.,  0., -1.),
+		{ glm::vec3(-1.,  1., -1.), glm::vec3( 0.,  0., -1.), glm::vec2(0, 1) },
+		{ glm::vec3( 1.,  1., -1.), glm::vec3( 0.,  0., -1.), glm::vec2(1, 1) },
+		{ glm::vec3( 1., -1., -1.), glm::vec3( 0.,  0., -1.), glm::vec2(1, 0) },
+		{ glm::vec3(-1., -1., -1.), glm::vec3( 0.,  0., -1.), glm::vec2(0, 0) },
         
-        glm::vec3(-1.,  1.,  1.),   // 2
-        glm::vec3(-1.,  0.,  0.),
-        glm::vec3(-1.,  1., -1.),   // 3
-        glm::vec3(-1.,  0.,  0.),
-        glm::vec3(-1., -1., -1.),   // 7
-        glm::vec3(-1.,  0.,  0.),
-        glm::vec3(-1., -1.,  1.),   // 6
-        glm::vec3(-1.,  0.,  0.),
+		{ glm::vec3(-1.,  1.,  1.), glm::vec3(-1.,  0.,  0.), glm::vec2(1, 1) },
+		{ glm::vec3(-1.,  1., -1.), glm::vec3(-1.,  0.,  0.), glm::vec2(1, 0) },
+		{ glm::vec3(-1., -1., -1.), glm::vec3(-1.,  0.,  0.), glm::vec2(0, 0) },
+		{ glm::vec3(-1., -1.,  1.), glm::vec3(-1.,  0.,  0.), glm::vec2(0, 1) },
         
-        glm::vec3( 1.,  1.,  1.),   // 1
-        glm::vec3( 1.,  0.,  0.),
-        glm::vec3( 1.,  1., -1.),   // 4
-        glm::vec3( 1.,  0.,  0.),
-        glm::vec3( 1., -1., -1.),   // 8 
-        glm::vec3( 1.,  0.,  0.),
-        glm::vec3( 1., -1.,  1.),   // 5
-        glm::vec3( 1.,  0.,  0.),
+		{ glm::vec3( 1.,  1.,  1.), glm::vec3( 1.,  0.,  0.), glm::vec2(1, 1) },
+		{ glm::vec3( 1.,  1., -1.), glm::vec3( 1.,  0.,  0.), glm::vec2(1, 0) },
+		{ glm::vec3( 1., -1., -1.), glm::vec3( 1.,  0.,  0.), glm::vec2(0, 0) },
+		{ glm::vec3( 1., -1.,  1.), glm::vec3( 1.,  0.,  0.), glm::vec2(0, 1) },
     };
 
     glm::uvec3 indices[] = {
@@ -91,8 +75,9 @@ void Cube::setupBuffers() noexcept
     VBO.loadData(vertices, GL_STATIC_DRAW);
     EBO.loadData(indices, GL_STATIC_DRAW);
     
-    VAO.addAttribute(Attribute::ATTRIB_POSITION, 6 * sizeof(GLfloat), 0);
-    VAO.addAttribute(Attribute::ATTRIB_NORMAL, 6 * sizeof(GLfloat), 3 * sizeof(GLfloat));
+    VAO.addAttribute(Attribute::ATTRIB_POSITION, 8 * sizeof(GLfloat), 0);
+    VAO.addAttribute(Attribute::ATTRIB_NORMAL, 8 * sizeof(GLfloat), 3 * sizeof(GLfloat));
+    VAO.addAttribute(Attribute::ATTRIB_TEX, 8 * sizeof(GLfloat), 6 * sizeof(GLfloat));
 
     // VAO.addAttribute(Attribute::ATTRIB_POSITION, 3 * sizeof(GLfloat), 0);
     // VAO.addAttribute(Attribute::ATTRIB_NORMAL, 3 * sizeof(GLfloat), 0);

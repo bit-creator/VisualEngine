@@ -1,16 +1,24 @@
 #include "geometry.h"
 
 Geometry::Geometry() noexcept    
-    : _conectionMode ( GL_TRIANGLES )
-    , VAO       (  )
-    , VBO       ( GL_ARRAY_BUFFER )
-    , EBO       ( GL_ELEMENT_ARRAY_BUFFER )
+	: _numVertex   (0)
+	, _numIndex    (0)
+	, _useIndex    (false)
+	, _useTexCoord (false)
+    , _conectionMode ( GL_TRIANGLES )
+    , VAO          (  )
+    , VBO          ( GL_ARRAY_BUFFER )
+    , EBO          ( GL_ELEMENT_ARRAY_BUFFER )
 {  }
 
 Geometry::~Geometry() noexcept {  }
 
-void Geometry::setNum(size_t index, size_t vertex) noexcept
-{ _numIndex = index; _numVertex = vertex; _useIndex = index == 0 ? false : true; }
+void Geometry::setNum(size_t index, size_t vertex, bool useTexCoord) noexcept {
+	_numIndex = index;
+	_numVertex = vertex;
+	_useTexCoord = useTexCoord;
+	_useIndex = index == 0 ? false : true;
+}
 
 size_t Geometry::getNumIndices() const noexcept
 { return _numIndex; }
@@ -37,4 +45,10 @@ void Geometry::setPoligonConnectMode(const GLenum mode) noexcept
 { _conectionMode = mode; }
 
 const GLenum Geometry::getPoligonConnectMode() const noexcept
-{ return _conectionMode; }
+{
+	return _conectionMode;
+}
+
+bool Geometry::hasTexCoord() const noexcept {
+	return _useTexCoord;
+}

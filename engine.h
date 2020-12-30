@@ -12,9 +12,8 @@
 #ifndef ENGINE_H
 #define ENGINE_H
 
-#include <memory>
-
 #include "GL/shaderprogram.h"
+#include "GL/Texture.h"
 
 #include "abstracteventlistener.hpp"
 #include "orthographiccamera.h"
@@ -57,7 +56,7 @@ class Engine
 
         void run(const Window& window = _mainWindow) noexcept;
 
-        void render(Object3D& obj, Camera& cam, ShaderProgram& prg) noexcept;
+        void render(Object3D& obj, Camera& cam, LightList lights, ShaderProgram& prg) noexcept;
 };
 
 #endif // ENGINE_H

@@ -9,10 +9,10 @@
  * 
  */
 
+#include <cmath>
 #include <memory>
 #include <unordered_set>
 
-#include <boost/functional/hash.hpp>
 
 #include "../geometry.h"
 
@@ -20,10 +20,17 @@
 
 class Sphere : public Geometry
 {
-    private:
-        GLuint                                                          _subdiv;
+	struct Vertex
+	{
+		glm::vec3			_coord;
+		glm::vec2			_texCoord;
+	};
 
-        std::vector<glm::vec3>                                          _vertices;
+	private:
+		GLuint                                                          _subdiv;
+
+
+        std::vector<Vertex>	                                            _vertices;
         std::unique_ptr<std::vector<glm::uvec3>>                        _indices;
 
     public:
@@ -34,6 +41,9 @@ class Sphere : public Geometry
         
     private:
         // void flipAndPush() noexcept;
+        void refreshUV();
         void div(GLuint sub) noexcept;
         std::array<glm::uvec3, 4> divTriangle(glm::uvec3 triangle);
 };
+
+glm::vec2 genSphereUV(glm::vec3 c);

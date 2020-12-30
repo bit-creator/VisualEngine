@@ -23,6 +23,7 @@ class Geometry
         size_t                                                  _numVertex;
         size_t                                                  _numIndex;
         bool                                                    _useIndex;
+        bool													_useTexCoord;
         GLenum                                                  _conectionMode;
 
     protected:          //  OpenGL Buffers
@@ -41,6 +42,7 @@ class Geometry
         const GLenum getPoligonConnectMode() const noexcept;
         
         bool hasIndexes() const noexcept;
+        bool hasTexCoord() const noexcept;
 
         void bindBuffers() noexcept;
         void unbindBuffers() noexcept;
@@ -48,7 +50,7 @@ class Geometry
         virtual void setupBuffers() noexcept =0;
 
     protected:
-        void setNum(size_t index, size_t vertex) noexcept;
+        void setNum(size_t index, size_t vertex, bool useTexCoord = false) noexcept;
 };
 
 using GeometryPtr = std::shared_ptr < Geometry >;

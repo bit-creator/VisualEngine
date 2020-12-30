@@ -28,6 +28,7 @@ enum class NodeType
 {
     NODE_CAMERA,
     NODE_OBJECT,
+	NODE_LIGHT,
 	NODE_NODE
 };
 

@@ -5,6 +5,8 @@
 #include "cameracontrol.h"
 #include "engine.h"
 
+#include "GL/Texture.h"
+
 #include "Primitive/triangle.h"
 #include "Primitive/rect.h"
 #include "Primitive/sphere.h"
@@ -13,14 +15,16 @@
 #include "Primitive/cone.h"
 #include "Primitive/mobiusstrip.h"
 
+
 class MyListener : public EventListener
 {
     Scene& scene;
+
     double time = 0;
     double time_ = 0;
 
 public:
-
+    ObjPtr  _cube;
     MyListener(Scene& sc)
         : scene(sc)
     {  }
@@ -29,19 +33,25 @@ public:
     {
 
         float f1 = std::abs(std::sin(1 * time));
-//        float f2 = std::abs(std::sin(2 * time));
-//        float f3 = std::abs(std::sin(3 * time));
+        float f2 = std::abs(std::sin(2 * time));
+        float f3 = std::abs(std::sin(3 * time));
         float f4 = time;
         float f5 = time_;
 
-        time_ += 0.1;
-        time += 0.01;
+        time_ += 0.01;
+        time += 0.001;
         
-//        auto color = glm::vec4(1., 0.2, 0.2, 1.0);
-//        auto SpecularColor = glm::vec4(1., 1., 1., 1.0);
+        auto color = glm::vec4(1., 1., 1., 1.0);
+        auto SpecularColor = glm::vec4(1., 0., 0., 1.0);
 
-//        const auto& material = scene._objects[0]->getMaterial();
-//
+
+        _cube->getMaterial()->setAmbientColor(color);
+        _cube->getMaterial()->setDiffuseColor(color);
+        _cube->getMaterial()->setSpecularColor(SpecularColor);
+        _cube->getMaterial()->setRoughness(1);
+
+        _cube->setRotate(glm::vec3(1.0, 1.0, 0.0), f4);
+
 //        material -> setColor(ColorTarget::Ambient, color);
 //        material -> setColor(ColorTarget::Diffuse, color);
 //        material -> setColor(ColorTarget::Specular, SpecularColor);
@@ -71,8 +81,11 @@ public:
         salSys->setRotate(glm::vec3(0.0f, 1.0f, 0.0f), f4);
         earthSys->setRotate(glm::vec3(0.0f, 1.0f, 0.0f), f5);
 
-//        scene.getCamera()->setPosition(glm::vec3(0.0, 0.0, f1));
+        scene.getCamera()->setRotate(glm::vec3(1.0, 1.0, f1));
+
+        scene._light.setRotate(glm::vec3(1.0, 1.0, 0.0), f4);
 //        (*scene.getCamera()->getChilds().begin())->setRotate(glm::vec3(1.0, 1., 1.), f4);
+//        scene.setBackgroundColor(glm::vec4(f1, f2, f3, 1.0));
     }
 
     ~MyListener() noexcept override {
@@ -91,38 +104,56 @@ int main()
     auto moonObj = std::make_shared<Object3D>();
     auto cubeObj = std::make_shared<Object3D>();
 
+    TexPtr cubicTex = std::make_shared<Texture2D>();
+    TexPtr titleTex = std::make_shared<Texture2D>();
+    TexPtr diffEarth = std::make_shared<Texture2D>();
+    TexPtr specEarth = std::make_shared<Texture2D>();
+    TexPtr diffSun = std::make_shared<Texture2D>();
+    TexPtr diffMoon = std::make_shared<Texture2D>();
+
+    cubicTex->loadImage("resource/cube.jpg");
+    titleTex->loadImage("resource/spec.png");
+    diffEarth->loadImage("resource/diff_earth.jpg");
+    specEarth->loadImage("resource/scec_earth.jpg");
+    diffSun->loadImage("resource/diff_sun.jpg");
+    diffMoon->loadImage("resource/diff_moon.jpg");
     
     MaterialPtr simple = std::make_shared < Material > ();
 
-    simple->setColor(ColorTarget::Ambient, glm::vec4(1., 0.2, 0.2, 1.0));
-    simple->setColor(ColorTarget::Diffuse, glm::vec4(1., 0.2, 0.2, 1.0));
-    simple->setColor(ColorTarget::Specular, glm::vec4(1., 1., 1., 1.0));
+    simple->setAmbientColor(glm::vec4(1., 0.2, 0.2, 1.0));
+    simple->setDiffuseColor(glm::vec4(1., 0.2, 0.2, 1.0));
+    simple->setSpecularColor(glm::vec4(1., 1., 1., 1.0));
     simple->setRoughness(0.001f);
+
+    simple->setDiffuseTexture(cubicTex);
+    simple->setSpecularTexture(titleTex);
 
     MaterialPtr sun = std::make_shared < Material > ();
 
-    sun->setColor(ColorTarget::Ambient, glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
-    sun->setColor(ColorTarget::Diffuse, glm::vec4(1.0f, 0.5f, 0.0f, 1.0f));
-    sun->setColor(ColorTarget::Specular, glm::vec4(1.0f, 1.0f, 0.0f, 1.0f));
+    sun->setAmbientColor(glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
+    sun->setDiffuseColor(glm::vec4(1.0f, 0.5f, 0.0f, 1.0f));
+    sun->setSpecularColor(glm::vec4(1.0f, 1.0f, 0.0f, 1.0f));
     sun->setRoughness(0.3f);
+    sun->setDiffuseTexture(diffSun);
 
     MaterialPtr earth = std::make_shared < Material > ();
 
-    earth->setColor(ColorTarget::Ambient, glm::vec4(0.0f, 0.0f, 1.0f, 1.0f));
-    earth->setColor(ColorTarget::Diffuse, glm::vec4(0.1f, 0.6f, 1.0f, 1.0f));
-    earth->setColor(ColorTarget::Specular, glm::vec4(0.2f, 0.4f, 0.0f, 1.0f));
-    earth->setRoughness(0.1f);
+    earth->setAmbientColor(glm::vec4(0.2f, 0.2f, 0.2f, 1.0f));
+    earth->setDiffuseColor(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+    earth->setSpecularColor(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+    earth->setRoughness(0.10f);
+    earth->setDiffuseTexture(diffEarth);
+    earth->setSpecularTexture(specEarth);
 
     MaterialPtr moon = std::make_shared < Material > ();
 
-    moon->setColor(ColorTarget::Ambient, glm::vec4(0.5f, 0.5f, 0.5f, 1.0f));
-    moon->setColor(ColorTarget::Diffuse, glm::vec4(0.5f, 0.5f, 0.5f, 1.0f));
-    moon->setColor(ColorTarget::Specular, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
-    moon->setRoughness(0.01f);
+    moon->setAmbientColor(glm::vec4(0.5f, 0.5f, 0.5f, 1.0f));
+    moon->setDiffuseColor(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+    moon->setSpecularColor(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+    moon->setRoughness(0.0000001f);
+    moon->setDiffuseTexture(diffMoon);
         
-    GeometryPtr sunGeom = std::make_shared<Sphere>(5);
-    GeometryPtr earthGeom = std::make_shared<Sphere>(5);
-    GeometryPtr moonGeom = std::make_shared<Sphere>(5);
+    GeometryPtr sphereGeom = std::make_shared<Sphere>(5);
 //     GeometryPtr circle = std::make_shared<Circle>(10);
 //     GeometryPtr rect = std::make_shared<Rect>();
 //     GeometryPtr triangle = std::make_shared<Triangle>();
@@ -130,9 +161,9 @@ int main()
 //     GeometryPtr cone = std::make_shared<Cone>(5);
 //     GeometryPtr mobius = std::make_shared<MobiusStrip>(50);
 
-    sunObj->setGeometry(sunGeom);
-    earthObj->setGeometry(earthGeom);
-    moonObj->setGeometry(moonGeom);
+    sunObj->setGeometry(sphereGeom);
+    earthObj->setGeometry(sphereGeom);
+    moonObj->setGeometry(sphereGeom);
     cubeObj->setGeometry(cube);
 
 //     obj.setGeometry(circle);
@@ -174,17 +205,32 @@ int main()
 
     CameraPtr cam = std::make_shared<Camera>(PerspectiveCamera(M_PI / 3, aspect, 0.1, 100));
 
-    cam->setPosition(glm::vec3(0.0, 0.0, -5.0));
+    cam->setPosition(glm::vec3(0.0, 0.0, -1.0));
 
-    cam->addChild(cubeObj);
+//    cam->addChild(cubeObj);
 
     scene->setCamera(cam);
+
+    scene->getRoot()->addChild(cubeObj);
+
+
 
 //    (*scene->getRoot()->getChilds().begin())->addChild(cubeObj);
 //    scene->getCamera()->addChild(cubeObj);
 
+    LightPtr light = std::make_shared<Light>(LightDirectional());
+
+    light->setColor(glm::vec4(0.0, 1.0, 1.0, 1.0));
+
+    LightPtr headLighter = std::make_shared<Light>(LightDirectional());
+
+    headLighter->setColor(glm::vec4(1.0, 1.0, 1.0, 1.0));
+
+//    scene->getRoot()->addChild(light);
+
     scene->getRoot()->addChild(salarySystem);
 
+    scene->getCamera()->addChild(headLighter);
 
     // scene._camera = std::make_shared<Camera>(OrthographicCamera(-5, 5, -5 * aspect, 5 * aspect, 0.1, 100));
 
@@ -229,6 +275,8 @@ int main()
 
     MyListener listener(*scene);
     CameraControl controler(scene->getCamera());
+
+    listener._cube = cubeObj;
 
     eng.addEventListener(std::make_shared<MyListener>(listener));
     eng.addEventListener(std::make_shared<CameraControl>(controler));

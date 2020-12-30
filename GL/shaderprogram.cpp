@@ -12,9 +12,11 @@ bool ShaderProgram::attachShader(const Shader& shader) const noexcept
     bool res = shader.compileShader();
     glAttachShader(getID(), shader.getID());
 
-    if(glGetError() == GL_NO_ERROR) return res;
+    auto errors = glGetError();
 
-    std::cout << "|    EROR     | attach shader\n" << "|             | " << glGetError() << '\n';
+    if(errors == GL_NO_ERROR) return res;
+
+    std::cout << "|    EROR     | attach shader\n" << "|             | " << errors << '\n';
     return false;
 }
 
@@ -77,7 +79,7 @@ void ShaderProgram::setUniform(const std::string& name, const int val) const noe
 {
     GLint loc = glGetUniformLocation(getID(), name.c_str());
 
-    glUniform1ui(loc, val);
+    glUniform1i(loc, val);
 }
 
 void ShaderProgram::setUniform(const std::string& name, const glm::vec4& vec) const noexcept
