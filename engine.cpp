@@ -143,6 +143,7 @@ void Engine::render(Object3D &obj, Camera &cam, LightList lights,
     }
 
 
+
     glPolygonMode(GL_FRONT_AND_BACK, material->getPolygonsFillMode());
 
     geom->bindBuffers();

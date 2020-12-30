@@ -16,11 +16,12 @@ Texture::Texture(const GLenum target)
 	: GLObject(gentex())
 	, _target(target)
 {
-	glBindTexture(getTarget(), getID());
+	bind();
 }
 
 Texture::~Texture() {
 	glDeleteTextures(1, &getID());
+	CHECK_ERROR();
 }
 
 GLenum Texture::getTarget() {
@@ -34,10 +35,12 @@ void Texture::bind(int index) {
 
 void Texture::bind() {
 	glBindTexture(getTarget(), getID());
+	CHECK_ERROR();
 }
 
 void Texture::unbind() {
 	glBindTexture(getTarget(), 0);
+	CHECK_ERROR();
 }
 
 void Texture::loadImage(const char *name) {
@@ -53,6 +56,8 @@ void Texture::loadImage(const char *name) {
 	glPixelStorei(GL_UNPACK_SKIP_ROWS, 0);
 
 	glTexParameteri(getTarget(), GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(getTarget(), GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(getTarget(), GL_TEXTURE_WRAP_T, GL_REPEAT);
 
 	auto format = GL_RGB;
 	if (nrChannels == 4) format = GL_RGBA;
@@ -60,14 +65,17 @@ void Texture::loadImage(const char *name) {
 	glTexImage2D(getTarget(), 0, format, width, height, 0, format,  GL_UNSIGNED_BYTE, data);
 	glGenerateMipmap(getTarget());
 
+	CHECK_ERROR();
+
 	unbind();
 
-	delete [] data;
+	stbi_image_free(data);
 }
 
 GLuint Texture::gentex() noexcept {
     GLuint ID;
     glGenTextures(1, &ID);
+    CHECK_ERROR();
     return ID;
 }
 

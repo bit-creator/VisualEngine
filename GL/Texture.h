@@ -16,8 +16,8 @@ class Texture : public GLObject {
 protected:
 	Texture(const GLenum target);
 
-	Texture(const Texture &other) = delete;
-	Texture& operator=(const Texture &other) = delete;
+//	Texture(const Texture &other) = delete;
+//	Texture& operator=(const Texture &other) = delete;
 
 public:
 	~Texture();

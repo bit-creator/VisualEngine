@@ -20,6 +20,14 @@
 #include <GL/freeglut.h>
 #include <GLFW/glfw3.h>
 
+#define CHECK_ERROR() {	\
+	auto res = glGetError(); \
+	if(res != GL_NO_ERROR) { \
+		std::cout << "FUNCTION: " << __func__ << "\tLINE: " << __LINE__ << '\t'; \
+		std::cout << "|   ERROR   |" << res << '\n'; \
+	}\
+}
+
 using ObjectID = const GLuint;
 
 /**
@@ -40,7 +48,6 @@ class GLObject
         explicit GLObject(ObjectID obj = 0) noexcept
             : _object(obj)
         {  }
-
         
         /**
          * @brief Construct a new GLObject object
@@ -60,7 +67,9 @@ class GLObject
          * @brief Destroy the GLObject object
          *        use tparam clear()
          */
-        ~GLObject() noexcept =default;
+        ~GLObject() noexcept {
+        	CHECK_ERROR();
+        }
  
     public:
         /**

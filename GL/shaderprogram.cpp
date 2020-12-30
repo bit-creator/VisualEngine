@@ -12,9 +12,11 @@ bool ShaderProgram::attachShader(const Shader& shader) const noexcept
     bool res = shader.compileShader();
     glAttachShader(getID(), shader.getID());
 
-    if(glGetError() == GL_NO_ERROR) return res;
+    auto errors = glGetError();
 
-    std::cout << "|    EROR     | attach shader\n" << "|             | " << glGetError() << '\n';
+    if(errors == GL_NO_ERROR) return res;
+
+    std::cout << "|    EROR     | attach shader\n" << "|             | " << errors << '\n';
     return false;
 }
 

@@ -38,8 +38,8 @@ public:
         float f4 = time;
         float f5 = time_;
 
-        time_ += 0.1;
-        time += 0.01;
+        time_ += 0.01;
+        time += 0.001;
         
         auto color = glm::vec4(1., 1., 1., 1.0);
         auto SpecularColor = glm::vec4(1., 0., 0., 1.0);
@@ -104,20 +104,19 @@ int main()
     auto moonObj = std::make_shared<Object3D>();
     auto cubeObj = std::make_shared<Object3D>();
 
-    TexPtr cubicTex = std::make_shared<Texture>(Texture2D());
-    TexPtr titleTex = std::make_shared<Texture>(Texture2D());
-    TexPtr diffEarth = std::make_shared<Texture>(Texture2D());
-    TexPtr specEarth = std::make_shared<Texture>(Texture2D());
-    TexPtr diffSun = std::make_shared<Texture>(Texture2D());
-    TexPtr diffMoon = std::make_shared<Texture>(Texture2D());
-    TexPtr skyBox = std::make_shared<Texture>(TextureCubeMap());
+    TexPtr cubicTex = std::make_shared<Texture2D>();
+    TexPtr titleTex = std::make_shared<Texture2D>();
+    TexPtr diffEarth = std::make_shared<Texture2D>();
+    TexPtr specEarth = std::make_shared<Texture2D>();
+    TexPtr diffSun = std::make_shared<Texture2D>();
+    TexPtr diffMoon = std::make_shared<Texture2D>();
 
-    cubicTex->loadImage("cube.jpg");
-    titleTex->loadImage("spec.png");
-    diffEarth->loadImage("diff_earth.jpg");
-    specEarth->loadImage("scec_earth.jpg");
-    diffSun->loadImage("diff_sun.jpg");
-    diffMoon->loadImage("dif_moon.jpg");
+    cubicTex->loadImage("resource/cube.jpg");
+    titleTex->loadImage("resource/spec.png");
+    diffEarth->loadImage("resource/diff_earth.jpg");
+    specEarth->loadImage("resource/scec_earth.jpg");
+    diffSun->loadImage("resource/diff_sun.jpg");
+    diffMoon->loadImage("resource/diff_moon.jpg");
     
     MaterialPtr simple = std::make_shared < Material > ();
 
