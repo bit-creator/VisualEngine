@@ -18,8 +18,10 @@
 #include "camera.h"
 #include "perspectivecamera.h"
 #include "object3d.h"
+#include "Light.h"
 
 using DrawList = std::vector < Object3D* >;
+using LightList = std::vector < Light* >;
 
 class Scene
 {
@@ -30,6 +32,8 @@ private:
     bool 										 _useSkyBox;
 
 public:
+    Light										 _light;
+
     Scene() noexcept;
     Scene(const Scene&) noexcept =delete;
     Scene& operator =(const Scene&) noexcept =delete;
@@ -50,9 +54,12 @@ public:
     NodePtr getRoot() const noexcept;
 
     DrawList getDrawList() const noexcept;
+    LightList getLightList() const noexcept;
+
 
 private:
     void getDrawListImpl(DrawList& list, const NodePtr& obj) const noexcept;
+    void getLightListImpl(LightList& list, const NodePtr& obj) const noexcept;
 };
 
 using ScenePtr = std::shared_ptr < Scene >;

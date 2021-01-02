@@ -36,7 +36,7 @@ GLuint VertexArray::genVAO() noexcept
 { GLuint VAO; glGenVertexArrays(1, &VAO); return VAO; }
 
 GLuint VertexArray::getAttribSize(Attribute attr) const noexcept
-{ return 3; }
+{ return (attr == Attribute::ATTRIB_TEX ? 2 : 3); }
 
 GLuint VertexArray::getAttribDataType(Attribute attr) const noexcept
 { return GL_FLOAT; }

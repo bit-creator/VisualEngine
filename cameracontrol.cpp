@@ -36,6 +36,8 @@ void CameraControl::onKeyPressed (int key, int scancode, int action, int mode) n
 
 void CameraControl::onMouseMove (double x, double y) noexcept {
 	_eilerAngle += glm::vec3(y * 0.002, x * 0.002, 0.);
+	if(_eilerAngle.x > M_PI / 2) _eilerAngle.x = M_PI / 2;
+	if(_eilerAngle.x < -M_PI / 2) _eilerAngle.x = -M_PI / 2;
 }
 
 void CameraControl::setVelocity(float velocity) noexcept {
