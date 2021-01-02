@@ -27,6 +27,7 @@ private:
 	glm::vec4									 _background;
     CameraPtr				                     _camera;
     NodePtr			                             _root;
+    bool 										 _useSkyBox;
 
 public:
     Scene() noexcept;
@@ -39,6 +40,12 @@ public:
 
     void setBackgroundColor(const glm::vec4& color) noexcept;
     const glm::vec4& getBackgroundColor() const noexcept;
+
+    void loadSkyboxImage(GLenum side, std::string filename);
+
+    void enableSkyBox();
+    void disableSkyBox();
+    bool useSkyBox() const;
 
     NodePtr getRoot() const noexcept;
 

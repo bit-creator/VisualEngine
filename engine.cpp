@@ -52,11 +52,17 @@ void Engine::run(const Window& window) noexcept {
         glClear(GL_COLOR_BUFFER_BIT);
         glClear(GL_DEPTH_BUFFER_BIT);
 
+        if (_scene -> useSkyBox()) renderSkyBox();
+
         for(auto obj : _scene->getDrawList())
         	render(*obj, *_scene->getCamera(), shader);
 
         glfwSwapBuffers(window);
     }
+}
+
+void Engine::renderSkyBox() {
+	std::cout << "Skybox rendered" << std::endl;
 }
 
 void Engine::render(Object3D &obj, Camera &cam,

@@ -41,3 +41,18 @@ void Scene::getDrawListImpl(DrawList &list, const NodePtr& obj) const noexcept {
 	}
 
 }
+
+void Scene::enableSkyBox() {
+	_useSkyBox = true;
+}
+
+void Scene::disableSkyBox() {
+	_useSkyBox = false;
+}
+
+bool Scene::useSkyBox() const {
+	return _useSkyBox;
+}
+
+void Scene::loadSkyboxImage(GLenum side, std::string filename) {
+}

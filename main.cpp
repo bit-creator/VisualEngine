@@ -86,6 +86,8 @@ int main()
 
     ScenePtr scene = std::make_shared<Scene>();
 
+    scene->enableSkyBox();
+
     auto sunObj = std::make_shared<Object3D>();
     auto earthObj = std::make_shared<Object3D>();
     auto moonObj = std::make_shared<Object3D>();
