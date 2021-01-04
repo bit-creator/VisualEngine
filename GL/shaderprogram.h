@@ -28,7 +28,7 @@ class ShaderProgram : public GLObject
         ShaderProgram() noexcept;
         ~ShaderProgram() noexcept;
 
-        bool attachShader(const Shader& shader) const noexcept;
+        void attachShader(const Shader& shader) const noexcept;
         bool link() const noexcept;
         void enable() const noexcept;
 

@@ -20,13 +20,18 @@
 #include <GL/freeglut.h>
 #include <GLFW/glfw3.h>
 
-#define CHECK_ERROR() {	\
-	auto res = glGetError(); \
-	if(res != GL_NO_ERROR) { \
-		std::cout << "FUNCTION: " << __func__ << "\tLINE: " << __LINE__ << '\t'; \
-		std::cout << "|   ERROR   |" << res << '\n'; \
-	}\
-}
+#define CHECK_GL_ERROR() {	 								\
+	if (auto res = glGetError( ); res != GL_NO_ERROR) {		\
+		std::cout << "| GL_ERROR | "      						\
+				  << "file | " << __FILE__					\
+				  << " | method | " << __PRETTY_FUNCTION__	\
+				  << " | line | " << __LINE__   			\
+				  << " | " << glewGetErrorString(res)		\
+				  << std::endl;								\
+	} else {												\
+															\
+	}														\
+}     														\
 
 using ObjectID = const GLuint;
 
@@ -68,7 +73,7 @@ class GLObject
          *        use tparam clear()
          */
         ~GLObject() noexcept {
-        	CHECK_ERROR();
+        	CHECK_GL_ERROR();
         }
  
     public:

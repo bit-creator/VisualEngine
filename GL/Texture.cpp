@@ -21,7 +21,7 @@ Texture::Texture(const GLenum target)
 
 Texture::~Texture() {
 	glDeleteTextures(1, &getID());
-	CHECK_ERROR();
+	CHECK_GL_ERROR();
 }
 
 GLenum Texture::getTarget() {
@@ -35,12 +35,12 @@ void Texture::bind(int index) {
 
 void Texture::bind() {
 	glBindTexture(getTarget(), getID());
-	CHECK_ERROR();
+	CHECK_GL_ERROR();
 }
 
 void Texture::unbind() {
 	glBindTexture(getTarget(), 0);
-	CHECK_ERROR();
+	CHECK_GL_ERROR();
 }
 
 void Texture::loadImage(const char *name) {
@@ -65,7 +65,7 @@ void Texture::loadImage(const char *name) {
 	glTexImage2D(getTarget(), 0, format, width, height, 0, format,  GL_UNSIGNED_BYTE, data);
 	glGenerateMipmap(getTarget());
 
-	CHECK_ERROR();
+	CHECK_GL_ERROR();
 
 	unbind();
 
@@ -75,7 +75,7 @@ void Texture::loadImage(const char *name) {
 GLuint Texture::gentex() noexcept {
     GLuint ID;
     glGenTextures(1, &ID);
-    CHECK_ERROR();
+    CHECK_GL_ERROR();
     return ID;
 }
 

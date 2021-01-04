@@ -64,8 +64,9 @@ LightList Scene::getLightList() const noexcept {
 }
 
 void Scene::getLightListImpl(LightList &list, const NodePtr &obj) const noexcept {
-	for(auto child : obj->getChilds()){
+	for(auto child : obj->getChilds()) {
 		getLightListImpl(list, child);
 	if(child->getNodeType() == NodeType::NODE_LIGHT)
 		list.push_back((Light*)child.get());
+	}
 }
