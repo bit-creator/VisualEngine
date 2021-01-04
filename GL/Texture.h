@@ -12,12 +12,19 @@
 
 #include "globject.hpp"
 
+enum class SkyBox
+{
+	right = GL_TEXTURE_CUBE_MAP_POSITIVE_X,
+	left = GL_TEXTURE_CUBE_MAP_NEGATIVE_X,
+	sky = GL_TEXTURE_CUBE_MAP_POSITIVE_Y,
+	ground = GL_TEXTURE_CUBE_MAP_NEGATIVE_Y,
+	near = GL_TEXTURE_CUBE_MAP_POSITIVE_Z,
+	far = GL_TEXTURE_CUBE_MAP_NEGATIVE_Z
+};
+
 class Texture : public GLObject {
 protected:
 	Texture(const GLenum target);
-
-//	Texture(const Texture &other) = delete;
-//	Texture& operator=(const Texture &other) = delete;
 
 public:
 	~Texture();
@@ -45,10 +52,7 @@ public:
 	Texture2D();
 	~Texture2D() =default;
 
-	Texture2D(const Texture2D &other) =delete;
 	Texture2D(Texture2D &&other) =default;
-
-	Texture2D& operator=(const Texture2D &other) =delete;
 	Texture2D& operator=(Texture2D &&other) =default;
 };	// CLASS_TEXTURE2D
 
@@ -57,10 +61,7 @@ public:
 	TextureCubeMap();
 	~TextureCubeMap() =default;
 
-	TextureCubeMap(const TextureCubeMap &other) =delete;
 	TextureCubeMap(TextureCubeMap &&other) =default;
-
-	TextureCubeMap& operator=(const TextureCubeMap &other) =delete;
 	TextureCubeMap& operator=(TextureCubeMap &&other) =default;
 }; 	// CLASS_TEXTURECUBEMAP
 

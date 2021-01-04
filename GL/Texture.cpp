@@ -20,8 +20,7 @@ Texture::Texture(const GLenum target)
 }
 
 Texture::~Texture() {
-	glDeleteTextures(1, &getID());
-	CHECK_ERROR();
+	glDeleteTextures(1, &getID()); CHECK_GL_ERROR();
 }
 
 GLenum Texture::getTarget() {
@@ -29,18 +28,16 @@ GLenum Texture::getTarget() {
 }
 
 void Texture::bind(int index) {
-	glActiveTexture(GL_TEXTURE0 + index);
+	glActiveTexture(GL_TEXTURE0 + index); CHECK_GL_ERROR();
 	bind();
 }
 
 void Texture::bind() {
-	glBindTexture(getTarget(), getID());
-	CHECK_ERROR();
+	glBindTexture(getTarget(), getID()); CHECK_GL_ERROR();
 }
 
 void Texture::unbind() {
-	glBindTexture(getTarget(), 0);
-	CHECK_ERROR();
+	glBindTexture(getTarget(), 0); CHECK_GL_ERROR();
 }
 
 void Texture::loadImage(const char *name) {
@@ -50,22 +47,20 @@ void Texture::loadImage(const char *name) {
 
 	bind();
 
-	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-	glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
-	glPixelStorei(GL_UNPACK_SKIP_PIXELS, 0);
-	glPixelStorei(GL_UNPACK_SKIP_ROWS, 0);
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);   CHECK_GL_ERROR();
+	glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);  CHECK_GL_ERROR();
+	glPixelStorei(GL_UNPACK_SKIP_PIXELS, 0); CHECK_GL_ERROR();
+	glPixelStorei(GL_UNPACK_SKIP_ROWS, 0);   CHECK_GL_ERROR();
 
-	glTexParameteri(getTarget(), GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexParameteri(getTarget(), GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(getTarget(), GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(getTarget(), GL_TEXTURE_MAG_FILTER, GL_NEAREST); CHECK_GL_ERROR();
+	glTexParameteri(getTarget(), GL_TEXTURE_WRAP_S, GL_REPEAT);      CHECK_GL_ERROR();
+	glTexParameteri(getTarget(), GL_TEXTURE_WRAP_T, GL_REPEAT);      CHECK_GL_ERROR();
 
 	auto format = GL_RGB;
 	if (nrChannels == 4) format = GL_RGBA;
 
-	glTexImage2D(getTarget(), 0, format, width, height, 0, format,  GL_UNSIGNED_BYTE, data);
-	glGenerateMipmap(getTarget());
-
-	CHECK_ERROR();
+	glTexImage2D(getTarget(), 0, format, width, height, 0, format,  GL_UNSIGNED_BYTE, data); CHECK_GL_ERROR();
+	glGenerateMipmap(getTarget()); CHECK_GL_ERROR();
 
 	unbind();
 
@@ -74,8 +69,7 @@ void Texture::loadImage(const char *name) {
 
 GLuint Texture::gentex() noexcept {
     GLuint ID;
-    glGenTextures(1, &ID);
-    CHECK_ERROR();
+    glGenTextures(1, &ID); CHECK_GL_ERROR();
     return ID;
 }
 

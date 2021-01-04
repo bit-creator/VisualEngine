@@ -112,6 +112,7 @@ int main()
     TexPtr specEarth = std::make_shared<Texture2D>();
     TexPtr diffSun = std::make_shared<Texture2D>();
     TexPtr diffMoon = std::make_shared<Texture2D>();
+    TexPtr skyBox = std::make_shared<TextureCubeMap>();
 
     cubicTex->loadImage("resource/cube.jpg");
     titleTex->loadImage("resource/spec.png");
@@ -120,6 +121,13 @@ int main()
     diffSun->loadImage("resource/diff_sun.jpg");
     diffMoon->loadImage("resource/diff_moon.jpg");
     
+    scene->loadSkyboxImage(SkyBox::left,   skyBox, "resource/skybox/left.jpg");
+//    scene->loadSkyboxImage(SkyBox::right,  skyBox, "resource/skybox/right.jpg");
+//    scene->loadSkyboxImage(SkyBox::ground, skyBox, "resource/skybox/ground.jpg");
+//    scene->loadSkyboxImage(SkyBox::sky,    skyBox, "resource/skybox/sky.jpg");
+//    scene->loadSkyboxImage(SkyBox::near,   skyBox, "resource/skybox/near.jpg");
+//    scene->loadSkyboxImage(SkyBox::far,    skyBox, "resource/skybox/far.jpg");
+
     MaterialPtr simple = std::make_shared < Material > ();
 
     simple->setAmbientColor(glm::vec4(1., 0.2, 0.2, 1.0));

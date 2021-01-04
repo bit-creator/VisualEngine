@@ -29,31 +29,30 @@ enum class Attribute
    ATTRIB_TEX = 3
 };
 
-class VertexArray : public GLObject
-{
-    private:
-        std::array < std::optional < Attribute >, 4 >                   _atributes;
+class VertexArray : public GLObject {
+private:
+	std::array < std::optional < Attribute >, 4 >                   _atributes;
 
-    public:
-        VertexArray() noexcept;
-        ~VertexArray() noexcept;    
+public:
+	VertexArray() noexcept;
+    ~VertexArray() noexcept;
 
-        void bind() noexcept;
-        void unbind() noexcept;
-        void enable(Attribute attr) noexcept;
-        void enableAll() noexcept;
-        void disable(Attribute attr) noexcept;
-        void disableAll() noexcept;
+    void bind() noexcept;
+    void unbind() noexcept;
+    void enable(Attribute attr) noexcept;
+    void enableAll() noexcept;
+    void disable(Attribute attr) noexcept;
+    void disableAll() noexcept;
 
-        void addAttribute(Attribute attr, GLsizei stride, GLsizei offset) noexcept;
+    void addAttribute(Attribute attr, GLsizei stride, GLsizei offset) noexcept;
 
-        bool hasAttribute(Attribute attr) const noexcept;
+    bool hasAttribute(Attribute attr) const noexcept;
 
-    private:
-        GLuint genVAO() noexcept;
-        GLuint getAttribSize(Attribute attr) const noexcept;
-        GLuint getAttribDataType(Attribute attr) const noexcept;
-        GLuint getAttribLocation(Attribute attr) const noexcept;
+private:
+    GLuint genVAO() noexcept;
+    GLuint getAttribSize(Attribute attr) const noexcept;
+    GLuint getAttribDataType(Attribute attr) const noexcept;
+    GLuint getAttribLocation(Attribute attr) const noexcept;
 };
 
 #endif //  VERTEXARRAY_H

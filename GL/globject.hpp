@@ -20,66 +20,44 @@
 #include <GL/freeglut.h>
 #include <GLFW/glfw3.h>
 
-#define CHECK_ERROR() {	\
-	auto res = glGetError(); \
-	if(res != GL_NO_ERROR) { \
-		std::cout << "FUNCTION: " << __func__ << "\tLINE: " << __LINE__ << '\t'; \
-		std::cout << "|   ERROR   |" << res << '\n'; \
-	}\
-}
+#define CHECK_GL_ERROR() {	 								\
+	if (auto res = glGetError( ); res != GL_NO_ERROR) {		\
+		std::cout << "| GL_ERROR | "      					\
+				  << "file | " << __FILE__					\
+				  << " | method | " << __PRETTY_FUNCTION__	\
+				  << " | line | " << __LINE__   			\
+				  << " | " << glewGetErrorString(res)		\
+				  << std::endl;								\
+	} else {												\
+															\
+	}														\
+}     														\
 
 using ObjectID = const GLuint;
 
-/**
- * @brief wrapper for openGl objects
- * 
- * @tparam create(void) 
- * @tparam clear(ObjectID) 
- */
-class GLObject
-{
-    private:
-        ObjectID                            _object;                      // ID current shader
-    protected:
-        /**
-         * @brief Construct a new GLObject object 
-         *        use tparam create()
-         */
-        explicit GLObject(ObjectID obj = 0) noexcept
-            : _object(obj)
-        {  }
-        
-        /**
-         * @brief Construct a new GLObject object
-         *        or replace current object
-         *        use other object prohibited
-         */
-        GLObject(const GLObject&)  =delete;
-        
-        GLObject& 
-        operator=(const GLObject&) =delete;
+class GLObject {
+private:
+	ObjectID                            _object;                      // ID current shader
 
-        GLObject(GLObject&&) =default;
-        GLObject& operator=(GLObject&&) =default;
-
+protected:
+	explicit GLObject(ObjectID obj = 0) noexcept
+    	: _object(obj)
+	{  }
         
-        /**
-         * @brief Destroy the GLObject object
-         *        use tparam clear()
-         */
-        ~GLObject() noexcept {
-        	CHECK_ERROR();
-        }
+    GLObject(const GLObject&)  =delete;
+    GLObject& operator=(const GLObject&) =delete;
+
+    GLObject(GLObject&&) =default;
+    GLObject& operator=(GLObject&&) =default;
+
+    ~GLObject() noexcept {
+    	CHECK_GL_ERROR();
+    }
  
-    public:
-        /**
-         * @brief get reference to ID
-         * 
-         * @return ID current object 
-         */
-        ObjectID&
-        getID() const noexcept
-        { return _object; }
+public:
+    ObjectID& getID() const noexcept {
+    	return _object;
+    }
 }; // GLObject
 
 #endif // GLOBJECT_H

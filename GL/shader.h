@@ -22,39 +22,13 @@
 
 #include "globject.hpp"
 
-/**
- * @brief impliment work with single shader
- *        inherit GLObject properties
- */
-class Shader : public GLObject
-{
-    public:
-        /**
-         * @brief Construct a new Shader object
-         *        copy/move operations with shader
-         *        prohibited
-         */
-        Shader(const GLuint shaderType) noexcept;
+class Shader : public GLObject {
+public:
+	Shader(const GLuint shaderType) noexcept;
+    ~Shader() noexcept;
 
-        ~Shader() noexcept;
-
-        /**
-         * @brief impliment compile process for
-         *        shader (use OGL func)
-         * 
-         * @return true if compile sucessesfull
-         */
-        bool
-        compileShader() const noexcept;
-
-        /**
-         * @brief load shader in memory use 
-         *        source string of chapters
-         * 
-         * @param source string with shader
-         */
-        void 
-        addSource(const std::string& source) const noexcept;
+    bool compileShader() const noexcept;
+    void addSource(const std::string& source) const noexcept;
 }; // Shader
 
 std::string loadShaderFromFile(const std::string& path) noexcept;

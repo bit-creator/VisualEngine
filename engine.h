@@ -30,7 +30,7 @@ class Engine
 {
 private:
 	ScenePtr                        		 _scene;
-    Cube   									 _skyBox;
+    Object3D   								 _skyBox;
 
 private:
     std::vector < EventListenerPtr >		 _eventListeners;
@@ -41,7 +41,7 @@ private:
     Engine(const Engine&) =delete;
     Engine& operator =(const Engine&) =delete;
 
-    void renderSkyBox();
+    void renderSkyBox(ShaderProgram& prg);
 
         // std::vector<Window>    _window_array;
     inline static const Window     _mainWindow = Window(4.6f, 1366u, 720u, "Visual Engine");

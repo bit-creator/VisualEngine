@@ -38,6 +38,21 @@ void Engine::run(const Window& window) noexcept {
 
     shader.link();
     
+    VertexShader vertSkyBox(GL_VERTEX_SHADER);
+    FragmentShader fragSkyBox(GL_FRAGMENT_SHADER);
+
+    vertSkyBox.addSource(loadShaderFromFile("shaders/skybox/skybox.vert.glsl"));
+    fragSkyBox.addSource(loadShaderFromFile("shaders/skybox/skybox.frag.glsl"));
+
+    ShaderProgram shaderSkyBox;
+
+    shaderSkyBox.attachShader(vertSkyBox);
+    shaderSkyBox.attachShader(fragSkyBox);
+
+    shaderSkyBox.link();
+
+    _skyBox.setGeometry(std::make_shared<Cube>());
+
     glEnable(GL_DEPTH_TEST);
 
     while (!glfwWindowShouldClose(window))
@@ -54,7 +69,7 @@ void Engine::run(const Window& window) noexcept {
         glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
         glClear(GL_DEPTH_BUFFER_BIT);
 
-        if (_scene -> useSkyBox()) renderSkyBox();
+        if (_scene -> useSkyBox()) renderSkyBox(shaderSkyBox);
 
         for(auto obj : _scene->getDrawList())
         	render(*obj, *_scene->getCamera(), _scene->getLightList(), shader);
@@ -63,8 +78,27 @@ void Engine::run(const Window& window) noexcept {
     }
 }
 
-void Engine::renderSkyBox() {
-	std::cout << "Skybox rendered" << std::endl;
+void Engine::renderSkyBox(ShaderProgram& prg) {
+	prg.enable();
+
+	auto geom = _skyBox.getGeometry();
+
+	glm::mat4 modelMat = _skyBox.getWorldMat();
+	glm::mat4 viewMat = glm::inverse(_scene->getCamera()->getWorldMat());
+	glm::mat4 projMat = _scene->getCamera()->getProjectionMatrix();
+	glm::mat3 nMat = glm::inverse(glm::transpose(modelMat));
+
+	auto mVPMat = projMat * viewMat * modelMat;
+	auto modelViewMat = viewMat * modelMat;
+
+	prg.setUniform("uSkyBoxMVPMat", mVPMat);
+
+	geom->bindBuffers();
+
+	glDrawElements(geom->getPoligonConnectMode(), geom->getNumIndices(), GL_UNSIGNED_INT, 0);
+
+	geom->unbindBuffers();
+
 }
 
 void Engine::render(Object3D &obj, Camera &cam, LightList lights,
