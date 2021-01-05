@@ -67,10 +67,8 @@ vec4 PhongLighting(vec4 ambientColor, vec4 diffuseColor, vec4 specularColor,
   
   if (diffFactor < 0) specFactor = 0; 
 
-  float ambiFactor = 0.1; 
-
   diffFactor = clamp(diffFactor, 0.0, 1.0);
   specFactor = clamp(specFactor, 0.0, 1.0);
 
-  return ambientColor * ambiFactor + diffuseColor * diffFactor + specularColor * specFactor;
+  return ambientColor + diffuseColor * diffFactor + specularColor * specFactor;
 }

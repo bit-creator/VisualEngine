@@ -25,20 +25,22 @@ std::vector<EventListenerPtr>& Engine::getListeners() noexcept {
 }
 
 void Engine::run(const Window& window) noexcept {
-    VertexShader vertex(GL_VERTEX_SHADER);
-    FragmentShader frag(GL_FRAGMENT_SHADER);
+//	VertexShader vertex;
+//	FragmentShader frag;
+//
+//    vertex.addSource(loadShaderFromFile("shaders/primitive/primitive.vert.glsl"));
+//    frag.addSource(loadShaderFromFile("shaders/primitive/primitive.frag.glsl"));
+//
+//    ShaderProgram shader;
+//
+//    shader.attachShader(vertex);
+//    shader.attachShader(frag);
+//
+//    shader.link();
 
-    vertex.addSource(loadShaderFromFile("shaders/primitive/primitive.vert.glsl"));
-    frag.addSource(loadShaderFromFile("shaders/primitive/primitive.frag.glsl"));
+	auto& shader = _factory.getShader(ShaderType::SHADER_PHONG);
 
-    ShaderProgram shader;
-   
-    shader.attachShader(vertex);
-    shader.attachShader(frag);
-
-    shader.link();
-    
-    glEnable(GL_DEPTH_TEST);
+	glEnable(GL_DEPTH_TEST);
 
     while (!glfwWindowShouldClose(window))
     {
@@ -152,4 +154,22 @@ void Engine::render(Object3D &obj, Camera &cam, LightList lights,
     else glDrawArrays(geom->getPoligonConnectMode() , 0, geom->getNumVertexes());
 
     geom->unbindBuffers();
+
+    if (geom->hasTexCoord())
+    {
+    	if (material->getAmbientTexture() != nullptr)
+    	{
+    		material->getAmbientTexture()->unbind();
+    	}
+
+    	if (material->getDiffuseTexture() != nullptr)
+    	{
+    		material->getDiffuseTexture()->unbind();
+    	}
+
+    	if (material->getSpecularTexture() != nullptr)
+    	{
+    		material->getSpecularTexture()->unbind();
+    	}
+    }
 }

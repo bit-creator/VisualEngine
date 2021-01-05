@@ -1,9 +1,8 @@
 /*
  * Color.cpp
  *
- *  Created on: Dec 30, 2020
- *      Author: bit_creator
- */
+ *  Created on: Dec 16, 2020
+*/
 
 #include "Color.h"
 
@@ -82,6 +81,3 @@ float Color::getB() const {
 float Color::getA() const {
 	return _source.a;
 }
-
-
-

@@ -4,7 +4,6 @@ Scene::Scene() noexcept
 	: _background(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f))
 	, _camera(std::make_shared<Camera>(PerspectiveCamera(M_PI / 3, 1, 0.1, 100)))
 	, _root(std::make_shared<Node>(NodeType::NODE_NODE))
-	, _light(LightType::LIGHT_DIRECTIONAL)
 {  }
 
 void Scene::setCamera(CameraPtr camera) noexcept {

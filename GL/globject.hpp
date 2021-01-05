@@ -78,8 +78,9 @@ class GLObject
          * @return ID current object 
          */
         ObjectID&
-        getID() const noexcept
-        { return _object; }
+        getID() const noexcept {
+        	return _object;
+        }
 }; // GLObject
 
 #endif // GLOBJECT_H
