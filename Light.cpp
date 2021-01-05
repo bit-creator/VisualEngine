@@ -24,3 +24,9 @@ void Light::setColor(const Color &color) {
 Color Light::getColor() const {
 	return _color;
 }
+
+std::string getLightsName(const int index) {
+	std::string patern = "uLights[%].";
+	std::replace(patern.begin(), patern.end(), '%', (char)(index + '0'));
+	return patern;
+}

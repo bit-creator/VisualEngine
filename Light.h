@@ -45,6 +45,8 @@ public:
 
 };
 
+std::string getLightsName(const int index);
+
 using LightPtr = std::shared_ptr < Light >;
 
 #endif /* LIGHT_H_ */

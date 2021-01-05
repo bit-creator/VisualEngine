@@ -63,7 +63,7 @@ void Texture::loadImage(const char *name, const GLenum target) {
 	if (nrChannels == 4) format = GL_RGBA;
 
 	glTexImage2D(target, 0, format, width, height, 0, format,  GL_UNSIGNED_BYTE, data);
-	glGenerateMipmap(target);
+	glGenerateMipmap(getTarget());
 
 	CHECK_ERROR();
 
@@ -72,7 +72,7 @@ void Texture::loadImage(const char *name, const GLenum target) {
 	stbi_image_free(data);
 }
 
-void Texture::discard() {
+void Texture::setEmpty() {
 	glBindTexture(getTarget(), getID());
 
 	unsigned char data[3] = {
@@ -103,60 +103,18 @@ GLuint Texture::gentex() noexcept {
 
 Texture2D::Texture2D()
 	: Texture(GL_TEXTURE_2D)
-{ discard(); }
+{ setEmpty(); }
 
 TextureCubeMap::TextureCubeMap()
 	: Texture(GL_TEXTURE_CUBE_MAP)
 {
-	discard();
+	setEmpty();
 }
 
-void Texture2D::loadImage(const char* name, const GLenum target) {
-	int width, height, nrChannels;
-
-	unsigned char *data = stbi_load(name, &width, &height, &nrChannels, 0);
-
-	glBindTexture(target, getID());
-
-	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-	glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
-	glPixelStorei(GL_UNPACK_SKIP_PIXELS, 0);
-	glPixelStorei(GL_UNPACK_SKIP_ROWS, 0);
-
-	glTexParameteri(target, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-
-	auto format = GL_RGB;
-	if (nrChannels == 4) format = GL_RGBA;
-
-	glTexImage2D(target, 0, format, width, height, 0, format,  GL_UNSIGNED_BYTE, data);
-	glGenerateMipmap(target);
-
-	unbind();
-
-	delete [] data;
+void Texture2D::loadImage(const char* name) {
+	Texture::loadImage(name, GL_TEXTURE_2D);
 }
 
-void TextureCubeMap::loadImage(const char* name, const GLenum target) {
-	int width, height, nrChannels;
-
-	unsigned char *data = stbi_load(name, &width, &height, &nrChannels, 0);
-
-	bind();
-
-	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-	glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
-	glPixelStorei(GL_UNPACK_SKIP_PIXELS, 0);
-	glPixelStorei(GL_UNPACK_SKIP_ROWS, 0);
-
-	glTexParameteri(target, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-
-	auto format = GL_RGB;
-	if (nrChannels == 4) format = GL_RGBA;
-
-	glTexImage2D(target, 0, format, width, height, 0, format,  GL_UNSIGNED_BYTE, data);
-	glGenerateMipmap(target);
-
-	unbind();
-
-	delete [] data;
+void TextureCubeMap::loadImage(const char* name, const BoxSide side) {
+	Texture::loadImage(name, (GLuint)side);
 }

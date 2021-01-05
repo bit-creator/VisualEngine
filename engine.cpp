@@ -1,5 +1,4 @@
 #include "engine.h"
-#include "ShaderFactory.h"
 
 Engine& Engine::engine() noexcept {
 	static Engine engine; return engine;
@@ -39,7 +38,7 @@ void Engine::run(const Window& window) noexcept {
 //
 //    shader.link();
 
-	auto& shader = ShaderFactory::getInstance().getShader(ShaderType::SHADER_PHONG);
+	auto& shader = _factory.getShader(ShaderType::SHADER_PHONG);
 
 	glEnable(GL_DEPTH_TEST);
 
@@ -174,10 +173,3 @@ void Engine::render(Object3D &obj, Camera &cam, LightList lights,
     	}
     }
 }
-
-std::string getLightsName(const int index) {
-	std::string patern = "uLights[%].";
-	std::replace(patern.begin(), patern.end(), '%', (char)(index + '0'));
-	return patern;
-}
-

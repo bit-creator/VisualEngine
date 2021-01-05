@@ -18,6 +18,7 @@
 #include "abstracteventlistener.hpp"
 #include "orthographiccamera.h"
 #include "perspectivecamera.h"
+#include "ShaderFactory.h"
 #include "object3d.h"
 #include "window.h"
 #include "scene.h"
@@ -26,6 +27,7 @@ class Engine
 {
     private:
         ScenePtr                        		 _scene;
+        ShaderFactory							 _factory;
 
     private:
         std::vector < EventListenerPtr >		 _eventListeners;
@@ -58,7 +60,5 @@ class Engine
 
         void render(Object3D& obj, Camera& cam, LightList lights, ShaderProgram& prg) noexcept;
 };
-
-std::string getLightsName(const int index);
 
 #endif // ENGINE_H

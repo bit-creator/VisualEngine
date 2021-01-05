@@ -98,8 +98,6 @@ int main()
 {
     auto& eng = Engine::engine();
 
-    ShaderFactory::getInstance();
-
     ScenePtr scene = std::make_shared<Scene>();
 
     auto sunObj = std::make_shared<Object3D>();
