@@ -50,3 +50,11 @@ std::string loadShaderFromFile(const std::string& path) noexcept {
 
     return std::string("").c_str();
 }
+
+VertexShader::VertexShader()
+	: Shader(GL_VERTEX_SHADER)
+{  }
+
+FragmentShader::FragmentShader()
+	: Shader(GL_FRAGMENT_SHADER)
+{  }

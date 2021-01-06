@@ -4,6 +4,9 @@ Material::Material() noexcept
     : _ambientColor(1.0, 1.0, 1.0, 1.0)
     , _diffuseColor(1.0, 1.0, 1.0, 1.0)
     , _specularColor(1.0, 1.0, 1.0, 1.0)
+	, _ambientMap(nullptr)
+	, _diffuseMap(nullptr)
+	, _specularMap(nullptr)
     , _roughness(0.0)
 	, _fillMode(GL_FILL)
 {  }
@@ -67,7 +70,6 @@ TexPtr Material::getSpecularTexture() const noexcept {
 	return _specularMap;
 }
 
-const GLenum Material::getPolygonsFillMode() const noexcept
-{
+const GLenum Material::getPolygonsFillMode() const noexcept {
 	return _fillMode;
 }

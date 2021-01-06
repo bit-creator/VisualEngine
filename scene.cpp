@@ -4,8 +4,6 @@ Scene::Scene() noexcept
 	: _background(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f))
 	, _camera(std::make_shared<Camera>(PerspectiveCamera(M_PI / 3, 1, 0.1, 100)))
 	, _root(std::make_shared<Node>(NodeType::NODE_NODE))
-	, _useSkyBox(false)
-	, _light(LightType::LIGHT_DIRECTIONAL)
 {  }
 
 void Scene::setCamera(CameraPtr camera) noexcept {
@@ -43,25 +41,29 @@ void Scene::getDrawListImpl(DrawList &list, const NodePtr& obj) const noexcept {
 	}
 }
 
-void Scene::enableSkyBox() {
-	_useSkyBox = true;
-}
-
 void Scene::disableSkyBox() {
-	_useSkyBox = false;
+	_skyBox = nullptr;
 }
 
 bool Scene::useSkyBox() const {
-	return _useSkyBox;
+	return _skyBox != nullptr;
 }
 
-void Scene::loadSkyboxImage(SkyBox side, TexPtr skyBox, std::string filename) {
+void Scene::loadSkyboxImage(BoxSide side, TexPtr skyBox, std::string filename) {
 }
 
 LightList Scene::getLightList() const noexcept {
 	LightList result;
 	getLightListImpl(result, _root);
 	return result;
+}
+
+void Scene::setSkyBox(TexPtr skyBox) {
+	_skyBox = skyBox;
+}
+
+TexPtr Scene::getSkyBox() const {
+	return _skyBox;
 }
 
 void Scene::getLightListImpl(LightList &list, const NodePtr &obj) const noexcept {

@@ -28,7 +28,7 @@ Sphere::Sphere(GLuint subdivision) noexcept
 {
 	div(_subdiv);
 	refreshUV();
-	setNum(_indices->size() * 3,  _vertices.size(), true);
+	setNum(_indices->size() * 3,  _vertices.size());
 	setupBuffers();
 }
 

@@ -30,11 +30,8 @@ private:
     CameraPtr				                     _camera;
     NodePtr			                             _root;
     TexPtr										 _skyBox;
-    bool 										 _useSkyBox;
 
 public:
-    Light										 _light;
-
     Scene() noexcept;
     Scene(const Scene&) noexcept =delete;
     Scene& operator =(const Scene&) noexcept =delete;
@@ -46,11 +43,13 @@ public:
     void setBackgroundColor(const glm::vec4& color) noexcept;
     const glm::vec4& getBackgroundColor() const noexcept;
 
-    void loadSkyboxImage(SkyBox side, TexPtr skyBox, std::string filename);
+    void loadSkyboxImage(BoxSide side, TexPtr skyBox, std::string filename);
 
-    void enableSkyBox();
     void disableSkyBox();
     bool useSkyBox() const;
+
+    void setSkyBox(TexPtr skyBox);
+    TexPtr getSkyBox() const;
 
     NodePtr getRoot() const noexcept;
 

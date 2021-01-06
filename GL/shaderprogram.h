@@ -54,4 +54,6 @@ public:  // set Uniform //
     void setUniform(const std::string& name, const int val) const noexcept;
 };
 
+using PrgPtr = std::unique_ptr < ShaderProgram >;
+
 #endif // SHADERPROGRAM_H

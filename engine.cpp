@@ -25,35 +25,13 @@ std::vector<EventListenerPtr>& Engine::getListeners() noexcept {
 }
 
 void Engine::run(const Window& window) noexcept {
-    VertexShader vertex(GL_VERTEX_SHADER);
-    FragmentShader frag(GL_FRAGMENT_SHADER);
+    auto& shaderSkyBox = _factory.getShader(ShaderType::SHADER_SKYBOX);;
 
-    vertex.addSource(loadShaderFromFile("shaders/primitive/primitive.vert.glsl"));
-    frag.addSource(loadShaderFromFile("shaders/primitive/primitive.frag.glsl"));
+	auto& shader = _factory.getShader(ShaderType::SHADER_PHONG);
 
-    ShaderProgram shader;
-   
-    shader.attachShader(vertex);
-    shader.attachShader(frag);
+	_skyBox.setGeometry(std::make_shared<Cube>());
 
-    shader.link();
-    
-    VertexShader vertSkyBox(GL_VERTEX_SHADER);
-    FragmentShader fragSkyBox(GL_FRAGMENT_SHADER);
-
-    vertSkyBox.addSource(loadShaderFromFile("shaders/skybox/skybox.vert.glsl"));
-    fragSkyBox.addSource(loadShaderFromFile("shaders/skybox/skybox.frag.glsl"));
-
-    ShaderProgram shaderSkyBox;
-
-    shaderSkyBox.attachShader(vertSkyBox);
-    shaderSkyBox.attachShader(fragSkyBox);
-
-    shaderSkyBox.link();
-
-    _skyBox.setGeometry(std::make_shared<Cube>());
-
-    glEnable(GL_DEPTH_TEST);
+	glEnable(GL_DEPTH_TEST);
 
     while (!glfwWindowShouldClose(window))
     {
@@ -86,7 +64,6 @@ void Engine::renderSkyBox(ShaderProgram& prg) {
 	glm::mat4 modelMat = _skyBox.getWorldMat();
 	glm::mat4 viewMat = glm::inverse(_scene->getCamera()->getWorldMat());
 	glm::mat4 projMat = _scene->getCamera()->getProjectionMatrix();
-	glm::mat3 nMat = glm::inverse(glm::transpose(modelMat));
 
 	auto mVPMat = projMat * viewMat * modelMat;
 	auto modelViewMat = viewMat * modelMat;
@@ -192,4 +169,22 @@ void Engine::render(Object3D &obj, Camera &cam, LightList lights,
     else glDrawArrays(geom->getPoligonConnectMode() , 0, geom->getNumVertexes());
 
     geom->unbindBuffers();
+
+    if (geom->hasTexCoord())
+    {
+    	if (material->getAmbientTexture() != nullptr)
+    	{
+    		material->getAmbientTexture()->unbind();
+    	}
+
+    	if (material->getDiffuseTexture() != nullptr)
+    	{
+    		material->getDiffuseTexture()->unbind();
+    	}
+
+    	if (material->getSpecularTexture() != nullptr)
+    	{
+    		material->getSpecularTexture()->unbind();
+    	}
+    }
 }

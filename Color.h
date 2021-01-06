@@ -1,9 +1,8 @@
 /*
  * Color.h
  *
- *  Created on: Dec 30, 2020
- *      Author: bit_creator
- */
+ *  Created on: Dec 16, 2020
+*/
 
 #ifndef COLOR_H_
 #define COLOR_H_

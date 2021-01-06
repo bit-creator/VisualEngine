@@ -15,6 +15,7 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
+#include <memory>
 
 #include <GL/glew.h>
 #include <GL/freeglut.h>
@@ -31,9 +32,31 @@ public:
     void addSource(const std::string& source) const noexcept;
 }; // Shader
 
+
+class VertexShader final : public Shader
+{
+public:
+	VertexShader();
+	~VertexShader() = default;
+	VertexShader(const VertexShader &other) = delete;
+	VertexShader(VertexShader &&other) = default;
+	VertexShader& operator=(const VertexShader &other) = delete;
+	VertexShader& operator=(VertexShader &&other) = default;
+};
+
+class FragmentShader final : public Shader
+{
+public:
+	FragmentShader();
+	~FragmentShader() = default;
+	FragmentShader(const FragmentShader &other) = delete;
+	FragmentShader(FragmentShader &&other) = default;
+	FragmentShader& operator=(const FragmentShader &other) = delete;
+	FragmentShader& operator=(FragmentShader &&other) = default;
+};
+
 std::string loadShaderFromFile(const std::string& path) noexcept;
 
-using VertexShader = Shader;
-using FragmentShader = Shader;
+using ShaderPtr = std::shared_ptr<Shader>;
 
 #endif // SHADER_H

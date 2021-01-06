@@ -2,7 +2,7 @@
 
 Cube::Cube() noexcept
     : Geometry()
-{ setNum(36, 24, true); setupBuffers(); }
+{ setNum(36, 24); setupBuffers(); }
 
 Cube::~Cube() noexcept {  }
 

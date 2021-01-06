@@ -17,6 +17,7 @@
 #include "abstracteventlistener.hpp"
 #include "orthographiccamera.h"
 #include "perspectivecamera.h"
+#include "ShaderFactory.h"
 #include "object3d.h"
 #include "window.h"
 #include "scene.h"
@@ -31,6 +32,7 @@ class Engine
 private:
 	ScenePtr                        		 _scene;
     Object3D   								 _skyBox;
+    ShaderFactory							 _factory;
 
 private:
     std::vector < EventListenerPtr >		 _eventListeners;
