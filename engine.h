@@ -31,7 +31,7 @@ class Engine
 {
 private:
 	ScenePtr                        		 _scene;
-    Object3D   								 _skyBox;
+    Cube	   								 _skyBox;
     ShaderFactory							 _factory;
 
 private:
@@ -43,7 +43,7 @@ private:
     Engine(const Engine&) =delete;
     Engine& operator =(const Engine&) =delete;
 
-    void renderSkyBox(ShaderProgram& prg);
+    void renderSkyBox();
 
         // std::vector<Window>    _window_array;
     inline static const Window     _mainWindow = Window(4.6f, 1366u, 720u, "Visual Engine");
@@ -65,7 +65,7 @@ public:
 
     void run(const Window& window = _mainWindow) noexcept;
 
-    void render(Object3D& obj, Camera& cam, LightList lights, ShaderProgram& prg) noexcept;
+    void render(Object3D& obj, LightList lights) noexcept;
 };
 
 #endif // ENGINE_H

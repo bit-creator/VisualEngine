@@ -25,11 +25,9 @@ std::vector<EventListenerPtr>& Engine::getListeners() noexcept {
 }
 
 void Engine::run(const Window& window) noexcept {
-    auto& shaderSkyBox = _factory.getShader(ShaderType::SHADER_SKYBOX);;
-
+    auto& shaderSkyBox = _factory.getShader(ShaderType::SHADER_SKYBOX);
+    auto& ShaderGlossy = _factory.getShader(ShaderType::SHADER_GLASS);
 	auto& shader = _factory.getShader(ShaderType::SHADER_PHONG);
-
-	_skyBox.setGeometry(std::make_shared<Cube>());
 
 	glEnable(GL_DEPTH_TEST);
 
@@ -47,43 +45,58 @@ void Engine::run(const Window& window) noexcept {
         glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
         glClear(GL_DEPTH_BUFFER_BIT);
 
-        if (_scene -> useSkyBox()) renderSkyBox(shaderSkyBox);
+        if (_scene -> useSkyBox()) renderSkyBox();
 
         for(auto obj : _scene->getDrawList())
-        	render(*obj, *_scene->getCamera(), _scene->getLightList(), shader);
+        	render(*obj, _scene->getLightList());
 
         glfwSwapBuffers(window);
     }
 }
 
-void Engine::renderSkyBox(ShaderProgram& prg) {
-	prg.enable();
+void Engine::renderSkyBox() {
+	ShaderProgram* prg = &_factory.getShader(ShaderType::SHADER_SKYBOX);
+	prg->enable();
 
-	auto geom = _skyBox.getGeometry();
-
-	glm::mat4 modelMat = _skyBox.getWorldMat();
 	glm::mat4 viewMat = glm::inverse(_scene->getCamera()->getWorldMat());
 	glm::mat4 projMat = _scene->getCamera()->getProjectionMatrix();
 
-	auto mVPMat = projMat * viewMat * modelMat;
-	auto modelViewMat = viewMat * modelMat;
+	auto MVPmat = projMat * glm::mat4(glm::mat3(viewMat));
 
-	prg.setUniform("uSkyBoxMVPMat", mVPMat);
+	_scene->getSkyBox()->bind(0);
 
-	geom->bindBuffers();
+	prg->setUniform("uSkyBoxMVPMat", MVPmat);
+	prg->setUniform("uSkyBox", 0);
 
-	glDrawElements(geom->getPoligonConnectMode(), geom->getNumIndices(), GL_UNSIGNED_INT, 0);
+	_skyBox.bindBuffers();
 
-	geom->unbindBuffers();
+	glDrawElements(_skyBox.getPoligonConnectMode(), _skyBox.getNumIndices(), GL_UNSIGNED_INT, 0);
 
+	_skyBox.unbindBuffers();
 }
 
-void Engine::render(Object3D &obj, Camera &cam, LightList lights,
-		ShaderProgram &prg) noexcept {
-	prg.enable();
-
+void Engine::render(Object3D &obj, LightList lights) noexcept {
     auto material = obj.getMaterial();
     auto geom = obj.getGeometry();
+
+    ShaderProgram* prog;
+    auto cam = *_scene->getCamera();
+
+    switch(material->getType()) {
+    case MaterialType::MATERIAL_PHONG:
+    	prog = &_factory.getShader(ShaderType::SHADER_PHONG);
+    	break;
+
+    case MaterialType::MATERIAL_GLOSSY:
+    	prog = &_factory.getShader(ShaderType::SHADER_GLOSSY);
+    	break;
+
+    case MaterialType::MATERIAL_GLASS:
+    	prog = &_factory.getShader(ShaderType::SHADER_GLASS);
+    	break;
+    }
+
+    prog->enable();
 
     glm::mat4 modelMat = obj.getWorldMat();
     glm::mat4 viewMat = glm::inverse(cam.getWorldMat());
@@ -94,54 +107,65 @@ void Engine::render(Object3D &obj, Camera &cam, LightList lights,
     	Ambient =0,
     	Diffuse =1,
     	Specular =2,
+		SkyBox =4
     };
+
+    if (_scene->useSkyBox()) {
+    	prog->setUniform("uHasSkyBox", true);
+    	_scene->getSkyBox()->bind((int)TextureUnit::SkyBox);
+    	prog->setUniform("uSkyBox", (int)TextureUnit::SkyBox);
+    }
 
     if (geom->hasTexCoord())
     {
     	if (material->getAmbientTexture() != nullptr)
     	{
     		material->getAmbientTexture()->bind((int)TextureUnit::Ambient);
-			prg.setUniform("uHasAmbientMap", true);
-			prg.setUniform("uTexAmbient", (int)TextureUnit::Ambient);
+    		prog->setUniform("uHasAmbientMap", true);
+    		prog->setUniform("uTexAmbient", (int)TextureUnit::Ambient);
     	}
-		else prg.setUniform("uHasAmbientMap", false);
+		else prog->setUniform("uHasAmbientMap", false);
 
     	if (material->getDiffuseTexture() != nullptr)
     	{
     		material->getDiffuseTexture()->bind((int)TextureUnit::Diffuse);
-			prg.setUniform("uHasDiffuseMap", true);
-			prg.setUniform("uTexDiffuse", (int)TextureUnit::Diffuse);
+    		prog->setUniform("uHasDiffuseMap", true);
+    		prog->setUniform("uTexDiffuse", (int)TextureUnit::Diffuse);
     	}
-		else prg.setUniform("uHasDiffuseMap", false);
+		else prog->setUniform("uHasDiffuseMap", false);
 
     	if (material->getSpecularTexture() != nullptr)
     	{
     		material->getSpecularTexture()->bind((int)TextureUnit::Specular);
-    		prg.setUniform("uHasSpecularMap", true);
-    		prg.setUniform("uTexSpecular", (int)TextureUnit::Specular);
+    		prog->setUniform("uHasSpecularMap", true);
+    		prog->setUniform("uTexSpecular", (int)TextureUnit::Specular);
     	}
-    	else prg.setUniform("uHasSpecularMap", false);
+    	else prog->setUniform("uHasSpecularMap", false);
     }
     else
     {
-    	prg.setUniform("uHasAmbientMap", false);
-    	prg.setUniform("uHasDiffuseMap", false);
-    	prg.setUniform("uHasSpecularMap", false);
+    	prog->setUniform("uHasAmbientMap", false);
+    	prog->setUniform("uHasDiffuseMap", false);
+    	prog->setUniform("uHasSpecularMap", false);
     }
 
     auto mVPMat = projMat * viewMat * modelMat;
     auto modelViewMat = viewMat * modelMat;
 
-    prg.setUniform("uAmbientColor", material->getAmbientColor().getColorSource());
-    prg.setUniform("uDiffuseColor", material->getDiffuseColor().getColorSource());
-    prg.setUniform("uSpecularColor", material->getSpecularColor().getColorSource());
-    prg.setUniform("uRoughness", 1 / material->getRoughness());
-    prg.setUniform("uPerspectiveCamera", (int)cam.getType());
+    prog->setUniform("uAmbientColor", material->getAmbientColor().getColorSource());
+    prog->setUniform("uDiffuseColor", material->getDiffuseColor().getColorSource());
+    prog->setUniform("uSpecularColor", material->getSpecularColor().getColorSource());
+    prog->setUniform("uRoughness", 1 / material->getRoughness());
+    prog->setUniform("uPerspectiveCamera", (int)cam.getType());
+    prog->setUniform("uFirstRefractiveIndex", 1.33f);
+    prog->setUniform("uSecondRefractiveIndex", 1.52f);
 
-    prg.setUniform("uMVPMat", mVPMat);
-    prg.setUniform("uNormalMat", nMat);
-    prg.setUniform("uModelViewMat", modelViewMat);
-    prg.setUniform("uLightCount", (int)lights.size());
+    prog->setUniform("uMVPMat", mVPMat);
+    prog->setUniform("uNormalMat", nMat);
+    prog->setUniform("uModelViewMat", modelViewMat);
+    prog->setUniform("uModelMat", modelMat);
+    prog->setUniform("uCameraPos", cam.getPosition());
+    prog->setUniform("uLightCount", (int)lights.size());
 
     int ind = 0;
 
@@ -153,8 +177,8 @@ void Engine::render(Object3D &obj, Camera &cam, LightList lights,
     	auto dir = glm::mat3(light->getWorldMat()) * glm::normalize(glm::vec3(0., 0., 1.));
     	Color color = light->getColor();
 
-		prg.setUniform(dirName, dir);
-		prg.setUniform(colName, color.getColorSource());
+    	prog->setUniform(dirName, dir);
+    	prog->setUniform(colName, color.getColorSource());
 
 		++ind;
     }

@@ -12,6 +12,7 @@ Node::Node(NodeType type) noexcept
     , _scale    ( glm::vec3(1.0f, 1.0f, 1.0f) )
     , _dirtyTransform(true)
 	, _dirtyWorldTransform(true)
+	, _enabled(true)
 {  }
 
 void Node::setScale(const glm::vec3& scale) noexcept
@@ -101,6 +102,14 @@ Node::Node(const Node &oth) noexcept
 
 NodeType Node::getNodeType() const noexcept {
 	return _type;
+}
+
+bool Node::isEnabled() {
+	return _enabled;
+}
+
+void Node::setEnabled(bool val) {
+	_enabled = val;
 }
 
 void Node::unvalidateWorldMat() noexcept {

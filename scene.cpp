@@ -35,9 +35,11 @@ DrawList Scene::getDrawList() const noexcept {
 
 void Scene::getDrawListImpl(DrawList &list, const NodePtr& obj) const noexcept {
 	for(auto child : obj->getChilds()){
-		getDrawListImpl(list, child);
-		if(child->getNodeType() == NodeType::NODE_OBJECT)
-			list.push_back((Object3D*)child.get());
+		if(child->isEnabled()) {
+			getDrawListImpl(list, child);
+			if(child->getNodeType() == NodeType::NODE_OBJECT)
+				list.push_back((Object3D*)child.get());
+		}
 	}
 }
 

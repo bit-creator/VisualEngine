@@ -45,24 +45,23 @@ void Texture::loadImage(const char *name, const GLenum target) {
 
 	unsigned char *data = stbi_load(name, &width, &height, &nrChannels, 0);
 
-	glBindTexture(target, getID());
+	if(data == NULL) std::cout << "Couldn\'t load image" << std::endl;
 
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);   CHECK_GL_ERROR();
 	glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);  CHECK_GL_ERROR();
 	glPixelStorei(GL_UNPACK_SKIP_PIXELS, 0); CHECK_GL_ERROR();
 	glPixelStorei(GL_UNPACK_SKIP_ROWS, 0);   CHECK_GL_ERROR();
 
-	glTexParameteri(getTarget(), GL_TEXTURE_MAG_FILTER, GL_NEAREST); CHECK_GL_ERROR();
+	glTexParameteri(getTarget(), GL_TEXTURE_MAG_FILTER, GL_LINEAR); CHECK_GL_ERROR();
+	glTexParameteri(getTarget(), GL_TEXTURE_MIN_FILTER, GL_LINEAR); CHECK_GL_ERROR();
 	glTexParameteri(getTarget(), GL_TEXTURE_WRAP_S, GL_REPEAT);      CHECK_GL_ERROR();
 	glTexParameteri(getTarget(), GL_TEXTURE_WRAP_T, GL_REPEAT);      CHECK_GL_ERROR();
+	glTexParameteri(getTarget(), GL_TEXTURE_WRAP_R, GL_REPEAT);      CHECK_GL_ERROR();
 
 	auto format = GL_RGB;
 	if (nrChannels == 4) format = GL_RGBA;
 
 	glTexImage2D(target, 0, format, width, height, 0, format,  GL_UNSIGNED_BYTE, data); CHECK_GL_ERROR();
-	glGenerateMipmap(getTarget()); CHECK_GL_ERROR();
-
-	unbind();
 
 	stbi_image_free(data);
 }
@@ -101,12 +100,23 @@ Texture2D::Texture2D()
 
 TextureCubeMap::TextureCubeMap()
 	: Texture(GL_TEXTURE_CUBE_MAP)
-{ setEmpty(); }
+{  }
 
 void Texture2D::loadImage(const char* name) {
+	bind();
 	Texture::loadImage(name, GL_TEXTURE_2D);
+	glGenerateMipmap(getTarget()); CHECK_GL_ERROR();
+	unbind();
 }
 
 void TextureCubeMap::loadImage(const char* name, const BoxSide side) {
+	bind();
+
 	Texture::loadImage(name, (GLuint)side);
+
+	glTexParameteri(getTarget(), GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);      CHECK_GL_ERROR();
+	glTexParameteri(getTarget(), GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);      CHECK_GL_ERROR();
+	glTexParameteri(getTarget(), GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);      CHECK_GL_ERROR();
+
+	unbind();
 }

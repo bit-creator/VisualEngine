@@ -96,6 +96,14 @@ public:
 
 int main()
 {
+	/**
+	 * 1) создать базовый материал, материал переименовать в фонгМатериал
+	 * 2) отнаследовать от базового материала Глосси и Гласс
+	 * 3) создать шейдера для глосси и гласс добавить в фактори
+	 * 4) в фактори сделать сфич по енаму
+	 * 5) в методе рандер проверить тип материала и подключить соответствующий шейдер
+	 */
+
     auto& eng = Engine::engine();
 
     ScenePtr scene = std::make_shared<Scene>();
@@ -120,16 +128,23 @@ int main()
     diffSun->loadImage("resource/diff_sun.jpg");
     diffMoon->loadImage("resource/diff_moon.jpg");
 
-//    skyBox->loadImage("resource/skybox/corona_rt.png", BoxSide::SIDE_RIGHT);
-//    skyBox->loadImage("resource/skybox/corona_lf.png", BoxSide::SIDE_LEFT);
-//    skyBox->loadImage("resource/skybox/corona_bk.png", BoxSide::SIDE_BACK);
-//    skyBox->loadImage("resource/skybox/corona_ft.png", BoxSide::SIDE_FRONT);
+//    skyBox->loadImage("resource/skybox/corona_rt.png", BoxSide::SIDE_FRONT);
+//    skyBox->loadImage("resource/skybox/corona_lf.png", BoxSide::SIDE_BACK);
+//    skyBox->loadImage("resource/skybox/corona_bk.png", BoxSide::SIDE_LEFT);
+//    skyBox->loadImage("resource/skybox/corona_ft.png", BoxSide::SIDE_RIGHT);
 //    skyBox->loadImage("resource/skybox/corona_up.png", BoxSide::SIDE_TOP);
 //    skyBox->loadImage("resource/skybox/corona_dn.png", BoxSide::SIDE_BOTTOM);
 
+    skyBox->loadImage("resource/skybox/posz.jpg", BoxSide::SIDE_FRONT);
+    skyBox->loadImage("resource/skybox/negz.jpg", BoxSide::SIDE_BACK);
+    skyBox->loadImage("resource/skybox/negx.jpg", BoxSide::SIDE_LEFT);
+    skyBox->loadImage("resource/skybox/posx.jpg", BoxSide::SIDE_RIGHT);
+    skyBox->loadImage("resource/skybox/posy.jpg", BoxSide::SIDE_TOP);
+    skyBox->loadImage("resource/skybox/negy.jpg", BoxSide::SIDE_BOTTOM);
+
     scene->setSkyBox(skyBox);
 
-    MaterialPtr simple = std::make_shared < Material > ();
+    MaterialPtr simple = std::make_shared < PhongMaterial > ();
 
     simple->setAmbientColor(glm::vec4(0., 0., 0., 1.0));
     simple->setDiffuseColor(glm::vec4(1., 0.2, 0.2, 1.0));
@@ -139,7 +154,7 @@ int main()
     simple->setDiffuseTexture(cubicTex);
     simple->setSpecularTexture(titleTex);
 
-    MaterialPtr sun = std::make_shared < Material > ();
+    MaterialPtr sun = std::make_shared < GlossyMaterial > ();
 
     sun->setAmbientColor(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
 //    sun->setDiffuseColor(glm::vec4(1.0f, 0.5f, 0.0f, 1.0f));
@@ -147,7 +162,7 @@ int main()
     sun->setRoughness(0.3f);
     sun->setDiffuseTexture(diffSun);
 
-    MaterialPtr earth = std::make_shared < Material > ();
+    MaterialPtr earth = std::make_shared < PhongMaterial > ();
 
     earth->setAmbientColor(glm::vec4(0.f, 0.f, 0.f, 1.0f));
 //    earth->setDiffuseColor(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
@@ -156,7 +171,7 @@ int main()
     earth->setDiffuseTexture(diffEarth);
     earth->setSpecularTexture(specEarth);
 
-    MaterialPtr moon = std::make_shared < Material > ();
+    MaterialPtr moon = std::make_shared < PhongMaterial > ();
 
     moon->setAmbientColor(glm::vec4(0.f, 0.f, 0.f, 1.0f));
     moon->setDiffuseColor(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
@@ -204,6 +219,8 @@ int main()
     planetSystem->setPosition(glm::vec3(3.0f, 0.0f, 0.0f));
 
     NodePtr salarySystem = std::make_shared<Node>(NodeType::NODE_NODE);
+
+    planetSystem->setEnabled(false);
 
     salarySystem->addChild(sunObj);
     salarySystem->addChild(planetSystem);
