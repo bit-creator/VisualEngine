@@ -9,4 +9,4 @@ uniform mat4 uSkyBoxMVPMat;
 void main() {
 	vTexCoords = aCoord;
     gl_Position = uSkyBoxMVPMat * vec4(aCoord * 50, 1.0);
-};
+}

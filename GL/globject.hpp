@@ -53,7 +53,7 @@ protected:
     ~GLObject() noexcept {
     	CHECK_GL_ERROR();
     }
- 
+
 public:
     ObjectID& getID() const noexcept {
     	return _object;

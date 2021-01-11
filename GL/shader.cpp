@@ -23,8 +23,6 @@ bool Shader::compileShader() const noexcept {
        return false;
     }
 
-//    std::cout << "shader compile sucssesfull" << std::endl;
-
     return true;
 }
 

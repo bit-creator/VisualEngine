@@ -25,10 +25,6 @@ std::vector<EventListenerPtr>& Engine::getListeners() noexcept {
 }
 
 void Engine::run(const Window& window) noexcept {
-    auto& shaderSkyBox = _factory.getShader(ShaderType::SHADER_SKYBOX);
-    auto& ShaderGlossy = _factory.getShader(ShaderType::SHADER_GLASS);
-	auto& shader = _factory.getShader(ShaderType::SHADER_PHONG);
-
 	glEnable(GL_DEPTH_TEST);
 
     while (!glfwWindowShouldClose(window))
@@ -182,8 +178,6 @@ void Engine::render(Object3D &obj, LightList lights) noexcept {
 
 		++ind;
     }
-
-
 
     glPolygonMode(GL_FRONT_AND_BACK, material->getPolygonsFillMode());
 

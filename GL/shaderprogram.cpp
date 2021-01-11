@@ -34,6 +34,7 @@ bool ShaderProgram::link() const noexcept {
 
         return false;
     }
+
     return true;
 }
 
