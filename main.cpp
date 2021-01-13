@@ -12,6 +12,7 @@
 #include "Primitive/cube.h"
 #include "Primitive/cone.h"
 #include "Primitive/mobiusstrip.h"
+#include "Primitive/WaterBox.h"
 
 namespace ch = std::chrono;
 
@@ -31,7 +32,7 @@ public:
 
     void onRender() noexcept override
     {
-        static double time =0;
+        static double time =0.0;
         // auto current_time = ch::high_resolution_clock().now();
         // auto count = duration_cast<ch::seconds>((time_point)current_time).count();
 
@@ -82,7 +83,7 @@ int main()
     // GeometryPtr triangle = std::make_shared<Triangle>();
     // GeometryPtr cube = std::make_shared<Cube>();
     // GeometryPtr cone = std::make_shared<Cone>(5);
-    GeometryPtr mobius = std::make_shared<MobiusStrip>(50);
+    GeometryPtr mobius = std::make_shared<WaterBox>(1, 10);
 
     // obj.setGeometry(sphere);
     // obj.setGeometry(circle);
