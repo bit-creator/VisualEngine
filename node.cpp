@@ -130,3 +130,21 @@ void Node::removeChild(NodePtr child) {
 std::list<std::shared_ptr<Node> >& Node::getChilds() {
 	return _childs;
 }
+
+std::list<std::shared_ptr<Node> >
+Node::rayCast(Ray ray) {
+	std::list<std::shared_ptr<Node> > result;
+	rayCastImpl(ray, result);
+	return result;
+}
+
+void Node::rayCastImpl(Ray ray, std::list<std::shared_ptr<Node> > list) {
+	for(auto child : _childs) rayCastImpl(ray, list);
+
+	if(_type != NodeType::NODE_OBJECT) return;
+	Ray changedRay;
+	changedRay.setOrigin(ray.getOrigin());
+	changedRay.setDirection(getWorldMat() * glm::vec4(ray.getDirection(), 1.0));
+
+
+}

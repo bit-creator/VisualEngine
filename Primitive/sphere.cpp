@@ -130,3 +130,33 @@ void Sphere::refreshUV() {
 	for ( Vertex& vert : _vertices )
 		vert._texCoord = genSphereUV(vert._coord);
 }
+
+std::vector<Intersection> Sphere::rayCast(Ray ray) const {
+	glm::vec3 dir = ray.getDirection();
+	glm::vec3 org = ray.getOrigin();
+
+	float a = pow(dir.x, 2) + pow(dir.y, 2) + pow(dir.z, 2);
+	float b = 2 * (dir.x * org.x + dir.y * org.y + dir.z * org.z);
+	float c = pow(org.x, 2) + pow(org.y, 2) + pow(org.z, 2) - 1;
+
+	b /= a;
+	c /= a;
+
+	float discr = pow(b, 2) - 4 * c;
+
+	if (discr < 0) return std::vector<Intersection>();
+
+	std::vector<Intersection> res;
+
+	if (discr == 0) {
+		float lambd = -b / 2;
+		res.push_back({ glm::length(lambd * dir), lambd * dir + org });
+	} else {
+		float lambd_1 = (-b + sqrt(discr)) / 2;
+		float lambd_2 = (-b - sqrt(discr)) / 2;
+		res.push_back({ glm::length(lambd_1 * dir), lambd_1 * dir + org });
+		res.push_back({ glm::length(lambd_2 * dir), lambd_2 * dir + org });
+	}
+
+	return res;
+}

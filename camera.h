@@ -17,6 +17,7 @@
 #include<glm/gtx/string_cast.hpp>
 
 #include "node.h"
+#include "Ray.h"
 
 enum class CameraType
 {
@@ -29,6 +30,7 @@ class Camera : public Node
 {
     private:
         glm::mat4                       _projectionMatr;
+        Ray								_viewRay;
         const CameraType                _type;
 
     public:
@@ -39,6 +41,8 @@ class Camera : public Node
         glm::mat4 getProjectionMatrix() const noexcept;
 
         CameraType getType() const noexcept;
+
+        Ray getRay();
 };
 
 using CameraPtr = std::shared_ptr<Camera>;

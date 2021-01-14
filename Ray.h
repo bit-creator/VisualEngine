@@ -10,6 +10,8 @@
 
 #include <glm/glm.hpp>
 
+//#include "object3d.h"
+
 class Ray final {
 private:
 	glm::vec3										_direction;
@@ -26,5 +28,19 @@ public:
 	const glm::vec3 getDirection() const;
 	const glm::vec3 getOrigin() const;
 };
+
+/*
+ * Intersection {
+ *		 distance – distance between the origin of the ray and the intersection
+ * 		 point – point of intersection, in world coordinates
+ * 		 object – the intersected object
+ * }
+ */
+struct Intersection {
+	float 											_distance;
+	glm::vec3										_point;
+//	ObjPtr											_obj;
+};
+
 
 #endif /* RAY_H_ */

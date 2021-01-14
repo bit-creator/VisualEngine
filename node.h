@@ -24,6 +24,8 @@
 #include <glm/glm.hpp>
 #include <glm/gtx/quaternion.hpp>
 
+#include "Ray.h"
+
 enum class NodeType
 {
     NODE_CAMERA,
@@ -76,8 +78,13 @@ class Node
         std::list < std::shared_ptr < Node > >&
         getChilds();
 
+        std::list < std::shared_ptr < Node > >
+        rayCast(Ray ray);
+
 		void unvalidateWorldMat() noexcept;
 
+    private:
+		void rayCastImpl(Ray ray, std::list < std::shared_ptr < Node > > list);
 };
 
 using NodePtr = std::shared_ptr < Node >;
