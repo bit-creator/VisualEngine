@@ -30,4 +30,9 @@ Object3D::Object3D(const Object3D &oth) noexcept
 	: Node(oth)
 	, _geom(oth._geom)
 	, _material(oth._material)
-	{  }
+	{
+}
+
+std::vector<Intersection> Object3D::rayCastGeom(Ray ray) {
+	return _geom->rayCast(ray);
+}

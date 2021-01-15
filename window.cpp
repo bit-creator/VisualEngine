@@ -107,6 +107,7 @@ void Window::setup() noexcept
     glfwSetKeyCallback(_window, keyCallBack);
     glfwSetCursorPos(_window, _width/2, _height/2);
     glfwSetCursorPosCallback(_window, mouseCallBack);
+    glfwSetMouseButtonCallback(_window, mouseClickCallBack);
 
     std::cout << std::endl;
 }
@@ -147,4 +148,13 @@ void Window::mouseCallBack(pointer window, double x, double y) {
 	if(listener) listener -> onMouseMove(x - (double)width / 2, y - (double)height / 2);
 
 	glfwSetCursorPos(window, width / 2, height / 2);
+}
+
+void Window::mouseClickCallBack(pointer window, int button, int action,
+		int mode) {
+	auto& eng = Engine::engine();
+	auto& listenerArray = eng.getListeners();
+
+	for(EventListenerPtr listener : listenerArray)
+    if(listener) listener -> onMouseClick(button, action, mode);
 }

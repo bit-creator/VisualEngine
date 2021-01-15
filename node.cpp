@@ -1,4 +1,5 @@
 #include "node.h"
+#include "object3d.h"
 
 #include <glm/gtc/type_ptr.hpp>
 
@@ -146,5 +147,9 @@ void Node::rayCastImpl(Ray ray, std::list<std::shared_ptr<Node> > list) {
 	changedRay.setOrigin(ray.getOrigin());
 	changedRay.setDirection(getWorldMat() * glm::vec4(ray.getDirection(), 1.0));
 
+	auto intersections = ((Object3D*)this)->rayCastGeom(ray);
 
+	if(!intersections.empty()) {
+		list.push_back(shared_from_this());
+	}
 }

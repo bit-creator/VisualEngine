@@ -89,6 +89,10 @@ public:
 //        scene.setBackgroundColor(glm::vec4(f1, f2, f3, 1.0));
     }
 
+    void onMouseClick(int button, int action, int mode) noexcept {
+    	std::cout << "click" << std::endl;
+    }
+
     ~MyListener() noexcept override {
     }
 

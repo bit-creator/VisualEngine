@@ -19,6 +19,10 @@ class EventListener
         virtual void onMouseMove(double x, double y) noexcept {
         }
 
+        virtual void onMouseClick(int button, int action, int mode) noexcept {
+
+        }
+
         virtual ~EventListener() noexcept {
         }
 }; // EventListener
