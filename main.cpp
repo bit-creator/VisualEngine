@@ -90,7 +90,13 @@ public:
     }
 
     void onMouseClick(int button, int action, int mode) noexcept {
-    	std::cout << "click" << std::endl;
+    	auto res = scene.getRoot()->rayCast(scene.getCamera()->getRay());
+    	if (res.empty()) {
+    		std::cout << "no object" << std::endl;
+    	} else {
+    		std::cout << "SHOOT" << std::endl;
+    	}
+//    	std::cout << "click" << std::endl;
     }
 
     ~MyListener() noexcept override {

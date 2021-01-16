@@ -135,9 +135,9 @@ std::vector<Intersection> Sphere::rayCast(Ray ray) const {
 	glm::vec3 dir = ray.getDirection();
 	glm::vec3 org = ray.getOrigin();
 
-	float a = pow(dir.x, 2) + pow(dir.y, 2) + pow(dir.z, 2);
-	float b = 2 * (dir.x * org.x + dir.y * org.y + dir.z * org.z);
-	float c = pow(org.x, 2) + pow(org.y, 2) + pow(org.z, 2) - 1;
+	float a = glm::dot(dir, dir);
+	float b = 2.0f * glm::dot(dir, org);
+	float c = glm::dot(org, org) - 1.0f;
 
 	b /= a;
 	c /= a;

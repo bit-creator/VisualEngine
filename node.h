@@ -85,7 +85,7 @@ class Node
 
     private:
 		std::vector<Intersection> rayCastGeom(Ray ray);
-		void rayCastImpl(Ray ray, std::list < std::shared_ptr < Node > > list);
+		void rayCastImpl(Ray ray, std::list < std::shared_ptr < Node > >& list);
 };
 
 using NodePtr = std::shared_ptr < Node >;

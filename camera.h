@@ -14,7 +14,7 @@
 
 #include <iostream>
 
-#include<glm/gtx/string_cast.hpp>
+#include <glm/gtx/string_cast.hpp>
 
 #include "node.h"
 #include "Ray.h"

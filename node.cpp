@@ -139,15 +139,15 @@ Node::rayCast(Ray ray) {
 	return result;
 }
 
-void Node::rayCastImpl(Ray ray, std::list<std::shared_ptr<Node> > list) {
-	for(auto child : _childs) rayCastImpl(ray, list);
+void Node::rayCastImpl(Ray ray, std::list<std::shared_ptr<Node> >& list) {
+	for(auto child : _childs) child->rayCastImpl(ray, list);
 
 	if(_type != NodeType::NODE_OBJECT) return;
 	Ray changedRay;
 	changedRay.setOrigin(ray.getOrigin());
 	changedRay.setDirection(getWorldMat() * glm::vec4(ray.getDirection(), 1.0));
 
-	auto intersections = ((Object3D*)this)->rayCastGeom(ray);
+	auto intersections = ((Object3D*)this)->rayCastGeom(changedRay);
 
 	if(!intersections.empty()) {
 		list.push_back(shared_from_this());
