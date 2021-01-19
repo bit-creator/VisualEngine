@@ -13,6 +13,7 @@
 #include "Primitive/cone.h"
 #include "Primitive/mobiusstrip.h"
 #include "Primitive/WaterBox.h"
+#include "Primitive/Crystal.h"
 
 namespace ch = std::chrono;
 
@@ -54,7 +55,8 @@ public:
 
         _object.setScale(glm::vec3(0.5f, 0.5f, 0.5f));
 
-        _object.setRotate(glm::vec3(1., 1., 1.), f4);
+//        _object.setRotate(glm::vec3(1., 0., 0.), M_PI / 2);
+          _object.setRotate(glm::vec3(1., 1., 1.), f4);
 
         _object.setOffset(glm::vec3(0., 0., 0.));
     }
@@ -83,7 +85,7 @@ int main()
     // GeometryPtr triangle = std::make_shared<Triangle>();
     // GeometryPtr cube = std::make_shared<Cube>();
     // GeometryPtr cone = std::make_shared<Cone>(5);
-    GeometryPtr mobius = std::make_shared<WaterBox>(1, 10);
+    GeometryPtr mobius = std::make_shared<Crystal>(FacetingType::Simple, 7);
 
     // obj.setGeometry(sphere);
     // obj.setGeometry(circle);
