@@ -78,14 +78,13 @@ class Node
         std::list < std::shared_ptr < Node > >&
         getChilds();
 
-        std::list < std::shared_ptr < Node > >
+        std::list < Intersection >
         rayCast(Ray ray);
 
 		void unvalidateWorldMat() noexcept;
 
-    private:
-		std::vector<Intersection> rayCastGeom(Ray ray);
-		void rayCastImpl(Ray ray, std::list < std::shared_ptr < Node > >& list);
+    protected:
+		virtual void rayCastImpl(Ray& ray, std::list < Intersection >& list);
 };
 
 using NodePtr = std::shared_ptr < Node >;

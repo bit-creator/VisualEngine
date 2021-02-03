@@ -42,16 +42,15 @@ public:
         time_ += 0.01;
         time += 0.001;
         
-        auto color = glm::vec4(1., 1., 1., 1.0);
+        auto color = glm::vec4(0.1, 0.1, 0.1, 1.0);
         auto SpecularColor = glm::vec4(1., 0., 0., 1.0);
-
 
         _cube->getMaterial()->setAmbientColor(color);
         _cube->getMaterial()->setDiffuseColor(color);
         _cube->getMaterial()->setSpecularColor(SpecularColor);
         _cube->getMaterial()->setRoughness(1);
 
-        _cube->setRotate(glm::vec3(1.0, 1.0, 0.0), f4);
+//        _cube->setRotate(glm::vec3(1.0, 1.0, 0.0), f4);
 
 //        material -> setColor(ColorTarget::Ambient, color);
 //        material -> setColor(ColorTarget::Diffuse, color);
@@ -90,11 +89,12 @@ public:
     }
 
     void onMouseClick(int button, int action, int mode) noexcept {
-    	auto res = scene.getRoot()->rayCast(scene.getCamera()->getRay());
+    	auto res = scene.getRoot()->rayCast(scene.getCamera()->getRay(glm::vec2(0.0, 0.0)));
     	if (res.empty()) {
     		std::cout << "no object" << std::endl;
     	} else {
-    		std::cout << "SHOOT" << std::endl;
+    		for(auto& el : res)
+    		el._obj->getMaterial()->setAmbientColor(glm::vec4(rand() * 1.0f / RAND_MAX, rand() * 1.0f / RAND_MAX, rand() * 1.0f / RAND_MAX, 1.0));
     	}
 //    	std::cout << "click" << std::endl;
     }

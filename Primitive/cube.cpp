@@ -124,7 +124,7 @@ std::vector<Intersection> Cube::rayCast(Ray ray) const {
 		glm::vec3 point = intersectionPoint(faces[i]);
 
 		if(checkRange(point)) {
-			res.push_back({ length(point - ray.getOrigin()), point });
+			res.push_back({ length(point - ray.getOrigin()), point, nullptr });
 		}
 	}
 

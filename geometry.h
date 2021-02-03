@@ -25,8 +25,8 @@ class Geometry
     private:         //  Num of elements
         size_t                                                  _numVertex;
         size_t                                                  _numIndex;
-        bool                                                    _useIndex;
         GLenum                                                  _conectionMode;
+        bool                                                    _useIndex;
 
     protected:          //  OpenGL Buffers
         VertexArray                                             VAO;

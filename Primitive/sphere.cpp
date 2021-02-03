@@ -142,20 +142,20 @@ std::vector<Intersection> Sphere::rayCast(Ray ray) const {
 	b /= a;
 	c /= a;
 
-	float discr = pow(b, 2) - 4 * c;
-
-	if (discr < 0) return std::vector<Intersection>();
+	float discr = std::pow(b, 2) - 4 * c;
 
 	std::vector<Intersection> res;
 
+	if (discr < 0) return res;
+
 	if (discr == 0) {
 		float lambd = -b / 2;
-		res.push_back({ glm::length(lambd * dir), lambd * dir + org });
+		res.push_back({ glm::length(lambd * dir), lambd * dir + org, nullptr });
 	} else {
 		float lambd_1 = (-b + sqrt(discr)) / 2;
 		float lambd_2 = (-b - sqrt(discr)) / 2;
-		res.push_back({ glm::length(lambd_1 * dir), lambd_1 * dir + org });
-		res.push_back({ glm::length(lambd_2 * dir), lambd_2 * dir + org });
+		res.push_back({ glm::length(lambd_1 * dir), lambd_1 * dir + org, nullptr });
+		res.push_back({ glm::length(lambd_2 * dir), lambd_2 * dir + org, nullptr });
 	}
 
 	return res;

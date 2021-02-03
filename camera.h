@@ -30,7 +30,6 @@ class Camera : public Node
 {
     private:
         glm::mat4                       _projectionMatr;
-        Ray								_viewRay;
         const CameraType                _type;
 
     public:
@@ -42,7 +41,7 @@ class Camera : public Node
 
         CameraType getType() const noexcept;
 
-        Ray getRay();
+        Ray getRay(glm::vec2 screenPos);
 };
 
 using CameraPtr = std::shared_ptr<Camera>;

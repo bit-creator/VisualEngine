@@ -57,7 +57,7 @@ class Object3D : public Node
         MaterialPtr getMaterial() const noexcept; 
 
     public:
-        std::vector<Intersection> rayCastGeom(Ray ray);
+		void rayCastImpl(Ray& ray, std::list < Intersection >& list) override;
 };
 
 using ObjPtr = std::shared_ptr < Object3D >;

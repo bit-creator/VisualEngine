@@ -132,24 +132,13 @@ std::list<std::shared_ptr<Node> >& Node::getChilds() {
 	return _childs;
 }
 
-std::list<std::shared_ptr<Node> >
+std::list< Intersection >
 Node::rayCast(Ray ray) {
-	std::list<std::shared_ptr<Node> > result;
+	std::list< Intersection > result;
 	rayCastImpl(ray, result);
 	return result;
 }
 
-void Node::rayCastImpl(Ray ray, std::list<std::shared_ptr<Node> >& list) {
+void Node::rayCastImpl(Ray& ray, std::list< Intersection >& list) {
 	for(auto child : _childs) child->rayCastImpl(ray, list);
-
-	if(_type != NodeType::NODE_OBJECT) return;
-	Ray changedRay;
-	changedRay.setOrigin(ray.getOrigin());
-	changedRay.setDirection(getWorldMat() * glm::vec4(ray.getDirection(), 1.0));
-
-	auto intersections = ((Object3D*)this)->rayCastGeom(changedRay);
-
-	if(!intersections.empty()) {
-		list.push_back(shared_from_this());
-	}
 }

@@ -8,6 +8,8 @@
 #ifndef RAY_H_
 #define RAY_H_
 
+#include <memory>
+
 #include <glm/glm.hpp>
 
 //#include "object3d.h"
@@ -16,6 +18,7 @@ class Ray final {
 private:
 	glm::vec3										_direction;
 	glm::vec3										_origin;
+
 public:
 	Ray();
 	Ray(const glm::vec3 direction, const glm::vec3 origin);
@@ -36,10 +39,12 @@ public:
  * 		 object – the intersected object
  * }
  */
+class Object3D;
+
 struct Intersection {
-	float 											_distance;
-	glm::vec3										_point;
-//	ObjPtr											_obj;
+	const float 										_distance;
+	const glm::vec3										_point;
+	Object3D*											_obj;
 };
 
 

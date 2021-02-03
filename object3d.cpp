@@ -33,6 +33,17 @@ Object3D::Object3D(const Object3D &oth) noexcept
 	{
 }
 
-std::vector<Intersection> Object3D::rayCastGeom(Ray ray) {
-	return _geom->rayCast(ray);
+void Object3D::rayCastImpl(Ray &ray, std::list<Intersection> &list) {
+	Node::rayCastImpl(ray, list);
+
+	Ray localRay;
+	localRay.setOrigin(glm::inverse(getWorldMat()) * glm::vec4(ray.getOrigin(), 1.0));
+	localRay.setDirection(glm::inverse(getWorldMat()) * glm::vec4(ray.getDirection(), 0.0));
+
+	auto intersections = _geom->rayCast(localRay);
+
+	for (auto intersec : intersections) {
+		intersec._obj = this;
+		list.push_back(intersec);
+	}
 }
