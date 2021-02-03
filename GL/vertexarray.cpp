@@ -3,55 +3,65 @@
 VertexArray::VertexArray() noexcept
     : GLObject(genVAO())
     , _atributes({std::nullopt, std::nullopt, std::nullopt})
-{  }
+{ CHECK_GL_ERROR(); }
 
-VertexArray::~VertexArray() noexcept
-{ glDeleteVertexArrays(1, &getID()); }
+VertexArray::~VertexArray() noexcept {
+	glDeleteVertexArrays(1, &getID()); CHECK_GL_ERROR();
+}
 
-void VertexArray::bind() noexcept
-{ glBindVertexArray(getID()); }
+void VertexArray::bind() noexcept {
+	glBindVertexArray(getID()); CHECK_GL_ERROR();
+}
 
-void VertexArray::unbind() noexcept
-{ glBindVertexArray(0); }
+void VertexArray::unbind() noexcept {
+	glBindVertexArray(0); CHECK_GL_ERROR();
+}
 
-void VertexArray::enable(Attribute attr) noexcept
-{ glEnableVertexAttribArray(getAttribLocation(attr)); }
+void VertexArray::enable(Attribute attr) noexcept {
+	glEnableVertexAttribArray(getAttribLocation(attr)); CHECK_GL_ERROR();
+}
 
-void VertexArray::enableAll() noexcept
-{
+void VertexArray::enableAll() noexcept {
     for(auto& attr : _atributes)
         if(attr) enable(*attr);
 }
 
-void VertexArray::disable(Attribute attr) noexcept
-{ glDisableVertexAttribArray(getAttribLocation(attr)); }
+void VertexArray::disable(Attribute attr) noexcept {
+	glDisableVertexAttribArray(getAttribLocation(attr)); CHECK_GL_ERROR();
+}
 
-void VertexArray::disableAll() noexcept
-{
+void VertexArray::disableAll() noexcept {
     for(auto& attr : _atributes)
         if(attr) disable(*attr); 
 }
 
-GLuint VertexArray::genVAO() noexcept
-{ GLuint VAO; glGenVertexArrays(1, &VAO); return VAO; }
+GLuint VertexArray::genVAO() noexcept {
+	GLuint VAO;
+	glGenVertexArrays(1, &VAO); CHECK_GL_ERROR();
+	return VAO;
+}
 
-GLuint VertexArray::getAttribSize(Attribute attr) const noexcept
-{ return (attr == Attribute::ATTRIB_TEX ? 2 : 3); }
+GLuint VertexArray::getAttribSize(Attribute attr) const noexcept {
+	return (attr == Attribute::ATTRIB_TEX ? 2 : 3);
+}
 
-GLuint VertexArray::getAttribDataType(Attribute attr) const noexcept
-{ return GL_FLOAT; }
+GLuint VertexArray::getAttribDataType(Attribute attr) const noexcept {
+	return GL_FLOAT;
+}
 
-GLuint VertexArray::getAttribLocation(Attribute attr) const noexcept
-{ return static_cast<int>(attr); }
+GLuint VertexArray::getAttribLocation(Attribute attr) const noexcept {
+	return static_cast<int>(attr);
+}
 
 
-void VertexArray::addAttribute(Attribute attr, GLsizei stride, GLsizei offset) noexcept{
+void VertexArray::addAttribute(Attribute attr, GLsizei stride, GLsizei offset) noexcept {
     glVertexAttribPointer(
         getAttribLocation(attr), getAttribSize(attr), getAttribDataType(attr),
-        GL_FALSE, stride, (GLvoid*)offset
-    ); 
+        GL_FALSE, stride, (GLvoid*)offset); CHECK_GL_ERROR();
+
     _atributes[getAttribLocation(attr)] = attr;
 }
 
-bool VertexArray::hasAttribute(Attribute attr) const noexcept
-{ return static_cast<bool>(_atributes[getAttribLocation(attr)]); }
+bool VertexArray::hasAttribute(Attribute attr) const noexcept {
+	return static_cast<bool>(_atributes[getAttribLocation(attr)]);
+}

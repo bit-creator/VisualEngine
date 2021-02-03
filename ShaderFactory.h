@@ -20,7 +20,9 @@ namespace fs = std::filesystem;
 
 enum ShaderType {
   SHADER_PHONG,
-  SHADER_SKYBOX
+  SHADER_SKYBOX,
+  SHADER_GLASS,
+  SHADER_GLOSSY
 };
 
 using shaderTree = std::map < ShaderType, PrgPtr >;

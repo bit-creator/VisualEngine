@@ -35,11 +35,23 @@ DrawList Scene::getDrawList() const noexcept {
 
 void Scene::getDrawListImpl(DrawList &list, const NodePtr& obj) const noexcept {
 	for(auto child : obj->getChilds()){
-		getDrawListImpl(list, child);
-		if(child->getNodeType() == NodeType::NODE_OBJECT)
-			list.push_back((Object3D*)child.get());
+		if(child->isEnabled()) {
+			getDrawListImpl(list, child);
+			if(child->getNodeType() == NodeType::NODE_OBJECT)
+				list.push_back((Object3D*)child.get());
+		}
 	}
+}
 
+void Scene::disableSkyBox() {
+	_skyBox = nullptr;
+}
+
+bool Scene::useSkyBox() const {
+	return _skyBox != nullptr;
+}
+
+void Scene::loadSkyboxImage(BoxSide side, TexPtr skyBox, std::string filename) {
 }
 
 LightList Scene::getLightList() const noexcept {
@@ -48,10 +60,18 @@ LightList Scene::getLightList() const noexcept {
 	return result;
 }
 
+void Scene::setSkyBox(TexPtr skyBox) {
+	_skyBox = skyBox;
+}
+
+TexPtr Scene::getSkyBox() const {
+	return _skyBox;
+}
+
 void Scene::getLightListImpl(LightList &list, const NodePtr &obj) const noexcept {
-	for(auto child : obj->getChilds()){
+	for(auto child : obj->getChilds()) {
 		getLightListImpl(list, child);
 	if(child->getNodeType() == NodeType::NODE_LIGHT)
 		list.push_back((Light*)child.get());
-}
+	}
 }

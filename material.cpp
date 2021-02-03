@@ -1,6 +1,6 @@
 #include "material.h"
 
-Material::Material() noexcept
+Material::Material(MaterialType type) noexcept
     : _ambientColor(1.0, 1.0, 1.0, 1.0)
     , _diffuseColor(1.0, 1.0, 1.0, 1.0)
     , _specularColor(1.0, 1.0, 1.0, 1.0)
@@ -9,7 +9,7 @@ Material::Material() noexcept
 	, _specularMap(nullptr)
     , _roughness(0.0)
 	, _fillMode(GL_FILL)
-{  }
+{ _type = type; }
 
 Material::~Material() noexcept {  }
 
@@ -70,6 +70,22 @@ TexPtr Material::getSpecularTexture() const noexcept {
 	return _specularMap;
 }
 
+MaterialType Material::getType() const {
+	return _type;
+}
+
 const GLenum Material::getPolygonsFillMode() const noexcept {
 	return _fillMode;
 }
+
+PhongMaterial::PhongMaterial()
+	: Material(MaterialType::MATERIAL_PHONG)
+{  }
+
+GlassMaterial::GlassMaterial()
+	: Material(MaterialType::MATERIAL_GLASS)
+{  }
+
+GlossyMaterial::GlossyMaterial()
+	: Material(MaterialType::MATERIAL_GLOSSY)
+{  }

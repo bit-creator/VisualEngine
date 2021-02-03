@@ -47,6 +47,7 @@ class Node
         glm::vec3                                               _scale;
         bool                                                    _dirtyTransform;
         bool 													_dirtyWorldTransform;
+        bool 													_enabled;
 
     public:
         Node(NodeType type) noexcept;
@@ -68,6 +69,9 @@ class Node
 
         glm::mat4 getModelMat() noexcept;
         glm::mat4 getWorldMat() noexcept;
+
+        void setEnabled(bool enabled);
+        bool isEnabled();
 
     public: 		// CHILD
         void addChild(std::shared_ptr < Node > child);

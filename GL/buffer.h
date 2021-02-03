@@ -18,29 +18,30 @@
 
 #include "globject.hpp"
 
-class Buffer : public GLObject
-{
-    private:
-        const GLuint                           _type;
+class Buffer : public GLObject {
+private:
+	const GLuint                           _type;
 
-    public:
-        Buffer(GLuint type) noexcept;
-        ~Buffer() noexcept;
+public:
+	Buffer(GLuint type) noexcept;
+    ~Buffer() noexcept;
 
-        void bind() noexcept;
-        void unbind() noexcept;
+    void bind() noexcept;
+    void unbind() noexcept;
     
-        template < typename Tp >
-            void loadData(Tp data, GLenum usage)
-            { loadRawData(std::data(data), std::size(data) * sizeof(typename Tp::value_type), usage); }
+    template < typename Tp >
+		void loadData(Tp data, GLenum usage) {
+    		loadRawData(std::data(data), std::size(data) * sizeof(typename Tp::value_type), usage);
+    	}
 
-        template <class T, unsigned int size>
-            void loadData(T (&data)[size], GLenum usage) 
-            { loadRawData(data, sizeof(data), usage); }
+	template <class T, unsigned int size>
+    	void loadData(T (&data)[size], GLenum usage) {
+			loadRawData(data, sizeof(data), usage);
+		}
 
-    private:
-        void loadRawData(GLvoid* data, size_t size, GLenum usage) noexcept;
-        GLuint genBuff();
-};
+private:
+	void loadRawData(GLvoid* data, size_t size, GLenum usage) noexcept;
+    GLuint genBuff();
+}; // Buffer
 
 #endif // BUFFER_H
