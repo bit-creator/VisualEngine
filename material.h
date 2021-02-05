@@ -23,6 +23,7 @@
 #include "GL/Texture.h"
 
 enum class MaterialType {
+	MATERIAL_BUMP,
 	MATERIAL_PHONG,
 	MATERIAL_GLASS,
 	MATERIAL_GLOSSY
@@ -35,6 +36,8 @@ private:
 	TexPtr								_ambientMap;
 	TexPtr								_diffuseMap;
 	TexPtr								_specularMap;
+	TexPtr								_normalMap;
+	TexPtr								_heightMap;
 
     Color       	                    _ambientColor;
     Color   	                        _diffuseColor;
@@ -63,16 +66,25 @@ public:
     void setAmbientTexture(TexPtr map);
     void setDiffuseTexture(TexPtr map);
     void setSpecularTexture(TexPtr map);
+    void setNormalTexture(TexPtr map);
+    void setHeightTexture(TexPtr map);
 
     TexPtr getAmbientTexture() const noexcept;
     TexPtr getDiffuseTexture() const noexcept;
     TexPtr getSpecularTexture() const noexcept;
+    TexPtr getNormalTexture() const noexcept;
+    TexPtr getHeightTexture() const noexcept;
 
     void setRoughness(const float roughness) noexcept;
     const float getRoughness() const noexcept;
         
     void setPolygonsFillMode(const GLenum mode) noexcept;
     const GLenum getPolygonsFillMode() const noexcept;
+};
+
+class BumpMaterial : public Material {
+public:
+	BumpMaterial();
 };
 
 class PhongMaterial : public Material {

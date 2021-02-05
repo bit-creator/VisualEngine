@@ -40,18 +40,18 @@ public:
         float f5 = time_;
 
         time_ += 0.01;
-        time += 0.001;
+        time += 0.004;
         
         auto color = glm::vec4(1., 1., 1., 1.0);
         auto SpecularColor = glm::vec4(1., 0., 0., 1.0);
 
 
-        _cube->getMaterial()->setAmbientColor(color);
-        _cube->getMaterial()->setDiffuseColor(color);
-        _cube->getMaterial()->setSpecularColor(SpecularColor);
-        _cube->getMaterial()->setRoughness(1);
+//        _cube->getMaterial()->setAmbientColor(color);
+//        _cube->getMaterial()->setDiffuseColor(color);
+//        _cube->getMaterial()->setSpecularColor(SpecularColor);
+//        _cube->getMaterial()->setRoughness(1);
 
-        _cube->setRotate(glm::vec3(1.0, 1.0, 0.0), f4);
+        _cube->setRotate(glm::vec3(0.0, 1.0, 0.0), f4);
 
 //        material -> setColor(ColorTarget::Ambient, color);
 //        material -> setColor(ColorTarget::Diffuse, color);
@@ -82,7 +82,7 @@ public:
         salSys->setRotate(glm::vec3(0.0f, 1.0f, 0.0f), f4);
         earthSys->setRotate(glm::vec3(0.0f, 1.0f, 0.0f), f5);
 
-        scene.getCamera()->setRotate(glm::vec3(1.0, 1.0, f1));
+//        scene.getCamera()->setRotate(glm::vec3(1.0, 1.0, f1));
 
 //        scene._light.setRotate(glm::vec3(1.0, 1.0, 0.0), f4);
 //        (*scene.getCamera()->getChilds().begin())->setRotate(glm::vec3(1.0, 1., 1.), f4);
@@ -115,14 +115,18 @@ int main()
 
     Tex2DPtr cubicTex = std::make_shared<Texture2D>();
     Tex2DPtr titleTex = std::make_shared<Texture2D>();
+    Tex2DPtr normalTex = std::make_shared<Texture2D>();
+    Tex2DPtr heightTex = std::make_shared<Texture2D>();
     Tex2DPtr diffEarth = std::make_shared<Texture2D>();
     Tex2DPtr specEarth = std::make_shared<Texture2D>();
     Tex2DPtr diffSun = std::make_shared<Texture2D>();
     Tex2DPtr diffMoon = std::make_shared<Texture2D>();
     CubeMapPtr skyBox = std::make_shared<TextureCubeMap>();
 
-    cubicTex->loadImage("resource/cube.jpg");
+    cubicTex->loadImage("resource/bricks2.jpg");
     titleTex->loadImage("resource/spec.png");
+    normalTex->loadImage("resource/bricks2_normal.jpg");
+    heightTex->loadImage("resource/bricks2_disp.jpg");
     diffEarth->loadImage("resource/diff_earth.jpg");
     specEarth->loadImage("resource/scec_earth.jpg");
     diffSun->loadImage("resource/diff_sun.jpg");
@@ -144,15 +148,18 @@ int main()
 
     scene->setSkyBox(skyBox);
 
-    MaterialPtr simple = std::make_shared < PhongMaterial > ();
+    MaterialPtr simple = std::make_shared < BumpMaterial > ();
 
     simple->setAmbientColor(glm::vec4(0., 0., 0., 1.0));
-    simple->setDiffuseColor(glm::vec4(1., 0.2, 0.2, 1.0));
-    simple->setSpecularColor(glm::vec4(1., 1., 1., 1.0));
-    simple->setRoughness(0.001f);
+    simple->setDiffuseColor(glm::vec4(1., 1., 1.0, 1.0));
+    simple->setSpecularColor(glm::vec4(1., 1.0, 1., 1.0));
+    simple->setRoughness(0.01f);
 
     simple->setDiffuseTexture(cubicTex);
-    simple->setSpecularTexture(titleTex);
+//    simple->setSpecularTexture(titleTex);
+    simple->setNormalTexture(normalTex);
+    simple->setHeightTexture(heightTex);
+
 
     MaterialPtr sun = std::make_shared < GlossyMaterial > ();
 
@@ -203,7 +210,7 @@ int main()
     moonObj->setMaterial(moon);
     cubeObj->setMaterial(simple);
 
-    cubeObj->setPosition(glm::vec3(0.0, 0.0, 5.0));
+    cubeObj->setPosition(glm::vec3(0.0, 0.0, 4.0));
     cubeObj->setScale(glm::vec3(0.5, 0.5, 0.5));
 
 //    earthObj->setPosition(glm::vec3(3.0f, 0.0f, 0.0f));
@@ -233,7 +240,7 @@ int main()
 
     CameraPtr cam = std::make_shared<Camera>(PerspectiveCamera(M_PI / 3, aspect, 0.1, 100));
 
-    cam->setPosition(glm::vec3(0.0, 0.0, -1.0));
+    cam->setPosition(glm::vec3(0.0, 0.0, 1.0));
 
 //    cam->addChild(cubeObj);
 
@@ -253,10 +260,13 @@ int main()
     LightPtr headLighter = std::make_shared<Light>(LightDirectional());
 
     headLighter->setColor(glm::vec4(1.0, 1.0, 1.0, 1.0));
+    headLighter->setRotate(glm::vec3(1, 1, 1));
 
 //    scene->getRoot()->addChild(light);
 
     scene->getRoot()->addChild(salarySystem);
+
+    salarySystem->setEnabled(false);
 
     scene->getCamera()->addChild(headLighter);
 
@@ -307,7 +317,7 @@ int main()
     listener._cube = cubeObj;
 
     eng.addEventListener(std::make_shared<MyListener>(listener));
-    eng.addEventListener(std::make_shared<CameraControl>(controler));
+//    eng.addEventListener(std::make_shared<CameraControl>(controler));
 
     eng.engine().run();
 

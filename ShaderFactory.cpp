@@ -20,6 +20,12 @@ PrgPtr ShaderFactory::createShader(ShaderType type) {
 	FragmentShader frag;
 
 	switch(type) {
+	case SHADER_BUMP: {
+		vert.addSource(loadShaderFromFile("shaders/bumpMapping/bump.vert.glsl"));
+		frag.addSource(loadShaderFromFile("shaders/bumpMapping/bump.frag.glsl"));
+		break;
+	}
+
 	case SHADER_PHONG: {
 		vert.addSource(loadShaderFromFile("shaders/phong/phong.vert.glsl"));
 		frag.addSource(loadShaderFromFile("shaders/phong/phong.frag.glsl"));

@@ -13,39 +13,41 @@ void Cube::setupBuffers() noexcept
 	{
 		glm::vec3			_coord;
 		glm::vec3			_normal;
+		glm::vec3 			_tangent;
+		glm::vec3 			_bitangent;
 		glm::vec2			_texCoord;
 	};
 
 	Vertex vertices[] = {
-        { glm::vec3( 1.,  1.,  1.), glm::vec3( 0.,  1.,  0.), glm::vec2(1, 1) },
-		{ glm::vec3(-1.,  1.,  1.), glm::vec3( 0.,  1.,  0.), glm::vec2(0, 1) },
-        { glm::vec3(-1.,  1., -1.), glm::vec3( 0.,  1.,  0.), glm::vec2(0, 0) },
-        { glm::vec3( 1.,  1., -1.), glm::vec3( 0.,  1.,  0.), glm::vec2(1, 0) },
+        { glm::vec3( 1.,  1.,  1.), glm::vec3( 0.,  1.,  0.), glm::vec3(1.0, 0.0, 0.0), glm::vec3(0.0, 0.0, 1.0), glm::vec2(1, 1) },
+		{ glm::vec3(-1.,  1.,  1.), glm::vec3( 0.,  1.,  0.), glm::vec3(1.0, 0.0, 0.0), glm::vec3(0.0, 0.0, 1.0), glm::vec2(0, 1) },
+        { glm::vec3(-1.,  1., -1.), glm::vec3( 0.,  1.,  0.), glm::vec3(1.0, 0.0, 0.0), glm::vec3(0.0, 0.0, 1.0), glm::vec2(0, 0) },
+        { glm::vec3( 1.,  1., -1.), glm::vec3( 0.,  1.,  0.), glm::vec3(1.0, 0.0, 0.0), glm::vec3(0.0, 0.0, 1.0), glm::vec2(1, 0) },
 
-		{ glm::vec3( 1., -1.,  1.), glm::vec3( 0., -1.,  0.), glm::vec2(1, 1) },
-		{ glm::vec3(-1., -1.,  1.), glm::vec3( 0., -1.,  0.), glm::vec2(0, 1) },
-		{ glm::vec3(-1., -1., -1.), glm::vec3( 0., -1.,  0.), glm::vec2(0, 0) },
-		{ glm::vec3( 1., -1., -1.), glm::vec3( 0., -1.,  0.), glm::vec2(1, 0) },
+		{ glm::vec3( 1., -1.,  1.), glm::vec3( 0., -1.,  0.), glm::vec3(1.0, 0.0, 0.0), glm::vec3(0.0, 0.0, 1.0), glm::vec2(1, 1) },
+		{ glm::vec3(-1., -1.,  1.), glm::vec3( 0., -1.,  0.), glm::vec3(1.0, 0.0, 0.0), glm::vec3(0.0, 0.0, 1.0), glm::vec2(0, 1) },
+		{ glm::vec3(-1., -1., -1.), glm::vec3( 0., -1.,  0.), glm::vec3(1.0, 0.0, 0.0), glm::vec3(0.0, 0.0, 1.0), glm::vec2(0, 0) },
+		{ glm::vec3( 1., -1., -1.), glm::vec3( 0., -1.,  0.), glm::vec3(1.0, 0.0, 0.0), glm::vec3(0.0, 0.0, 1.0), glm::vec2(1, 0) },
         
-		{ glm::vec3( 1.,  1.,  1.), glm::vec3( 0.,  0.,  1.), glm::vec2(1, 1) },
-		{ glm::vec3(-1.,  1.,  1.), glm::vec3( 0.,  0.,  1.), glm::vec2(0, 1) },
-		{ glm::vec3(-1., -1.,  1.), glm::vec3( 0.,  0.,  1.), glm::vec2(0, 0) },
-		{ glm::vec3( 1., -1.,  1.), glm::vec3( 0.,  0.,  1.), glm::vec2(1, 0) },
+		{ glm::vec3( 1.,  1.,  1.), glm::vec3( 0.,  0.,  1.), glm::vec3(1.0, 0.0, 0.0), glm::vec3(0.0, 1.0, 0.0), glm::vec2(1, 1) },
+		{ glm::vec3(-1.,  1.,  1.), glm::vec3( 0.,  0.,  1.), glm::vec3(1.0, 0.0, 0.0), glm::vec3(0.0, 1.0, 0.0), glm::vec2(0, 1) },
+		{ glm::vec3(-1., -1.,  1.), glm::vec3( 0.,  0.,  1.), glm::vec3(1.0, 0.0, 0.0), glm::vec3(0.0, 1.0, 0.0), glm::vec2(0, 0) },
+		{ glm::vec3( 1., -1.,  1.), glm::vec3( 0.,  0.,  1.), glm::vec3(1.0, 0.0, 0.0), glm::vec3(0.0, 1.0, 0.0), glm::vec2(1, 0) },
         
-		{ glm::vec3(-1.,  1., -1.), glm::vec3( 0.,  0., -1.), glm::vec2(0, 1) },
-		{ glm::vec3( 1.,  1., -1.), glm::vec3( 0.,  0., -1.), glm::vec2(1, 1) },
-		{ glm::vec3( 1., -1., -1.), glm::vec3( 0.,  0., -1.), glm::vec2(1, 0) },
-		{ glm::vec3(-1., -1., -1.), glm::vec3( 0.,  0., -1.), glm::vec2(0, 0) },
+		{ glm::vec3(-1.,  1., -1.), glm::vec3( 0.,  0., -1.), glm::vec3(1.0, 0.0, 0.0), glm::vec3(0.0, 1.0, 0.0), glm::vec2(0, 1) },
+		{ glm::vec3( 1.,  1., -1.), glm::vec3( 0.,  0., -1.), glm::vec3(1.0, 0.0, 0.0), glm::vec3(0.0, 1.0, 0.0), glm::vec2(1, 1) },
+		{ glm::vec3( 1., -1., -1.), glm::vec3( 0.,  0., -1.), glm::vec3(1.0, 0.0, 0.0), glm::vec3(0.0, 1.0, 0.0), glm::vec2(1, 0) },
+		{ glm::vec3(-1., -1., -1.), glm::vec3( 0.,  0., -1.), glm::vec3(1.0, 0.0, 0.0), glm::vec3(0.0, 1.0, 0.0), glm::vec2(0, 0) },
         
-		{ glm::vec3(-1.,  1.,  1.), glm::vec3(-1.,  0.,  0.), glm::vec2(1, 1) },
-		{ glm::vec3(-1.,  1., -1.), glm::vec3(-1.,  0.,  0.), glm::vec2(1, 0) },
-		{ glm::vec3(-1., -1., -1.), glm::vec3(-1.,  0.,  0.), glm::vec2(0, 0) },
-		{ glm::vec3(-1., -1.,  1.), glm::vec3(-1.,  0.,  0.), glm::vec2(0, 1) },
+		{ glm::vec3(-1.,  1.,  1.), glm::vec3(-1.,  0.,  0.), glm::vec3(0.0, 1.0, 0.0), glm::vec3(0.0, 0.0, 1.0), glm::vec2(1, 1) },
+		{ glm::vec3(-1.,  1., -1.), glm::vec3(-1.,  0.,  0.), glm::vec3(0.0, 1.0, 0.0), glm::vec3(0.0, 0.0, 1.0), glm::vec2(1, 0) },
+		{ glm::vec3(-1., -1., -1.), glm::vec3(-1.,  0.,  0.), glm::vec3(0.0, 1.0, 0.0), glm::vec3(0.0, 0.0, 1.0), glm::vec2(0, 0) },
+		{ glm::vec3(-1., -1.,  1.), glm::vec3(-1.,  0.,  0.), glm::vec3(0.0, 1.0, 0.0), glm::vec3(0.0, 0.0, 1.0), glm::vec2(0, 1) },
         
-		{ glm::vec3( 1.,  1.,  1.), glm::vec3( 1.,  0.,  0.), glm::vec2(1, 1) },
-		{ glm::vec3( 1.,  1., -1.), glm::vec3( 1.,  0.,  0.), glm::vec2(1, 0) },
-		{ glm::vec3( 1., -1., -1.), glm::vec3( 1.,  0.,  0.), glm::vec2(0, 0) },
-		{ glm::vec3( 1., -1.,  1.), glm::vec3( 1.,  0.,  0.), glm::vec2(0, 1) },
+		{ glm::vec3( 1.,  1.,  1.), glm::vec3( 1.,  0.,  0.), glm::vec3(0.0, 1.0, 0.0), glm::vec3(0.0, 0.0, 1.0), glm::vec2(1, 1) },
+		{ glm::vec3( 1.,  1., -1.), glm::vec3( 1.,  0.,  0.), glm::vec3(0.0, 1.0, 0.0), glm::vec3(0.0, 0.0, 1.0), glm::vec2(1, 0) },
+		{ glm::vec3( 1., -1., -1.), glm::vec3( 1.,  0.,  0.), glm::vec3(0.0, 1.0, 0.0), glm::vec3(0.0, 0.0, 1.0), glm::vec2(0, 0) },
+		{ glm::vec3( 1., -1.,  1.), glm::vec3( 1.,  0.,  0.), glm::vec3(0.0, 1.0, 0.0), glm::vec3(0.0, 0.0, 1.0), glm::vec2(0, 1) },
     };
 
     glm::uvec3 indices[] = {
@@ -75,9 +77,11 @@ void Cube::setupBuffers() noexcept
     VBO.loadData(vertices, GL_STATIC_DRAW);
     EBO.loadData(indices, GL_STATIC_DRAW);
     
-    VAO.addAttribute(Attribute::ATTRIB_POSITION, 8 * sizeof(GLfloat), 0);
-    VAO.addAttribute(Attribute::ATTRIB_NORMAL, 8 * sizeof(GLfloat), 3 * sizeof(GLfloat));
-    VAO.addAttribute(Attribute::ATTRIB_TEX, 8 * sizeof(GLfloat), 6 * sizeof(GLfloat));
+    VAO.addAttribute(Attribute::ATTRIB_POSITION, 14 * sizeof(GLfloat), 0);
+    VAO.addAttribute(Attribute::ATTRIB_NORMAL, 14 * sizeof(GLfloat), 3 * sizeof(GLfloat));
+    VAO.addAttribute(Attribute::ATTRIB_TANGENT, 14 * sizeof(GLfloat), 6 * sizeof(GLfloat));
+    VAO.addAttribute(Attribute::ATTRIB_BITANGENT, 14 * sizeof(GLfloat), 9 * sizeof(GLfloat));
+    VAO.addAttribute(Attribute::ATTRIB_TEX, 14 * sizeof(GLfloat), 12 * sizeof(GLfloat));
 
     // VAO.addAttribute(Attribute::ATTRIB_POSITION, 3 * sizeof(GLfloat), 0);
     // VAO.addAttribute(Attribute::ATTRIB_NORMAL, 3 * sizeof(GLfloat), 0);
