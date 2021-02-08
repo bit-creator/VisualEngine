@@ -210,10 +210,25 @@ void Engine::render(Object3D &obj, LightList lights) noexcept {
 
     geom->bindBuffers();
 
+//    glEnableVertexAttribArray(0); CHECK_GL_ERROR();
+//    glEnableVertexAttribArray(1); CHECK_GL_ERROR();
+//    glEnableVertexAttribArray(2); CHECK_GL_ERROR();
+//    glEnableVertexAttribArray(3); CHECK_GL_ERROR();
+//    glEnableVertexAttribArray(4); CHECK_GL_ERROR();
+//    glEnableVertexAttribArray(5); CHECK_GL_ERROR();
+
     if (geom->hasIndexes()) glDrawElements(geom->getPoligonConnectMode(), geom->getNumIndices(), GL_UNSIGNED_INT, 0);
     else glDrawArrays(geom->getPoligonConnectMode() , 0, geom->getNumVertexes());
 
+//    glDisableVertexAttribArray(0); CHECK_GL_ERROR();
+//    glDisableVertexAttribArray(1); CHECK_GL_ERROR();
+//    glDisableVertexAttribArray(2); CHECK_GL_ERROR();
+//    glDisableVertexAttribArray(3); CHECK_GL_ERROR();
+//    glDisableVertexAttribArray(4); CHECK_GL_ERROR();
+//    glDisableVertexAttribArray(5); CHECK_GL_ERROR();
+
     geom->unbindBuffers();
+
 
     if (geom->hasTexCoord())
     {

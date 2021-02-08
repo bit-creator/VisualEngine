@@ -65,7 +65,7 @@ void main() {
 //  vec3 R_1 = reflect(I, normal);
 
 //  color = mix(texture(uSkyBox, R), texture(uSkyBox, R_1), dot(normal, I) > BrusterAngle ? 1 : 0);
-  color = _color;
+  color = diffuseColor;
 }
 
 vec4 PhongLighting(vec4 ambientColor, vec4 diffuseColor, vec4 specularColor,

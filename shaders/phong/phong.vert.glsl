@@ -3,7 +3,7 @@
 #define ATTRIB_COORD_LOC 0
 #define ATTRIB_NORMAL_LOC 1
 #define ATTRIB_COLOR_LOC 2
-#define ATTRIB_TEXCOORD_LOC 3
+#define ATTRIB_TEXCOORD_LOC 5
 
 #define ATTRIBUTE(LOCATION) layout(location = LOCATION) in
 
