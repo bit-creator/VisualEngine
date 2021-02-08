@@ -26,13 +26,13 @@ enum class Attribute
    ATTRIB_POSITION = 0,
    ATTRIB_NORMAL = 1,
    ATTRIB_COLOR = 2,
-   ATTRIB_TEX = 3
+   ATTRIB_TEX = 5
 };
 
 class VertexArray : public GLObject
 {
     private:
-        std::array < std::optional < Attribute >, 4 >                   _atributes;
+        std::array < std::optional < Attribute >, 6 >                   _atributes;
 
     public:
         VertexArray() noexcept;
