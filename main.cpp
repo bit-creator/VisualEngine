@@ -23,15 +23,17 @@ class MyListener : public EventListener
 
     double time = 0;
     double time_ = 0;
-
+    bool   onEarth = false;
 public:
     ObjPtr  _cube;
+    TexPtr  _skybox;
     MyListener(Scene& sc)
         : scene(sc)
     {  }
 
     void onRender() noexcept override
     {
+    	if (onEarth) return;
 
         float f1 = std::abs(std::sin(1 * time));
         float f2 = std::abs(std::sin(2 * time));
@@ -42,8 +44,8 @@ public:
         time_ += 0.01;
         time += 0.004;
         
-        auto color = glm::vec4(1., 1., 1., 1.0);
-        auto SpecularColor = glm::vec4(1., 0., 0., 1.0);
+//        auto color = glm::vec4(1., 1., 1., 1.0);
+//        auto SpecularColor = glm::vec4(1., 0., 0., 1.0);
 
 
 //        _cube->getMaterial()->setAmbientColor(color);
@@ -51,7 +53,7 @@ public:
 //        _cube->getMaterial()->setSpecularColor(SpecularColor);
 //        _cube->getMaterial()->setRoughness(1);
 
-        _cube->setRotate(glm::vec3(0.0, 1.0, 0.0), f4);
+//        _cube->setRotate(glm::vec3(0.0, 1.0, 0.0), f4);
 
 //        material -> setColor(ColorTarget::Ambient, color);
 //        material -> setColor(ColorTarget::Diffuse, color);
@@ -82,6 +84,13 @@ public:
         salSys->setRotate(glm::vec3(0.0f, 1.0f, 0.0f), f4);
         earthSys->setRotate(glm::vec3(0.0f, 1.0f, 0.0f), f5);
 
+    	if (glm::distance(scene.getCamera()->getPosition(), glm::vec3(earth->getWorldMat() * glm::vec4(earth->getPosition(), 1.0))) <= 0.75f) {
+    		scene.setSkyBox(_skybox);
+    		_cube->setEnabled(true);
+    		salSys->setEnabled(false);
+    		onEarth = true;
+    		std::cout << "on  earth" << std::endl;
+    	}
 //        scene.getCamera()->setRotate(glm::vec3(1.0, 1.0, f1));
 
 //        scene._light.setRotate(glm::vec3(1.0, 1.0, 0.0), f4);
@@ -91,8 +100,93 @@ public:
 
     ~MyListener() noexcept override {
     }
-
 };
+
+void space(ScenePtr scene)
+{
+    auto sunObj = std::make_shared<Object3D>();
+    auto earthObj = std::make_shared<Object3D>();
+    auto moonObj = std::make_shared<Object3D>();
+
+    Tex2DPtr diffEarth = std::make_shared<Texture2D>();
+	Tex2DPtr specEarth = std::make_shared<Texture2D>();
+    Tex2DPtr diffSun = std::make_shared<Texture2D>();
+    Tex2DPtr diffMoon = std::make_shared<Texture2D>();
+    CubeMapPtr skyBox = std::make_shared<TextureCubeMap>();
+
+    diffEarth->loadImage("resource/diff_earth.jpg");
+    specEarth->loadImage("resource/scec_earth.jpg");
+    diffSun->loadImage("resource/diff_sun.jpg");
+    diffMoon->loadImage("resource/diff_moon.jpg");
+
+	skyBox->loadImage("resource/skybox/corona_rt.png", BoxSide::SIDE_FRONT);
+    skyBox->loadImage("resource/skybox/corona_lf.png", BoxSide::SIDE_BACK);
+    skyBox->loadImage("resource/skybox/corona_bk.png", BoxSide::SIDE_LEFT);
+    skyBox->loadImage("resource/skybox/corona_ft.png", BoxSide::SIDE_RIGHT);
+    skyBox->loadImage("resource/skybox/corona_up.png", BoxSide::SIDE_TOP);
+    skyBox->loadImage("resource/skybox/corona_dn.png", BoxSide::SIDE_BOTTOM);
+
+    scene->setSkyBox(skyBox);
+
+    MaterialPtr sun = std::make_shared < PhongMaterial > ();
+
+    sun->setAmbientColor(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
+    sun->setDiffuseColor(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+    sun->setSpecularColor(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+    sun->setRoughness(0.3f);
+    sun->setDiffuseTexture(diffSun);
+
+    MaterialPtr earth = std::make_shared < PhongMaterial > ();
+
+    earth->setAmbientColor(glm::vec4(0.f, 0.f, 0.f, 1.0f));
+    earth->setDiffuseColor(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+    earth->setSpecularColor(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+    earth->setRoughness(0.010f);
+    earth->setDiffuseTexture(diffEarth);
+    earth->setSpecularTexture(specEarth);
+
+    MaterialPtr moon = std::make_shared < PhongMaterial > ();
+
+    moon->setAmbientColor(glm::vec4(0.f, 0.f, 0.f, 1.0f));
+    moon->setDiffuseColor(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+    moon->setSpecularColor(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+    moon->setRoughness(0.0000001f);
+    moon->setDiffuseTexture(diffMoon);
+
+    GeometryPtr sphereGeom = std::make_shared<Sphere>(5);
+
+    sunObj->setGeometry(sphereGeom);
+    earthObj->setGeometry(sphereGeom);
+    moonObj->setGeometry(sphereGeom);
+
+    sunObj->setMaterial(sun);
+    earthObj->setMaterial(earth);
+    moonObj->setMaterial(moon);
+
+    earthObj->setScale(glm::vec3(0.5f, 0.5f, 0.5f));
+
+    moonObj->setPosition(glm::vec3(1.0f, 0.0f, 0.0f));
+    moonObj->setScale(glm::vec3(0.25f, 0.25f, 0.25f));
+
+    NodePtr planetSystem = std::make_shared<Node>(NodeType::NODE_NODE);
+    planetSystem->addChild(earthObj);
+    planetSystem->addChild(moonObj);
+
+    planetSystem->setPosition(glm::vec3(3.0f, 0.0f, 0.0f));
+
+    NodePtr salarySystem = std::make_shared<Node>(NodeType::NODE_NODE);
+
+    planetSystem->setEnabled(false);
+
+    salarySystem->addChild(sunObj);
+    salarySystem->addChild(planetSystem);
+
+    salarySystem->setPosition(glm::vec3(0.0f, 0.0f, 3.0f));
+
+    scene->getRoot()->addChild(salarySystem);
+
+    salarySystem->setEnabled(false);
+}
 
 int main()
 {
@@ -122,22 +216,23 @@ int main()
     Tex2DPtr diffSun = std::make_shared<Texture2D>();
     Tex2DPtr diffMoon = std::make_shared<Texture2D>();
     CubeMapPtr skyBox = std::make_shared<TextureCubeMap>();
+    CubeMapPtr spaceSkyBox = std::make_shared<TextureCubeMap>();
 
-    cubicTex->loadImage("resource/bricks2.jpg");
+    cubicTex->loadImage("resource/nicholas-andy-wood2.jpg");
     titleTex->loadImage("resource/spec.png");
-    normalTex->loadImage("resource/bricks2_normal.jpg");
-    heightTex->loadImage("resource/bricks2_disp.jpg");
+    normalTex->loadImage("resource/bump_normal.png");
+    heightTex->loadImage("resource/bump_depth.png");
     diffEarth->loadImage("resource/diff_earth.jpg");
     specEarth->loadImage("resource/scec_earth.jpg");
     diffSun->loadImage("resource/diff_sun.jpg");
     diffMoon->loadImage("resource/diff_moon.jpg");
 
-//    skyBox->loadImage("resource/skybox/corona_rt.png", BoxSide::SIDE_FRONT);
-//    skyBox->loadImage("resource/skybox/corona_lf.png", BoxSide::SIDE_BACK);
-//    skyBox->loadImage("resource/skybox/corona_bk.png", BoxSide::SIDE_LEFT);
-//    skyBox->loadImage("resource/skybox/corona_ft.png", BoxSide::SIDE_RIGHT);
-//    skyBox->loadImage("resource/skybox/corona_up.png", BoxSide::SIDE_TOP);
-//    skyBox->loadImage("resource/skybox/corona_dn.png", BoxSide::SIDE_BOTTOM);
+    spaceSkyBox->loadImage("resource/skybox/corona_rt.png", BoxSide::SIDE_FRONT);
+    spaceSkyBox->loadImage("resource/skybox/corona_lf.png", BoxSide::SIDE_BACK);
+    spaceSkyBox->loadImage("resource/skybox/corona_bk.png", BoxSide::SIDE_LEFT);
+    spaceSkyBox->loadImage("resource/skybox/corona_ft.png", BoxSide::SIDE_RIGHT);
+    spaceSkyBox->loadImage("resource/skybox/corona_up.png", BoxSide::SIDE_TOP);
+    spaceSkyBox->loadImage("resource/skybox/corona_dn.png", BoxSide::SIDE_BOTTOM);
 
     skyBox->loadImage("resource/skybox/posz.jpg", BoxSide::SIDE_FRONT);
     skyBox->loadImage("resource/skybox/negz.jpg", BoxSide::SIDE_BACK);
@@ -146,7 +241,7 @@ int main()
     skyBox->loadImage("resource/skybox/posy.jpg", BoxSide::SIDE_TOP);
     skyBox->loadImage("resource/skybox/negy.jpg", BoxSide::SIDE_BOTTOM);
 
-    scene->setSkyBox(skyBox);
+    scene->setSkyBox(spaceSkyBox);
 
     MaterialPtr simple = std::make_shared < BumpMaterial > ();
 
@@ -161,19 +256,19 @@ int main()
     simple->setHeightTexture(heightTex);
 
 
-    MaterialPtr sun = std::make_shared < GlossyMaterial > ();
+    MaterialPtr sun = std::make_shared < PhongMaterial > ();
 
     sun->setAmbientColor(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
-//    sun->setDiffuseColor(glm::vec4(1.0f, 0.5f, 0.0f, 1.0f));
-//    sun->setSpecularColor(glm::vec4(1.0f, 1.0f, 0.0f, 1.0f));
+    sun->setDiffuseColor(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+    sun->setSpecularColor(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
     sun->setRoughness(0.3f);
     sun->setDiffuseTexture(diffSun);
 
     MaterialPtr earth = std::make_shared < PhongMaterial > ();
 
     earth->setAmbientColor(glm::vec4(0.f, 0.f, 0.f, 1.0f));
-//    earth->setDiffuseColor(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
-//    earth->setSpecularColor(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+    earth->setDiffuseColor(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+    earth->setSpecularColor(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
     earth->setRoughness(0.010f);
     earth->setDiffuseTexture(diffEarth);
     earth->setSpecularTexture(specEarth);
@@ -185,7 +280,7 @@ int main()
     moon->setSpecularColor(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
     moon->setRoughness(0.0000001f);
     moon->setDiffuseTexture(diffMoon);
-        
+
     GeometryPtr sphereGeom = std::make_shared<Sphere>(5);
 //     GeometryPtr circle = std::make_shared<Circle>(10);
 //     GeometryPtr rect = std::make_shared<Rect>();
@@ -211,7 +306,7 @@ int main()
     cubeObj->setMaterial(simple);
 
     cubeObj->setPosition(glm::vec3(0.0, 0.0, 4.0));
-    cubeObj->setScale(glm::vec3(0.5, 0.5, 0.5));
+//    cubeObj->setScale(glm::vec3(30.5, 10.5, 0.5));
 
 //    earthObj->setPosition(glm::vec3(3.0f, 0.0f, 0.0f));
     earthObj->setScale(glm::vec3(0.5f, 0.5f, 0.5f));
@@ -227,7 +322,7 @@ int main()
 
     NodePtr salarySystem = std::make_shared<Node>(NodeType::NODE_NODE);
 
-    planetSystem->setEnabled(false);
+    planetSystem->setEnabled(true);
 
     salarySystem->addChild(sunObj);
     salarySystem->addChild(planetSystem);
@@ -248,7 +343,7 @@ int main()
 
     scene->getRoot()->addChild(cubeObj);
 
-
+    cubeObj->setEnabled(false);
 
 //    (*scene->getRoot()->getChilds().begin())->addChild(cubeObj);
 //    scene->getCamera()->addChild(cubeObj);
@@ -260,13 +355,13 @@ int main()
     LightPtr headLighter = std::make_shared<Light>(LightDirectional());
 
     headLighter->setColor(glm::vec4(1.0, 1.0, 1.0, 1.0));
-    headLighter->setRotate(glm::vec3(1, 1, 1));
+//    headLighter->setRotate(glm::vec3(1, 1, 1));s
 
 //    scene->getRoot()->addChild(light);
 
     scene->getRoot()->addChild(salarySystem);
 
-    salarySystem->setEnabled(false);
+    salarySystem->setEnabled(true);
 
     scene->getCamera()->addChild(headLighter);
 
@@ -315,9 +410,10 @@ int main()
     CameraControl controler(scene->getCamera());
 
     listener._cube = cubeObj;
+    listener._skybox = skyBox;
 
     eng.addEventListener(std::make_shared<MyListener>(listener));
-//    eng.addEventListener(std::make_shared<CameraControl>(controler));
+    eng.addEventListener(std::make_shared<CameraControl>(controler));
 
     eng.engine().run();
 
