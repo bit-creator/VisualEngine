@@ -19,6 +19,9 @@ uniform mat3 uNormalMat;
 
 uniform bool uPerspectiveCamera;
 
+//uniform sampler2D uDisplacementMap;
+//uniform bool uHasDisplacementMap;
+
 out vec3 vNormal;
 out vec3 vView;
 out vec2 vTexCoords;
