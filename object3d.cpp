@@ -2,7 +2,7 @@
 
 Object3D::Object3D() noexcept
     : Node(NodeType::NODE_OBJECT)
-    , _material ( std::make_shared<Material>() )
+//    , _material ( std::make_shared<Material>() )
 {  }
 
 Object3D::Object3D(MaterialPtr material) noexcept

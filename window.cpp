@@ -64,10 +64,9 @@ void Window::setup() noexcept
 {
     if (!glfwInit())
     {
-        std::cout << "|    EROR     | initialize GLFW\n" << "|             | " << glGetError() << '\n';
-        std::raise(SIGTERM);
+    	CHECK_GL_ERROR();
+    	std::raise(SIGTERM);
     }
-    std::cout << "| SUCCSESSFUL | initialize GLFW\n";
 
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, (GLint)(_version));
 
@@ -81,12 +80,10 @@ void Window::setup() noexcept
 
     if(_window == nullptr)
     {
-        std::cout << "|    EROR     | Window create\n";
-        glfwTerminate();
+    	CHECK_GL_ERROR();
+    	glfwTerminate();
         std::raise(SIGTERM);
     }
-
-    std::cout << "| SUCCSESSFUL | Window create\n";
 
     glfwMakeContextCurrent(_window);
 
@@ -94,11 +91,10 @@ void Window::setup() noexcept
 
     if (auto err =glewInit(); err != GLEW_OK)
     {
-        std::cout << "|    EROR     | initialize GLEW\n" << "|             | " << glewGetErrorString(err) << '\n' << "|             | " << glGetError() << '\n';
-        glfwTerminate();
+    	CHECK_GL_ERROR();
+    	glfwTerminate();
         std::raise(SIGTERM);
     }
-    std::cout << "| SUCCSESSFUL | Initialize GLEW\n";
 
     glfwGetFramebufferSize(_window, &_width, &_height);
 
@@ -109,7 +105,7 @@ void Window::setup() noexcept
     glfwSetCursorPosCallback(_window, mouseCallBack);
     glfwSetMouseButtonCallback(_window, mouseClickCallBack);
 
-    std::cout << std::endl;
+    CHECK_GL_ERROR();
 }
 
 Window::pointer Window::get() noexcept

@@ -26,6 +26,9 @@ class MyListener : public EventListener
 
 public:
     ObjPtr  _cube;
+    NodePtr _atom;
+    MaterialPtr _selected;
+    MaterialPtr _regular;
     MyListener(Scene& sc)
         : scene(sc)
     {  }
@@ -80,6 +83,7 @@ public:
         moon->setRotate(glm::vec3(0.0f, 1.0f, 0.0f), f5);
         salSys->setRotate(glm::vec3(0.0f, 1.0f, 0.0f), f4);
         earthSys->setRotate(glm::vec3(0.0f, 1.0f, 0.0f), f5);
+        _atom->setRotate(glm::vec3(f3, f2, f1), f5);
 
         scene.getCamera()->setRotate(glm::vec3(1.0, 1.0, f1));
 
@@ -93,8 +97,15 @@ public:
     	if (res.empty()) {
     		std::cout << "no object" << std::endl;
     	} else {
-    		for(auto& el : res)
-    		el._obj->getMaterial()->setAmbientColor(glm::vec4(rand() * 1.0f / RAND_MAX, rand() * 1.0f / RAND_MAX, rand() * 1.0f / RAND_MAX, 1.0));
+    		auto el = res.front();
+    			if(el._obj->getMaterial()->_selected) {
+    				el._obj->setMaterial(_regular);
+    			} else {
+    				el._obj->setMaterial(_selected);
+//    				el._obj->getMaterial()->setAmbientColor(glm::vec4(rand() * 1.0f / RAND_MAX, rand() * 1.0f / RAND_MAX, rand() * 1.0f / RAND_MAX, 1.0));
+    			}
+
+
     	}
 //    	std::cout << "click" << std::endl;
     }
@@ -106,78 +117,6 @@ public:
 
 int main()
 {
-	/**
-	 * Вместо этого мы сделаем простой пикер основаный на тесте луча
-	 * Для этого у ноды создадим метод
-	 *
-	 * RayCast(ray: Ray)
-	 *
-	 * Давай наверное возвратим список всех пересечений.
-	 *
-	 * Т.е. RayCast(ray: Ray): Nodes[]
-	 *
-	 * Не пугайся - это тайпскриптовый синтаксис)
-	 * Метод должен рекурсивно пройти по всем нодам наследникам
-	 * и проверить пересечение с геометрией с учётом трансформации
-	 * Т.е. если нода типа объект, то сделать
-	 *
-	 * rayCast(ray: Ray);
-	 *
-	 * для геометрии предварительно применив к лучу мировое преобразование
-	 * Т.е. нам не нужно выполнять преобразование для каждой вершины, мы ж можем преобразовать луч.
-	 * Пока начнём с простого - сферу и куб пересечём аналитически
-	 * Т.е. мы ж знаем, что они единичные и никому не позволяем править вершины.
-	 * Значит по формуле можно сразу узнать пересечение.
-	 * Итак, нам нужен маленький класс
-	 *
-	 * Ray {
-   	 *  	   vec3 origin;
-   	 *  	   vec3 dir;
-	 *  }
-	 *
-	 * В системе координат камеры луч выходит из нуля координат,
-	 * т.е. очевидно в мировых координтах это просто положение камеры
-	 * С направлением чуть сложнее. Будем считать, что камера перспективная.
-	 * Для начала найдём координаты мышки в каноническом объёме
-	 *
-	 * 		mouse.x = ( clientX / window.Width ) * 2 - 1;
-	 * 		mouse.y = - (clientY / window.Height ) * 2 + 1;
-	 *
-	 * Тогда мировое положение точки на передней стенке канонического объёма
-	 *
-	 *		inv(viewProj) * (mouse.x, mouse.y, -1, 1)
-	 *
-	 * Ну а направление - разница.
-	 * Но поскольку у нас мышка всегда по центру, то можно и упростить
-	 * Я думаю будет лучше создать структуру
-	 *
-	 * Intersection {
- 	 *		 distance – distance between the origin of the ray and the intersection
-	 * 		 point – point of intersection, in world coordinates
-	 * 		 object – the intersected object
-	 * }
-	 *
-	 * И возвращать массив таких структур
-	 * Итак. У класса геометрии появляется метод
-	 *
-	 * rayCast(ray: Ray): distance.
-	 *
-	 * Если отрицательное число, то пересечени нету.
-	 * У ноды сцены рекурсивный
-	 *
-	 * rayCast(ray: Ray): Intersection[]
-	 *
-	 * У камеры можно метод
-	 *
-	 * getRay(mouseX, mouseY): Ray
-	 *
-	 * Для сферы и куба rayCast нужно перегрузить и аналитически посчитать перечечение
-	 * В общем случае - пройти по всем треугольникам по массиву индексов
-	 *  и проверить пересечение луча и треугольника.
-	 * Но для этого нужно иметь эти массивы.
-	 * Пока не имплементь это
-	 */
-
     auto& eng = Engine::engine();
 
     ScenePtr scene = std::make_shared<Scene>();
@@ -186,6 +125,12 @@ int main()
     auto earthObj = std::make_shared<Object3D>();
     auto moonObj = std::make_shared<Object3D>();
     auto cubeObj = std::make_shared<Object3D>();
+//    std::vector<std::shared_ptr<Object3D>> 	electrons(10, std::make_shared<Object3D>());
+	std::vector<std::shared_ptr<Object3D>> 	electrons;
+	for(int i = 0; i <= 10; i++){
+		auto electron = std::make_shared<Object3D>();
+		electrons.push_back(electron);
+	}
 
     Tex2DPtr cubicTex = std::make_shared<Texture2D>();
     Tex2DPtr titleTex = std::make_shared<Texture2D>();
@@ -193,6 +138,7 @@ int main()
     Tex2DPtr specEarth = std::make_shared<Texture2D>();
     Tex2DPtr diffSun = std::make_shared<Texture2D>();
     Tex2DPtr diffMoon = std::make_shared<Texture2D>();
+    CubeMapPtr skyBox = std::make_shared<TextureCubeMap>();
 
     cubicTex->loadImage("resource/cube.jpg");
     titleTex->loadImage("resource/spec.png");
@@ -200,8 +146,24 @@ int main()
     specEarth->loadImage("resource/scec_earth.jpg");
     diffSun->loadImage("resource/diff_sun.jpg");
     diffMoon->loadImage("resource/diff_moon.jpg");
-    
-    MaterialPtr simple = std::make_shared < Material > ();
+
+//    skyBox->loadImage("resource/skybox/corona_rt.png", BoxSide::SIDE_FRONT);
+//    skyBox->loadImage("resource/skybox/corona_lf.png", BoxSide::SIDE_BACK);
+//    skyBox->loadImage("resource/skybox/corona_bk.png", BoxSide::SIDE_LEFT);
+//    skyBox->loadImage("resource/skybox/corona_ft.png", BoxSide::SIDE_RIGHT);
+//    skyBox->loadImage("resource/skybox/corona_up.png", BoxSide::SIDE_TOP);
+//    skyBox->loadImage("resource/skybox/corona_dn.png", BoxSide::SIDE_BOTTOM);
+
+    skyBox->loadImage("resource/skybox/posz.jpg", BoxSide::SIDE_FRONT);
+    skyBox->loadImage("resource/skybox/negz.jpg", BoxSide::SIDE_BACK);
+    skyBox->loadImage("resource/skybox/negx.jpg", BoxSide::SIDE_LEFT);
+    skyBox->loadImage("resource/skybox/posx.jpg", BoxSide::SIDE_RIGHT);
+    skyBox->loadImage("resource/skybox/posy.jpg", BoxSide::SIDE_TOP);
+    skyBox->loadImage("resource/skybox/negy.jpg", BoxSide::SIDE_BOTTOM);
+
+    scene->setSkyBox(skyBox);
+
+    MaterialPtr simple = std::make_shared < PhongMaterial > ();
 
     simple->setAmbientColor(glm::vec4(0., 0., 0., 1.0));
     simple->setDiffuseColor(glm::vec4(1., 0.2, 0.2, 1.0));
@@ -211,7 +173,17 @@ int main()
     simple->setDiffuseTexture(cubicTex);
     simple->setSpecularTexture(titleTex);
 
-    MaterialPtr sun = std::make_shared < Material > ();
+    MaterialPtr glossy = std::make_shared < GlossyMaterial > ();
+    glossy->setRoughness(0.3f);
+    glossy->setAmbientColor(glm::vec4(0.0, 0.0, 0., 1.0));
+
+	MaterialPtr selected = std::make_shared < PhongMaterial > ();
+    selected->setRoughness(0.3f);
+    selected->setAmbientColor(glm::vec4(1.0, 1.0, 1., 1.0));
+    selected->_selected = true;
+
+
+    MaterialPtr sun = std::make_shared < PhongMaterial > ();
 
     sun->setAmbientColor(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
 //    sun->setDiffuseColor(glm::vec4(1.0f, 0.5f, 0.0f, 1.0f));
@@ -219,7 +191,7 @@ int main()
     sun->setRoughness(0.3f);
     sun->setDiffuseTexture(diffSun);
 
-    MaterialPtr earth = std::make_shared < Material > ();
+    MaterialPtr earth = std::make_shared < PhongMaterial > ();
 
     earth->setAmbientColor(glm::vec4(0.f, 0.f, 0.f, 1.0f));
 //    earth->setDiffuseColor(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
@@ -228,7 +200,7 @@ int main()
     earth->setDiffuseTexture(diffEarth);
     earth->setSpecularTexture(specEarth);
 
-    MaterialPtr moon = std::make_shared < Material > ();
+    MaterialPtr moon = std::make_shared < PhongMaterial > ();
 
     moon->setAmbientColor(glm::vec4(0.f, 0.f, 0.f, 1.0f));
     moon->setDiffuseColor(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
@@ -248,6 +220,39 @@ int main()
     earthObj->setGeometry(sphereGeom);
     moonObj->setGeometry(sphereGeom);
     cubeObj->setGeometry(cube);
+
+    float angle = 2 * M_PI / electrons.size();
+    auto index = 0;
+    float radius = 5.0;
+    float diam = 2 * radius;
+    float yHeight = 2 * radius;
+    float delta = yHeight / electrons.size();
+
+
+    NodePtr atom = std::make_shared<Node>(NodeType::NODE_NODE);
+
+    for(auto electron : electrons) {
+    	auto currentAngle = index * angle;
+    	electron->setGeometry(sphereGeom);
+    	electron->setMaterial(glossy);
+    	electron->setEnabled(true);
+    	float localRad = std::sqrt(radius * radius - (yHeight - radius) * (yHeight - radius));
+    	electron->setPosition(glm::vec3(localRad* cos(currentAngle), radius - yHeight, localRad * sin(currentAngle)));
+    	atom->addChild(electron);
+    	++index;
+    	yHeight -= delta;
+    }
+
+//    electrons[9]->setScale(position);
+
+
+
+    std::cout << atom->getChilds().size() << std::endl;
+
+    atom->setScale(glm::vec3(0.2));
+
+    atom->setEnabled(true);
+
 
 //     obj.setGeometry(circle);
 //     obj.setGeometry(rect);
@@ -277,6 +282,8 @@ int main()
 
     NodePtr salarySystem = std::make_shared<Node>(NodeType::NODE_NODE);
 
+    planetSystem->setEnabled(false);
+
     salarySystem->addChild(sunObj);
     salarySystem->addChild(planetSystem);
 
@@ -295,6 +302,8 @@ int main()
     scene->setCamera(cam);
 
     scene->getRoot()->addChild(cubeObj);
+
+    scene->getRoot()->addChild(atom);
 
 
 
@@ -360,6 +369,9 @@ int main()
     CameraControl controler(scene->getCamera());
 
     listener._cube = cubeObj;
+    listener._atom = atom;
+    listener._selected = selected;
+    listener._regular = glossy;
 
     eng.addEventListener(std::make_shared<MyListener>(listener));
     eng.addEventListener(std::make_shared<CameraControl>(controler));
