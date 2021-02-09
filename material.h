@@ -25,7 +25,8 @@
 enum class MaterialType {
 	MATERIAL_PHONG,
 	MATERIAL_GLASS,
-	MATERIAL_GLOSSY
+	MATERIAL_GLOSSY,
+	MATERIAL_SELECTED
 };
 
 class Material {
@@ -48,6 +49,8 @@ protected:
 
 public:
     ~Material() noexcept;
+
+    bool _selected = false;
 
     MaterialType getType() const;
 //    void setType(MaterialType type);

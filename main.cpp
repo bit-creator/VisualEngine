@@ -26,6 +26,9 @@ class MyListener : public EventListener
 
 public:
     ObjPtr  _cube;
+    NodePtr _atom;
+    MaterialPtr _selected;
+    MaterialPtr _regular;
     MyListener(Scene& sc)
         : scene(sc)
     {  }
@@ -42,16 +45,15 @@ public:
         time_ += 0.01;
         time += 0.001;
         
-        auto color = glm::vec4(1., 1., 1., 1.0);
+        auto color = glm::vec4(0.1, 0.1, 0.1, 1.0);
         auto SpecularColor = glm::vec4(1., 0., 0., 1.0);
-
 
         _cube->getMaterial()->setAmbientColor(color);
         _cube->getMaterial()->setDiffuseColor(color);
         _cube->getMaterial()->setSpecularColor(SpecularColor);
         _cube->getMaterial()->setRoughness(1);
 
-        _cube->setRotate(glm::vec3(1.0, 1.0, 0.0), f4);
+//        _cube->setRotate(glm::vec3(1.0, 1.0, 0.0), f4);
 
 //        material -> setColor(ColorTarget::Ambient, color);
 //        material -> setColor(ColorTarget::Diffuse, color);
@@ -81,12 +83,31 @@ public:
         moon->setRotate(glm::vec3(0.0f, 1.0f, 0.0f), f5);
         salSys->setRotate(glm::vec3(0.0f, 1.0f, 0.0f), f4);
         earthSys->setRotate(glm::vec3(0.0f, 1.0f, 0.0f), f5);
+        _atom->setRotate(glm::vec3(f3, f2, f1), f5);
 
         scene.getCamera()->setRotate(glm::vec3(1.0, 1.0, f1));
 
 //        scene._light.setRotate(glm::vec3(1.0, 1.0, 0.0), f4);
 //        (*scene.getCamera()->getChilds().begin())->setRotate(glm::vec3(1.0, 1., 1.), f4);
 //        scene.setBackgroundColor(glm::vec4(f1, f2, f3, 1.0));
+    }
+
+    void onMouseClick(int button, int action, int mode) noexcept {
+    	auto res = scene.getRoot()->rayCast(scene.getCamera()->getRay(glm::vec2(0.0, 0.0)));
+    	if (res.empty()) {
+    		std::cout << "no object" << std::endl;
+    	} else {
+    		auto el = res.front();
+    			if(el._obj->getMaterial()->_selected) {
+    				el._obj->setMaterial(_regular);
+    			} else {
+    				el._obj->setMaterial(_selected);
+//    				el._obj->getMaterial()->setAmbientColor(glm::vec4(rand() * 1.0f / RAND_MAX, rand() * 1.0f / RAND_MAX, rand() * 1.0f / RAND_MAX, 1.0));
+    			}
+
+
+    	}
+//    	std::cout << "click" << std::endl;
     }
 
     ~MyListener() noexcept override {
@@ -96,14 +117,6 @@ public:
 
 int main()
 {
-	/**
-	 * 1) создать базовый материал, материал переименовать в фонгМатериал
-	 * 2) отнаследовать от базового материала Глосси и Гласс
-	 * 3) создать шейдера для глосси и гласс добавить в фактори
-	 * 4) в фактори сделать сфич по енаму
-	 * 5) в методе рандер проверить тип материала и подключить соответствующий шейдер
-	 */
-
     auto& eng = Engine::engine();
 
     ScenePtr scene = std::make_shared<Scene>();
@@ -112,6 +125,12 @@ int main()
     auto earthObj = std::make_shared<Object3D>();
     auto moonObj = std::make_shared<Object3D>();
     auto cubeObj = std::make_shared<Object3D>();
+//    std::vector<std::shared_ptr<Object3D>> 	electrons(10, std::make_shared<Object3D>());
+	std::vector<std::shared_ptr<Object3D>> 	electrons;
+	for(int i = 0; i <= 10; i++){
+		auto electron = std::make_shared<Object3D>();
+		electrons.push_back(electron);
+	}
 
     Tex2DPtr cubicTex = std::make_shared<Texture2D>();
     Tex2DPtr titleTex = std::make_shared<Texture2D>();
@@ -154,7 +173,17 @@ int main()
     simple->setDiffuseTexture(cubicTex);
     simple->setSpecularTexture(titleTex);
 
-    MaterialPtr sun = std::make_shared < GlossyMaterial > ();
+    MaterialPtr glossy = std::make_shared < GlossyMaterial > ();
+    glossy->setRoughness(0.3f);
+    glossy->setAmbientColor(glm::vec4(0.0, 0.0, 0., 1.0));
+
+	MaterialPtr selected = std::make_shared < PhongMaterial > ();
+    selected->setRoughness(0.3f);
+    selected->setAmbientColor(glm::vec4(1.0, 1.0, 1., 1.0));
+    selected->_selected = true;
+
+
+    MaterialPtr sun = std::make_shared < PhongMaterial > ();
 
     sun->setAmbientColor(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
 //    sun->setDiffuseColor(glm::vec4(1.0f, 0.5f, 0.0f, 1.0f));
@@ -191,6 +220,39 @@ int main()
     earthObj->setGeometry(sphereGeom);
     moonObj->setGeometry(sphereGeom);
     cubeObj->setGeometry(cube);
+
+    float angle = 2 * M_PI / electrons.size();
+    auto index = 0;
+    float radius = 5.0;
+    float diam = 2 * radius;
+    float yHeight = 2 * radius;
+    float delta = yHeight / electrons.size();
+
+
+    NodePtr atom = std::make_shared<Node>(NodeType::NODE_NODE);
+
+    for(auto electron : electrons) {
+    	auto currentAngle = index * angle;
+    	electron->setGeometry(sphereGeom);
+    	electron->setMaterial(glossy);
+    	electron->setEnabled(true);
+    	float localRad = std::sqrt(radius * radius - (yHeight - radius) * (yHeight - radius));
+    	electron->setPosition(glm::vec3(localRad* cos(currentAngle), radius - yHeight, localRad * sin(currentAngle)));
+    	atom->addChild(electron);
+    	++index;
+    	yHeight -= delta;
+    }
+
+//    electrons[9]->setScale(position);
+
+
+
+    std::cout << atom->getChilds().size() << std::endl;
+
+    atom->setScale(glm::vec3(0.2));
+
+    atom->setEnabled(true);
+
 
 //     obj.setGeometry(circle);
 //     obj.setGeometry(rect);
@@ -240,6 +302,8 @@ int main()
     scene->setCamera(cam);
 
     scene->getRoot()->addChild(cubeObj);
+
+    scene->getRoot()->addChild(atom);
 
 
 
@@ -305,6 +369,9 @@ int main()
     CameraControl controler(scene->getCamera());
 
     listener._cube = cubeObj;
+    listener._atom = atom;
+    listener._selected = selected;
+    listener._regular = glossy;
 
     eng.addEventListener(std::make_shared<MyListener>(listener));
     eng.addEventListener(std::make_shared<CameraControl>(controler));

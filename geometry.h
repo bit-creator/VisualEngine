@@ -12,18 +12,21 @@
 #ifndef GEOMETRY_H
 #define GEOMETRY_H
 
+#include <vector>
 #include <memory>
 
 #include "GL/buffer.h"
 #include "GL/vertexarray.h"
+
+#include "Ray.h"
 
 class Geometry
 {
     private:         //  Num of elements
         size_t                                                  _numVertex;
         size_t                                                  _numIndex;
-        bool                                                    _useIndex;
         GLenum                                                  _conectionMode;
+        bool                                                    _useIndex;
 
     protected:          //  OpenGL Buffers
         VertexArray                                             VAO;
@@ -47,6 +50,7 @@ class Geometry
         void unbindBuffers() noexcept;
         
         virtual void setupBuffers() noexcept =0;
+        virtual std::vector<Intersection> rayCast(Ray ray) const=0;
 
     protected:
         void setNum(size_t index, size_t vertex) noexcept;

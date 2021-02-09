@@ -12,6 +12,8 @@
 #ifndef CUBE_H
 #define CUBE_H
 
+#include <vector>
+
 #include <glm/glm.hpp>
 
 #include "../geometry.h"
@@ -23,6 +25,7 @@ class Cube : public Geometry
         virtual ~Cube() noexcept override;
 
         void setupBuffers() noexcept override;
+        std::vector<Intersection> rayCast(Ray ray) const override;
 };
 
 

@@ -38,6 +38,7 @@ class Sphere : public Geometry
         virtual ~Sphere() noexcept override;
 
         void setupBuffers() noexcept override;
+        std::vector<Intersection> rayCast(Ray ray) const override;
         
     private:
         // void flipAndPush() noexcept;
