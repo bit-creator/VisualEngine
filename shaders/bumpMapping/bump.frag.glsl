@@ -41,6 +41,8 @@ uniform vec4 uAmbientColor;
 uniform vec4 uDiffuseColor;
 uniform vec4 uSpecularColor;
 
+uniform float uScale;
+
 uniform uint uLightCount;
 
 uniform float uRoughness;
@@ -64,7 +66,11 @@ void main() {
   vec2 texCoord = vTexCoords;
 
   if (uHasHeightMap) 	texCoord = paralax(view * vTBNMat);
-  if (uHasNormalMap) 	normal = vTBNMat * (texture(uTexNormal, texCoord).xyz * 2 - 1);
+  if (uHasNormalMap){
+	  normal = (texture(uTexNormal, texCoord).xyz * 2 - 1);
+	  normal.xy *= uScale;
+	  normal = vTBNMat * normal;
+  }
   if (uHasAmbientMap) 	ambientColor *= texture(uTexAmbient, texCoord);
   if (uHasDiffuseMap) 	diffuseColor *= texture(uTexDiffuse, texCoord);
   if (uHasSpecularMap) 	specularColor *= texture(uTexSpecular, texCoord);
@@ -94,8 +100,8 @@ vec4 PhongLighting(vec4 ambientColor, vec4 diffuseColor, vec4 specularColor,
 }
 
 vec2 paralax(vec3 viewVec) {
-	const float height_scale = 0.20;
-    const float numLayers = 10;
+	const float height_scale = uScale;
+    const float numLayers = 20;
 
     float layerDepth = 1.0 / numLayers;
     float currentLayerDepth = 0.0;

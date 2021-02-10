@@ -91,3 +91,46 @@ void Cube::setupBuffers() noexcept
     VBO.unbind();
     VAO.unbind();
 }
+
+void planeIntersection() {
+
+}
+
+
+std::vector<Intersection> Cube::rayCast(Ray ray) const {
+	auto intersectionPoint = [dir = ray.getDirection(), org = ray.getOrigin()]
+							  (glm::vec4 koef) -> glm::vec3 {
+		float lambd = koef.x * ((koef.w - org.x) / dir.x) +
+				 	  koef.y * ((koef.w - org.y) / dir.y) +
+					  koef.z * ((koef.w - org.z) / dir.z);
+		return lambd * dir + org;
+	};
+
+	auto checkRange = [] (glm::vec3 point) -> bool {
+		return (point.x <= 1 && point.x >= -1 &&
+			    point.y <= 1 && point.y >= -1 &&
+			    point.z <= 1 && point.z >= -1);
+	};
+
+	glm::vec4 faces[6] {
+		{ 1, 0, 0,  1 },
+		{ 1, 0, 0, -1 },
+		{ 0, 1, 0,  1 },
+		{ 0, 1, 0, -1 },
+		{ 0, 0, 1,  1 },
+		{ 0, 0, 1, -1 },
+
+	};
+
+	std::vector<Intersection> res;
+
+	for (int i = 0; i < 6; i++) {
+		glm::vec3 point = intersectionPoint(faces[i]);
+
+		if(checkRange(point)) {
+			res.push_back({ length(point - ray.getOrigin()), point, nullptr });
+		}
+	}
+
+	return res;
+}

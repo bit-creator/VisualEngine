@@ -1,4 +1,5 @@
 #include "node.h"
+#include "object3d.h"
 
 #include <glm/gtc/type_ptr.hpp>
 
@@ -138,4 +139,15 @@ void Node::removeChild(NodePtr child) {
 
 std::list<std::shared_ptr<Node> >& Node::getChilds() {
 	return _childs;
+}
+
+std::list< Intersection >
+Node::rayCast(Ray ray) {
+	std::list< Intersection > result;
+	rayCastImpl(ray, result);
+	return result;
+}
+
+void Node::rayCastImpl(Ray& ray, std::list< Intersection >& list) {
+	for(auto child : _childs) child->rayCastImpl(ray, list);
 }

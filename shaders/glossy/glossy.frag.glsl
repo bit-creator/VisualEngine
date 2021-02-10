@@ -22,7 +22,7 @@ uniform bool uHasSkyBox;
 uniform vec3 uCameraPos;
 
 uniform vec4 uSpecularColor;
-uniform vec4 uColor;
+uniform vec4 uAmbientColor;
 
 uniform samplerCube uSkyBox;
 
@@ -47,18 +47,5 @@ void main() {
 
 	vec4 _color = mix(texture(uSkyBox, R), texture(uSkyBox, R_1), dot(normal, I) > BrusterAngle ? 1 : 0);
 
-	for (uint i = 0; i < 2; ++i)
-		_color += SpecColor(uSpecularColor,
-				-(uLights[i].lightDir), normal, vView, uRoughness) * uLights[i].lightColor;
-
-	color = _color * color;
-}
-
-vec4 SpecColor(vec4 specularColor, vec3 lightDir, vec3 normal, vec3 viewDir, float rougness) {
-	  vec3 _half = normalize(lightDir + viewDir);
-
-	  float specFactor = pow(max(-dot(_half, normal), 0.0), uRoughness);
-	  specFactor = clamp(specFactor, 0.0, 1.0);
-
-	  return specularColor * specFactor;
+	color = _color * uAmbientColor;
 }

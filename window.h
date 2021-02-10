@@ -79,6 +79,7 @@ public:
 private:
     static void keyCallBack(pointer window, int key, int scancode, int action, int mode);
     static void mouseCallBack(pointer window, double x, double y);
+    static void mouseClickCallBack(pointer window, int button, int action, int mode);
 };
 
 using WndPtr = GLFWwindow *;

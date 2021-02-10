@@ -108,4 +108,5 @@ GlassMaterial::GlassMaterial()
 
 GlossyMaterial::GlossyMaterial()
 	: Material(MaterialType::MATERIAL_GLOSSY)
-{  }
+{
+}

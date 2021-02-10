@@ -171,6 +171,12 @@ void Engine::render(Object3D &obj, LightList lights) noexcept {
     	prog->setUniform("uHasHeightMap", false);
     }
 
+    if(material->getType() == MaterialType::MATERIAL_BUMP)
+    {
+    	auto bumpMaterial = (BumpMaterial*)material.get();
+    	prog->setUniform("uScale", bumpMaterial->_scale);
+    }
+
     auto mVPMat = projMat * viewMat * modelMat;
     auto modelViewMat = viewMat * modelMat;
 

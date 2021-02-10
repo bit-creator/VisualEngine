@@ -85,6 +85,7 @@ public:
 class BumpMaterial : public Material {
 public:
 	BumpMaterial();
+	float 				_scale = 0.2;
 };
 
 class PhongMaterial : public Material {

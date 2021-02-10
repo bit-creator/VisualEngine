@@ -37,7 +37,7 @@ private:
 
 public:
 	VertexArray() noexcept;
-    ~VertexArray() noexcept;
+	~VertexArray() noexcept;
 
     void bind() noexcept;
     void unbind() noexcept;

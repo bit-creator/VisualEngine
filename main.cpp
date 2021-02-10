@@ -24,16 +24,23 @@ class MyListener : public EventListener
     double time = 0;
     double time_ = 0;
     bool   onEarth = false;
+    float  dir = -1.0;
+
 public:
     ObjPtr  _cube;
     TexPtr  _skybox;
+    NodePtr _atom;
+    MaterialPtr _selected;
+    MaterialPtr _regular;
+    MaterialPtr _bump;
+
     MyListener(Scene& sc)
         : scene(sc)
     {  }
 
     void onRender() noexcept override
     {
-    	if (onEarth) return;
+
 
         float f1 = std::abs(std::sin(1 * time));
         float f2 = std::abs(std::sin(2 * time));
@@ -44,6 +51,17 @@ public:
         time_ += 0.01;
         time += 0.004;
         
+    	if (onEarth) {
+//        _atom->setRotate(glm::vec3(f3, f2, f1), f5);
+
+	    auto bumpMaterial = (BumpMaterial*)_bump.get();
+	    bumpMaterial->_scale += dir * 0.004;
+
+	    if(bumpMaterial->_scale >= 0.2) bumpMaterial->_scale = 0.2;
+	    if(bumpMaterial->_scale <= 0.) bumpMaterial->_scale = 0.0;
+
+    		return;
+    	}
 //        auto color = glm::vec4(1., 1., 1., 1.0);
 //        auto SpecularColor = glm::vec4(1., 0., 0., 1.0);
 
@@ -54,6 +72,16 @@ public:
 //        _cube->getMaterial()->setRoughness(1);
 
 //        _cube->setRotate(glm::vec3(0.0, 1.0, 0.0), f4);
+
+//        auto color = glm::vec4(0.1, 0.1, 0.1, 1.0);
+//        auto SpecularColor = glm::vec4(1., 0., 0., 1.0);
+
+//        _cube->getMaterial()->setAmbientColor(color);
+//        _cube->getMaterial()->setDiffuseColor(color);
+//        _cube->getMaterial()->setSpecularColor(SpecularColor);
+//        _cube->getMaterial()->setRoughness(1);
+
+//        _cube->setRotate(glm::vec3(1.0, 1.0, 0.0), f4);
 
 //        material -> setColor(ColorTarget::Ambient, color);
 //        material -> setColor(ColorTarget::Diffuse, color);
@@ -87,6 +115,7 @@ public:
     	if (glm::distance(scene.getCamera()->getPosition(), glm::vec3(earth->getWorldMat() * glm::vec4(earth->getPosition(), 1.0))) <= 0.75f) {
     		scene.setSkyBox(_skybox);
     		_cube->setEnabled(true);
+    		_atom->setEnabled(true);
     		salSys->setEnabled(false);
     		onEarth = true;
     		std::cout << "on  earth" << std::endl;
@@ -96,6 +125,28 @@ public:
 //        scene._light.setRotate(glm::vec3(1.0, 1.0, 0.0), f4);
 //        (*scene.getCamera()->getChilds().begin())->setRotate(glm::vec3(1.0, 1., 1.), f4);
 //        scene.setBackgroundColor(glm::vec4(f1, f2, f3, 1.0));
+    }
+
+    void onMouseClick(int button, int action, int mode) noexcept {
+    	auto res = scene.getRoot()->rayCast(scene.getCamera()->getRay(glm::vec2(0.0, 0.0)));
+    	if (res.empty()) {
+    		std::cout << "no object" << std::endl;
+    	} else {
+    		Intersection* el = &(res.front());
+    		for (auto elem : res) if(elem._distance <= el->_distance) el = &elem;
+    			if(el->_obj->getMaterial() == _selected) {
+    				el->_obj->setMaterial(_regular);
+    			} else if (el->_obj->getMaterial() == _regular) {
+    				el->_obj->setMaterial(_selected);
+//    				el._obj->getMaterial()->setAmbientColor(glm::vec4(rand() * 1.0f / RAND_MAX, rand() * 1.0f / RAND_MAX, rand() * 1.0f / RAND_MAX, 1.0));
+    			} else if(el->_obj->getMaterial() == _bump) {
+    		    	dir *= -1;
+    			}
+
+
+
+    	}
+//    	std::cout << "click" << std::endl;
     }
 
     ~MyListener() noexcept override {
@@ -112,6 +163,12 @@ int main()
     auto earthObj = std::make_shared<Object3D>();
     auto moonObj = std::make_shared<Object3D>();
     auto cubeObj = std::make_shared<Object3D>();
+//    std::vector<std::shared_ptr<Object3D>> 	electrons(10, std::make_shared<Object3D>());
+	std::vector<std::shared_ptr<Object3D>> 	electrons;
+	for(int i = 0; i <= 10; i++){
+		auto electron = std::make_shared<Object3D>();
+		electrons.push_back(electron);
+	}
 
     Tex2DPtr cubicTex = std::make_shared<Texture2D>();
     Tex2DPtr titleTex = std::make_shared<Texture2D>();
@@ -161,6 +218,13 @@ int main()
     simple->setNormalTexture(normalTex);
     simple->setHeightTexture(heightTex);
 
+    MaterialPtr glossy = std::make_shared < GlossyMaterial > ();
+    glossy->setRoughness(0.3f);
+    glossy->setAmbientColor(glm::vec4(1.0, 1.0, 1., 1.0));
+
+	MaterialPtr selected = std::make_shared < GlossyMaterial > ();
+    selected->setRoughness(0.3f);
+    selected->setAmbientColor(glm::vec4(0.5, 0.5, 1., 1.0));
 
     MaterialPtr sun = std::make_shared < PhongMaterial > ();
 
@@ -200,6 +264,38 @@ int main()
     moonObj->setGeometry(sphereGeom);
     cubeObj->setGeometry(cube);
 
+    float angle = 2 * M_PI / electrons.size();
+    auto index = 0;
+    float radius = 5.0;
+    float diam = 2 * radius;
+    float yHeight = 2 * radius;
+    float delta = 0;
+
+
+    NodePtr atom = std::make_shared<Node>(NodeType::NODE_NODE);
+
+    for(auto electron : electrons) {
+    	auto currentAngle = index * angle;
+    	electron->setGeometry(sphereGeom);
+    	electron->setMaterial(glossy);
+    	electron->setEnabled(true);
+    	float localRad = std::sqrt(radius * radius - (yHeight - radius) * (yHeight - radius));
+    	electron->setPosition(glm::vec3(radius* cos(currentAngle), 0, radius * sin(currentAngle)));
+    	atom->addChild(electron);
+    	++index;
+    	yHeight -= delta;
+    }
+
+//    electrons[9]->setScale(position);
+
+
+
+    std::cout << atom->getChilds().size() << std::endl;
+
+    atom->setScale(glm::vec3(0.7));
+    atom->setEnabled(false);
+
+
 //     obj.setGeometry(circle);
 //     obj.setGeometry(rect);
 //     obj1->setGeometry(cube);
@@ -212,6 +308,7 @@ int main()
     cubeObj->setMaterial(simple);
 
     cubeObj->setPosition(glm::vec3(0.0, 0.0, 4.0));
+    atom->setPosition(cubeObj->getPosition());
 //    cubeObj->setScale(glm::vec3(30.5, 10.5, 0.5));
 
 //    earthObj->setPosition(glm::vec3(3.0f, 0.0f, 0.0f));
@@ -250,6 +347,7 @@ int main()
     scene->getRoot()->addChild(cubeObj);
 
     cubeObj->setEnabled(false);
+    scene->getRoot()->addChild(atom);
 
 //    (*scene->getRoot()->getChilds().begin())->addChild(cubeObj);
 //    scene->getCamera()->addChild(cubeObj);
@@ -317,6 +415,10 @@ int main()
 
     listener._cube = cubeObj;
     listener._skybox = skyBox;
+    listener._atom = atom;
+    listener._selected = selected;
+    listener._regular = glossy;
+    listener._bump = simple;
 
     eng.addEventListener(std::make_shared<MyListener>(listener));
     eng.addEventListener(std::make_shared<CameraControl>(controler));
