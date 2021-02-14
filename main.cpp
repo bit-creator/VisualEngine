@@ -23,18 +23,24 @@ class MyListener : public EventListener
 
     double time = 0;
     double time_ = 0;
+    bool   onEarth = false;
+    float  dir = -1.0;
 
 public:
     ObjPtr  _cube;
+    TexPtr  _skybox;
     NodePtr _atom;
     MaterialPtr _selected;
     MaterialPtr _regular;
+    MaterialPtr _bump;
+
     MyListener(Scene& sc)
         : scene(sc)
     {  }
 
     void onRender() noexcept override
     {
+
 
         float f1 = std::abs(std::sin(1 * time));
         float f2 = std::abs(std::sin(2 * time));
@@ -43,15 +49,37 @@ public:
         float f5 = time_;
 
         time_ += 0.01;
-        time += 0.001;
+        time += 0.004;
         
-        auto color = glm::vec4(0.1, 0.1, 0.1, 1.0);
-        auto SpecularColor = glm::vec4(1., 0., 0., 1.0);
+    	if (onEarth) {
+//        _atom->setRotate(glm::vec3(f3, f2, f1), f5);
 
-        _cube->getMaterial()->setAmbientColor(color);
-        _cube->getMaterial()->setDiffuseColor(color);
-        _cube->getMaterial()->setSpecularColor(SpecularColor);
-        _cube->getMaterial()->setRoughness(1);
+	    auto bumpMaterial = (BumpMaterial*)_bump.get();
+	    bumpMaterial->_scale += dir * 0.004;
+
+	    if(bumpMaterial->_scale >= 0.2) bumpMaterial->_scale = 0.2;
+	    if(bumpMaterial->_scale <= 0.) bumpMaterial->_scale = 0.0;
+
+    		return;
+    	}
+//        auto color = glm::vec4(1., 1., 1., 1.0);
+//        auto SpecularColor = glm::vec4(1., 0., 0., 1.0);
+
+
+//        _cube->getMaterial()->setAmbientColor(color);
+//        _cube->getMaterial()->setDiffuseColor(color);
+//        _cube->getMaterial()->setSpecularColor(SpecularColor);
+//        _cube->getMaterial()->setRoughness(1);
+
+//        _cube->setRotate(glm::vec3(0.0, 1.0, 0.0), f4);
+
+//        auto color = glm::vec4(0.1, 0.1, 0.1, 1.0);
+//        auto SpecularColor = glm::vec4(1., 0., 0., 1.0);
+
+//        _cube->getMaterial()->setAmbientColor(color);
+//        _cube->getMaterial()->setDiffuseColor(color);
+//        _cube->getMaterial()->setSpecularColor(SpecularColor);
+//        _cube->getMaterial()->setRoughness(1);
 
 //        _cube->setRotate(glm::vec3(1.0, 1.0, 0.0), f4);
 
@@ -83,9 +111,16 @@ public:
         moon->setRotate(glm::vec3(0.0f, 1.0f, 0.0f), f5);
         salSys->setRotate(glm::vec3(0.0f, 1.0f, 0.0f), f4);
         earthSys->setRotate(glm::vec3(0.0f, 1.0f, 0.0f), f5);
-        _atom->setRotate(glm::vec3(f3, f2, f1), f5);
 
-        scene.getCamera()->setRotate(glm::vec3(1.0, 1.0, f1));
+    	if (glm::distance(scene.getCamera()->getPosition(), glm::vec3(earth->getWorldMat() * glm::vec4(earth->getPosition(), 1.0))) <= 0.75f) {
+    		scene.setSkyBox(_skybox);
+    		_cube->setEnabled(true);
+    		_atom->setEnabled(true);
+    		salSys->setEnabled(false);
+    		onEarth = true;
+    		std::cout << "on  earth" << std::endl;
+    	}
+//        scene.getCamera()->setRotate(glm::vec3(1.0, 1.0, f1));
 
 //        scene._light.setRotate(glm::vec3(1.0, 1.0, 0.0), f4);
 //        (*scene.getCamera()->getChilds().begin())->setRotate(glm::vec3(1.0, 1., 1.), f4);
@@ -97,13 +132,17 @@ public:
     	if (res.empty()) {
     		std::cout << "no object" << std::endl;
     	} else {
-    		auto el = res.front();
-    			if(el._obj->getMaterial()->_selected) {
-    				el._obj->setMaterial(_regular);
-    			} else {
-    				el._obj->setMaterial(_selected);
+    		Intersection* el = &(res.front());
+    		for (auto elem : res) if(elem._distance <= el->_distance) el = &elem;
+    			if(el->_obj->getMaterial() == _selected) {
+    				el->_obj->setMaterial(_regular);
+    			} else if (el->_obj->getMaterial() == _regular) {
+    				el->_obj->setMaterial(_selected);
 //    				el._obj->getMaterial()->setAmbientColor(glm::vec4(rand() * 1.0f / RAND_MAX, rand() * 1.0f / RAND_MAX, rand() * 1.0f / RAND_MAX, 1.0));
+    			} else if(el->_obj->getMaterial() == _bump) {
+    		    	dir *= -1;
     			}
+
 
 
     	}
@@ -112,7 +151,6 @@ public:
 
     ~MyListener() noexcept override {
     }
-
 };
 
 int main()
@@ -134,25 +172,30 @@ int main()
 
     Tex2DPtr cubicTex = std::make_shared<Texture2D>();
     Tex2DPtr titleTex = std::make_shared<Texture2D>();
+    Tex2DPtr normalTex = std::make_shared<Texture2D>();
+    Tex2DPtr heightTex = std::make_shared<Texture2D>();
     Tex2DPtr diffEarth = std::make_shared<Texture2D>();
     Tex2DPtr specEarth = std::make_shared<Texture2D>();
     Tex2DPtr diffSun = std::make_shared<Texture2D>();
     Tex2DPtr diffMoon = std::make_shared<Texture2D>();
     CubeMapPtr skyBox = std::make_shared<TextureCubeMap>();
+    CubeMapPtr spaceSkyBox = std::make_shared<TextureCubeMap>();
 
-    cubicTex->loadImage("resource/cube.jpg");
+    cubicTex->loadImage("resource/nicholas-andy-wood2.jpg");
     titleTex->loadImage("resource/spec.png");
+    normalTex->loadImage("resource/bump_normal.png");
+    heightTex->loadImage("resource/bump_depth.png");
     diffEarth->loadImage("resource/diff_earth.jpg");
     specEarth->loadImage("resource/scec_earth.jpg");
     diffSun->loadImage("resource/diff_sun.jpg");
     diffMoon->loadImage("resource/diff_moon.jpg");
 
-//    skyBox->loadImage("resource/skybox/corona_rt.png", BoxSide::SIDE_FRONT);
-//    skyBox->loadImage("resource/skybox/corona_lf.png", BoxSide::SIDE_BACK);
-//    skyBox->loadImage("resource/skybox/corona_bk.png", BoxSide::SIDE_LEFT);
-//    skyBox->loadImage("resource/skybox/corona_ft.png", BoxSide::SIDE_RIGHT);
-//    skyBox->loadImage("resource/skybox/corona_up.png", BoxSide::SIDE_TOP);
-//    skyBox->loadImage("resource/skybox/corona_dn.png", BoxSide::SIDE_BOTTOM);
+    spaceSkyBox->loadImage("resource/skybox/corona_rt.png", BoxSide::SIDE_FRONT);
+    spaceSkyBox->loadImage("resource/skybox/corona_lf.png", BoxSide::SIDE_BACK);
+    spaceSkyBox->loadImage("resource/skybox/corona_bk.png", BoxSide::SIDE_LEFT);
+    spaceSkyBox->loadImage("resource/skybox/corona_ft.png", BoxSide::SIDE_RIGHT);
+    spaceSkyBox->loadImage("resource/skybox/corona_up.png", BoxSide::SIDE_TOP);
+    spaceSkyBox->loadImage("resource/skybox/corona_dn.png", BoxSide::SIDE_BOTTOM);
 
     skyBox->loadImage("resource/skybox/posz.jpg", BoxSide::SIDE_FRONT);
     skyBox->loadImage("resource/skybox/negz.jpg", BoxSide::SIDE_BACK);
@@ -161,41 +204,41 @@ int main()
     skyBox->loadImage("resource/skybox/posy.jpg", BoxSide::SIDE_TOP);
     skyBox->loadImage("resource/skybox/negy.jpg", BoxSide::SIDE_BOTTOM);
 
-    scene->setSkyBox(skyBox);
+    scene->setSkyBox(spaceSkyBox);
 
-    MaterialPtr simple = std::make_shared < PhongMaterial > ();
+    MaterialPtr simple = std::make_shared < BumpMaterial > ();
 
     simple->setAmbientColor(glm::vec4(0., 0., 0., 1.0));
-    simple->setDiffuseColor(glm::vec4(1., 0.2, 0.2, 1.0));
-    simple->setSpecularColor(glm::vec4(1., 1., 1., 1.0));
-    simple->setRoughness(0.001f);
+    simple->setDiffuseColor(glm::vec4(1., 1., 1.0, 1.0));
+    simple->setSpecularColor(glm::vec4(1., 1.0, 1., 1.0));
+    simple->setRoughness(0.01f);
 
     simple->setDiffuseTexture(cubicTex);
-    simple->setSpecularTexture(titleTex);
+//    simple->setSpecularTexture(titleTex);
+    simple->setNormalTexture(normalTex);
+    simple->setHeightTexture(heightTex);
 
     MaterialPtr glossy = std::make_shared < GlossyMaterial > ();
     glossy->setRoughness(0.3f);
-    glossy->setAmbientColor(glm::vec4(0.0, 0.0, 0., 1.0));
+    glossy->setAmbientColor(glm::vec4(1.0, 1.0, 1., 1.0));
 
-	MaterialPtr selected = std::make_shared < PhongMaterial > ();
+	MaterialPtr selected = std::make_shared < GlossyMaterial > ();
     selected->setRoughness(0.3f);
-    selected->setAmbientColor(glm::vec4(1.0, 1.0, 1., 1.0));
-    selected->_selected = true;
-
+    selected->setAmbientColor(glm::vec4(0.5, 0.5, 1., 1.0));
 
     MaterialPtr sun = std::make_shared < PhongMaterial > ();
 
     sun->setAmbientColor(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
-//    sun->setDiffuseColor(glm::vec4(1.0f, 0.5f, 0.0f, 1.0f));
-//    sun->setSpecularColor(glm::vec4(1.0f, 1.0f, 0.0f, 1.0f));
+    sun->setDiffuseColor(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+    sun->setSpecularColor(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
     sun->setRoughness(0.3f);
     sun->setDiffuseTexture(diffSun);
 
     MaterialPtr earth = std::make_shared < PhongMaterial > ();
 
     earth->setAmbientColor(glm::vec4(0.f, 0.f, 0.f, 1.0f));
-//    earth->setDiffuseColor(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
-//    earth->setSpecularColor(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+    earth->setDiffuseColor(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+    earth->setSpecularColor(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
     earth->setRoughness(0.010f);
     earth->setDiffuseTexture(diffEarth);
     earth->setSpecularTexture(specEarth);
@@ -207,7 +250,7 @@ int main()
     moon->setSpecularColor(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
     moon->setRoughness(0.0000001f);
     moon->setDiffuseTexture(diffMoon);
-        
+
     GeometryPtr sphereGeom = std::make_shared<Sphere>(5);
 //     GeometryPtr circle = std::make_shared<Circle>(10);
 //     GeometryPtr rect = std::make_shared<Rect>();
@@ -226,7 +269,7 @@ int main()
     float radius = 5.0;
     float diam = 2 * radius;
     float yHeight = 2 * radius;
-    float delta = yHeight / electrons.size();
+    float delta = 0;
 
 
     NodePtr atom = std::make_shared<Node>(NodeType::NODE_NODE);
@@ -237,7 +280,7 @@ int main()
     	electron->setMaterial(glossy);
     	electron->setEnabled(true);
     	float localRad = std::sqrt(radius * radius - (yHeight - radius) * (yHeight - radius));
-    	electron->setPosition(glm::vec3(localRad* cos(currentAngle), radius - yHeight, localRad * sin(currentAngle)));
+    	electron->setPosition(glm::vec3(radius* cos(currentAngle), 0, radius * sin(currentAngle)));
     	atom->addChild(electron);
     	++index;
     	yHeight -= delta;
@@ -249,9 +292,8 @@ int main()
 
     std::cout << atom->getChilds().size() << std::endl;
 
-    atom->setScale(glm::vec3(0.2));
-
-    atom->setEnabled(true);
+    atom->setScale(glm::vec3(0.7));
+    atom->setEnabled(false);
 
 
 //     obj.setGeometry(circle);
@@ -265,8 +307,9 @@ int main()
     moonObj->setMaterial(moon);
     cubeObj->setMaterial(simple);
 
-    cubeObj->setPosition(glm::vec3(0.0, 0.0, 5.0));
-    cubeObj->setScale(glm::vec3(0.5, 0.5, 0.5));
+    cubeObj->setPosition(glm::vec3(0.0, 0.0, 4.0));
+    atom->setPosition(cubeObj->getPosition());
+//    cubeObj->setScale(glm::vec3(30.5, 10.5, 0.5));
 
 //    earthObj->setPosition(glm::vec3(3.0f, 0.0f, 0.0f));
     earthObj->setScale(glm::vec3(0.5f, 0.5f, 0.5f));
@@ -282,7 +325,7 @@ int main()
 
     NodePtr salarySystem = std::make_shared<Node>(NodeType::NODE_NODE);
 
-    planetSystem->setEnabled(false);
+    planetSystem->setEnabled(true);
 
     salarySystem->addChild(sunObj);
     salarySystem->addChild(planetSystem);
@@ -295,7 +338,7 @@ int main()
 
     CameraPtr cam = std::make_shared<Camera>(PerspectiveCamera(M_PI / 3, aspect, 0.1, 100));
 
-    cam->setPosition(glm::vec3(0.0, 0.0, -1.0));
+    cam->setPosition(glm::vec3(0.0, 0.0, 1.0));
 
 //    cam->addChild(cubeObj);
 
@@ -303,9 +346,8 @@ int main()
 
     scene->getRoot()->addChild(cubeObj);
 
+    cubeObj->setEnabled(false);
     scene->getRoot()->addChild(atom);
-
-
 
 //    (*scene->getRoot()->getChilds().begin())->addChild(cubeObj);
 //    scene->getCamera()->addChild(cubeObj);
@@ -317,10 +359,13 @@ int main()
     LightPtr headLighter = std::make_shared<Light>(LightDirectional());
 
     headLighter->setColor(glm::vec4(1.0, 1.0, 1.0, 1.0));
+//    headLighter->setRotate(glm::vec3(1, 1, 1));s
 
 //    scene->getRoot()->addChild(light);
 
     scene->getRoot()->addChild(salarySystem);
+
+    salarySystem->setEnabled(true);
 
     scene->getCamera()->addChild(headLighter);
 
@@ -369,9 +414,11 @@ int main()
     CameraControl controler(scene->getCamera());
 
     listener._cube = cubeObj;
+    listener._skybox = skyBox;
     listener._atom = atom;
     listener._selected = selected;
     listener._regular = glossy;
+    listener._bump = simple;
 
     eng.addEventListener(std::make_shared<MyListener>(listener));
     eng.addEventListener(std::make_shared<CameraControl>(controler));

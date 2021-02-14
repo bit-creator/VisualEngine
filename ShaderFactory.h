@@ -19,6 +19,7 @@
 namespace fs = std::filesystem;
 
 enum ShaderType {
+  SHADER_BUMP,
   SHADER_PHONG,
   SHADER_SKYBOX,
   SHADER_GLASS,

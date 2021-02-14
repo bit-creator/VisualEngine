@@ -23,9 +23,6 @@ uniform sampler2D uTexAmbient;
 uniform sampler2D uTexDiffuse;
 uniform sampler2D uTexSpecular;
 
-//uniform samplerCube uSkyBox;
-
-//uniform bool uHasSkyBox;
 uniform bool uHasAmbientMap;
 uniform bool uHasDiffuseMap;
 uniform bool uHasSpecularMap;
@@ -56,30 +53,23 @@ void main() {
   if (uHasSpecularMap) specularColor *= texture(uTexSpecular, vTexCoords);
 
   for (uint i = 0; i < 2; ++i)
-		  _color += PhongLighting(ambientColor, diffuseColor, specularColor,
-			  -(uLights[i].lightDir), normal, vView, uRoughness) * uLights[i].lightColor;
+	  _color += PhongLighting(ambientColor, diffuseColor, specularColor,
+			(uLights[i].lightDir), normal, view, uRoughness) * uLights[i].lightColor;
 
-//  float BrusterAngle = sqrt(1 - (1/(1.52 * 1.52)));
-//  vec3 I = normalize(vPos - uCameraPos);
-//  vec3 R = refract(I, normal, 1 / 1.52);
-//  vec3 R_1 = reflect(I, normal);
-
-//  color = mix(texture(uSkyBox, R), texture(uSkyBox, R_1), dot(normal, I) > BrusterAngle ? 1 : 0);
   color = _color;
 }
 
 vec4 PhongLighting(vec4 ambientColor, vec4 diffuseColor, vec4 specularColor,
 		vec3 lightDir, vec3 normal, vec3 viewDir, float rougness) {
-  vec3 _half = normalize(lightDir + viewDir);
-
-  float diffFactor = dot(normal, lightDir);
+	float diffFactor = dot(normal, -lightDir);
   
-  float specFactor = pow(max(-dot(_half, normal), 0.0), uRoughness);
+	vec3 _half = -normalize(lightDir + viewDir);
+	float specFactor = pow(max(dot(_half, normal), 0.0), uRoughness);
   
-  if (diffFactor < 0) specFactor = 0; 
+	if (diffFactor < 0) specFactor = 0;
 
-  diffFactor = clamp(diffFactor, 0.0, 1.0);
-  specFactor = clamp(specFactor, 0.0, 1.0);
+	diffFactor = clamp(diffFactor, 0.0, 1.0);
+	specFactor = clamp(specFactor, 0.0, 1.0);
 
-  return ambientColor + diffuseColor * diffFactor + specularColor * specFactor;
+	return ambientColor + diffuseColor * diffFactor + specularColor * specFactor;
 }

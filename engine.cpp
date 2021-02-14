@@ -79,6 +79,10 @@ void Engine::render(Object3D &obj, LightList lights) noexcept {
     auto cam = *_scene->getCamera();
 
     switch(material->getType()) {
+    case MaterialType::MATERIAL_BUMP:
+    	prog = &_factory.getShader(ShaderType::SHADER_BUMP);
+    	break;
+
     case MaterialType::MATERIAL_PHONG:
     	prog = &_factory.getShader(ShaderType::SHADER_PHONG);
     	break;
@@ -103,7 +107,9 @@ void Engine::render(Object3D &obj, LightList lights) noexcept {
     	Ambient =0,
     	Diffuse =1,
     	Specular =2,
-		SkyBox =4
+		SkyBox =4,
+		Normal = 5,
+		Height = 6
     };
 
     if (_scene->useSkyBox()) {
@@ -114,6 +120,24 @@ void Engine::render(Object3D &obj, LightList lights) noexcept {
 
     if (geom->hasTexCoord())
     {
+    	if (material->getHeightTexture() != nullptr)
+    	{
+    		material->getHeightTexture()->bind((int)TextureUnit::Height);
+    	    prog->setUniform("uHasHeightMap", true);
+    	    prog->setUniform("uTexHeight", (int)TextureUnit::Height);
+    	}
+    	else prog->setUniform("uHasHeightMap", false);
+
+
+    	if (material->getNormalTexture() != nullptr)
+    	{
+    	    material->getNormalTexture()->bind((int)TextureUnit::Normal);
+    	    prog->setUniform("uHasNormalMap", true);
+    		prog->setUniform("uTexNormal", (int)TextureUnit::Normal);
+    	}
+    	else prog->setUniform("uHasNormalMap", false);
+
+
     	if (material->getAmbientTexture() != nullptr)
     	{
     		material->getAmbientTexture()->bind((int)TextureUnit::Ambient);
@@ -143,6 +167,14 @@ void Engine::render(Object3D &obj, LightList lights) noexcept {
     	prog->setUniform("uHasAmbientMap", false);
     	prog->setUniform("uHasDiffuseMap", false);
     	prog->setUniform("uHasSpecularMap", false);
+    	prog->setUniform("uHasAmbientMap", false);
+    	prog->setUniform("uHasHeightMap", false);
+    }
+
+    if(material->getType() == MaterialType::MATERIAL_BUMP)
+    {
+    	auto bumpMaterial = (BumpMaterial*)material.get();
+    	prog->setUniform("uScale", bumpMaterial->_scale);
     }
 
     auto mVPMat = projMat * viewMat * modelMat;
@@ -153,6 +185,7 @@ void Engine::render(Object3D &obj, LightList lights) noexcept {
     prog->setUniform("uSpecularColor", material->getSpecularColor().getColorSource());
     prog->setUniform("uRoughness", 1 / material->getRoughness());
     prog->setUniform("uPerspectiveCamera", (int)cam.getType());
+    prog->setUniform("uCamPos", cam.getPosition());
     prog->setUniform("uFirstRefractiveIndex", 1.33f);
     prog->setUniform("uSecondRefractiveIndex", 1.52f);
 
@@ -183,10 +216,25 @@ void Engine::render(Object3D &obj, LightList lights) noexcept {
 
     geom->bindBuffers();
 
+//    glEnableVertexAttribArray(0); CHECK_GL_ERROR();
+//    glEnableVertexAttribArray(1); CHECK_GL_ERROR();
+//    glEnableVertexAttribArray(2); CHECK_GL_ERROR();
+//    glEnableVertexAttribArray(3); CHECK_GL_ERROR();
+//    glEnableVertexAttribArray(4); CHECK_GL_ERROR();
+//    glEnableVertexAttribArray(5); CHECK_GL_ERROR();
+
     if (geom->hasIndexes()) glDrawElements(geom->getPoligonConnectMode(), geom->getNumIndices(), GL_UNSIGNED_INT, 0);
     else glDrawArrays(geom->getPoligonConnectMode() , 0, geom->getNumVertexes());
 
+//    glDisableVertexAttribArray(0); CHECK_GL_ERROR();
+//    glDisableVertexAttribArray(1); CHECK_GL_ERROR();
+//    glDisableVertexAttribArray(2); CHECK_GL_ERROR();
+//    glDisableVertexAttribArray(3); CHECK_GL_ERROR();
+//    glDisableVertexAttribArray(4); CHECK_GL_ERROR();
+//    glDisableVertexAttribArray(5); CHECK_GL_ERROR();
+
     geom->unbindBuffers();
+
 
     if (geom->hasTexCoord())
     {

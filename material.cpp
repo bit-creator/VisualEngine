@@ -58,8 +58,20 @@ void Material::setSpecularTexture(TexPtr map) {
 	_specularMap = map;
 }
 
+void Material::setNormalTexture(TexPtr map) {
+	_normalMap = map;
+}
+
+void Material::setHeightTexture(TexPtr map) {
+	_heightMap = map;
+}
+
 TexPtr Material::getAmbientTexture() const noexcept {
 	return _ambientMap;
+}
+
+TexPtr Material::getNormalTexture() const noexcept {
+	return _normalMap;
 }
 
 TexPtr Material::getDiffuseTexture() const noexcept {
@@ -70,6 +82,10 @@ TexPtr Material::getSpecularTexture() const noexcept {
 	return _specularMap;
 }
 
+TexPtr Material::getHeightTexture() const noexcept {
+	return _heightMap;
+}
+
 MaterialType Material::getType() const {
 	return _type;
 }
@@ -77,6 +93,10 @@ MaterialType Material::getType() const {
 const GLenum Material::getPolygonsFillMode() const noexcept {
 	return _fillMode;
 }
+
+BumpMaterial::BumpMaterial()
+	: Material(MaterialType::MATERIAL_BUMP)
+{  }
 
 PhongMaterial::PhongMaterial()
 	: Material(MaterialType::MATERIAL_PHONG)

@@ -54,9 +54,9 @@ void Texture::loadImage(const char *name, const GLenum target) {
 
 	glTexParameteri(getTarget(), GL_TEXTURE_MAG_FILTER, GL_LINEAR); CHECK_GL_ERROR();
 	glTexParameteri(getTarget(), GL_TEXTURE_MIN_FILTER, GL_LINEAR); CHECK_GL_ERROR();
-	glTexParameteri(getTarget(), GL_TEXTURE_WRAP_S, GL_REPEAT);     CHECK_GL_ERROR();
-	glTexParameteri(getTarget(), GL_TEXTURE_WRAP_T, GL_REPEAT);     CHECK_GL_ERROR();
-	glTexParameteri(getTarget(), GL_TEXTURE_WRAP_R, GL_REPEAT);     CHECK_GL_ERROR();
+	glTexParameteri(getTarget(), GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);     CHECK_GL_ERROR();
+	glTexParameteri(getTarget(), GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);     CHECK_GL_ERROR();
+	glTexParameteri(getTarget(), GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);     CHECK_GL_ERROR();
 
 	auto format = GL_RGB;
 	if (nrChannels == 4) format = GL_RGBA;
