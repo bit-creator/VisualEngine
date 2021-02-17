@@ -28,6 +28,7 @@ PrgPtr ShaderFactory::createShader(ShaderType type) {
 
 	case SHADER_PHONG: {
 		vert.addSource(loadShaderFromFile("shaders/phong/phong.vert.glsl"));
+		frag.addSource(loadShaderFromFile("shaders/phong/phongMethod.glsl"));
 		frag.addSource(loadShaderFromFile("shaders/phong/phong.frag.glsl"));
 		break;
 	}

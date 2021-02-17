@@ -9,6 +9,14 @@ Shader::~Shader() noexcept {
 }
 
 bool Shader::compileShader() const noexcept {
+	std::vector<char*> cstrings;
+	cstrings.reserve(_shaderSources.size());
+
+	for(size_t i = 0; i < _shaderSources.size(); ++i)
+		cstrings.push_back(const_cast<char*>(_shaderSources[i].c_str()));
+
+	glShaderSource(getID(), _shaderSources.size(), &cstrings[0], _shaderLength.data()); CHECK_GL_ERROR();
+
     glCompileShader(getID()); CHECK_GL_ERROR();
 
     GLint success;
@@ -26,9 +34,9 @@ bool Shader::compileShader() const noexcept {
     return true;
 }
 
-void Shader::addSource(const std::string& source) const noexcept {
-    auto sourceArray = source.c_str();
-    glShaderSource(getID(), 1, &sourceArray, NULL); CHECK_GL_ERROR();
+void Shader::addSource(const std::string& source) noexcept {
+    _shaderSources.push_back(source);
+    _shaderLength.push_back(source.size());
 }
 
 std::string loadShaderFromFile(const std::string& path) noexcept {

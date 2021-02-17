@@ -9,6 +9,17 @@
  * 
  */
 
+/**
+ * !!!! refactoring !!!!
+ * 1) common pieces of shader code must contained in one file.
+ * 2) attribute location must synchronized with buffer and contained in one file
+ * 3) defaines and macroses must contained in including file
+ * 4) ??? how its chenged factory code???
+ * 5) create Draw Data structure ??? what this structure must contained ???
+ * 6) synchronize scene param and defines contained in shader
+ */
+
+
 #ifndef SHADER_H
 #define SHADER_H
 
@@ -24,12 +35,16 @@
 #include "globject.hpp"
 
 class Shader : public GLObject {
+private:
+	std::vector < std::string >				_shaderSources;
+	std::vector < GLint >		  			_shaderLength;
+
 public:
 	Shader(const GLuint shaderType) noexcept;
     ~Shader() noexcept;
 
     bool compileShader() const noexcept;
-    void addSource(const std::string& source) const noexcept;
+    void addSource(const std::string& source) noexcept;
 }; // Shader
 
 
