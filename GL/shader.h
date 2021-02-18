@@ -70,8 +70,6 @@ public:
 	FragmentShader& operator=(FragmentShader &&other) = default;
 };
 
-std::string loadShaderFromFile(const std::string& path) noexcept;
-
 using ShaderPtr = std::shared_ptr<Shader>;
 
 #endif // SHADER_H

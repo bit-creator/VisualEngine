@@ -39,27 +39,6 @@ void Shader::addSource(const std::string& source) noexcept {
     _shaderLength.push_back(source.size());
 }
 
-std::string loadShaderFromFile(const std::string& path) noexcept {
-    std::ifstream in(path, std::ios::in);
-
-    if (in.is_open()) {
-        if (in.peek() != EOF) {
-            std::string source = "", sourceline = "\n";
-            while (getline(in, sourceline, '\n')) {
-            	if(!sourceline.empty()) {
-            		source.append(sourceline);
-                }
-                source.push_back('\n');
-            }
-            return source.c_str();
-
-        } else std::cout << "| EROR | Shader source file is empty" << std::endl;
-
-    } else  std::cout << "| EROR | Shader source file not open" << std::endl;
-
-    return std::string("").c_str();
-}
-
 VertexShader::VertexShader()
 	: Shader(GL_VERTEX_SHADER)
 {  }
