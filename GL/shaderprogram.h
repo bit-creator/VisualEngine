@@ -14,11 +14,6 @@
 
 #include <map>
 
-#include <GL/glew.h>
-#include <GL/freeglut.h>
-#include <GLFW/glfw3.h>
-
-#include "globject.hpp"
 #include "shader.h"
 
 #include <glm/glm.hpp>

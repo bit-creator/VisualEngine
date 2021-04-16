@@ -10,7 +10,7 @@
 
 #include <memory>
 
-#include "globject.hpp"
+#include "globject.h"
 
 enum class BoxSide {
 	SIDE_RIGHT  = GL_TEXTURE_CUBE_MAP_POSITIVE_X,

@@ -28,15 +28,11 @@
 #include <vector>
 #include <memory>
 
-#include <GL/glew.h>
-#include <GL/freeglut.h>
-#include <GLFW/glfw3.h>
-
-#include "globject.hpp"
+#include "globject.h"
 
 class Shader : public GLObject {
 private:
-	std::vector < std::string >				_shaderSources;
+	std::vector < char* >					_shaderSources;
 	std::vector < GLint >		  			_shaderLength;
 
 public:
@@ -53,9 +49,9 @@ class VertexShader final : public Shader
 public:
 	VertexShader();
 	~VertexShader() = default;
-	VertexShader(const VertexShader &other) = delete;
+//	VertexShader(const VertexShader &other) = delete;
 	VertexShader(VertexShader &&other) = default;
-	VertexShader& operator=(const VertexShader &other) = delete;
+//	VertexShader& operator=(const VertexShader &other) = delete;
 	VertexShader& operator=(VertexShader &&other) = default;
 };
 
@@ -64,9 +60,9 @@ class FragmentShader final : public Shader
 public:
 	FragmentShader();
 	~FragmentShader() = default;
-	FragmentShader(const FragmentShader &other) = delete;
+//	FragmentShader(const FragmentShader &other) = delete;
 	FragmentShader(FragmentShader &&other) = default;
-	FragmentShader& operator=(const FragmentShader &other) = delete;
+//	FragmentShader& operator=(const FragmentShader &other) = delete;
 	FragmentShader& operator=(FragmentShader &&other) = default;
 };
 

@@ -26,7 +26,7 @@ void Node::setScale(const glm::vec3& scale) noexcept
 glm::vec3 Node::getScale() const noexcept
 { return _scale; }
 
-void Node::setRotate(const glm::vec3& axis, const GLfloat angle) noexcept
+void Node::setRotate(const glm::vec3& axis, const float angle) noexcept
 {
 	_rotate = glm::angleAxis(angle, glm::normalize(axis));
 	_dirtyTransform = true;

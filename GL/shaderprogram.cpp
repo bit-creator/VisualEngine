@@ -2,35 +2,36 @@
 
 ShaderProgram::ShaderProgram() noexcept
     : GLObject(glCreateProgram())
-{ CHECK_GL_ERROR(); }
+{ HANDLE_GL_ERROR(); }
 
 ShaderProgram::~ShaderProgram() noexcept {
-	glDeleteProgram(getID()); CHECK_GL_ERROR();
+	glDeleteProgram(getID()); HANDLE_GL_ERROR();
 }
 
 void ShaderProgram::attachShader(const Shader& shader) const noexcept {
     if (shader.compileShader()) {
-    	glAttachShader(getID(), shader.getID()); CHECK_GL_ERROR();
+    	glAttachShader(getID(), shader.getID()); HANDLE_GL_ERROR();
     }
 }
 
 void ShaderProgram::enable() const noexcept {
-	glUseProgram(getID()); CHECK_GL_ERROR();
+	glUseProgram(getID()); HANDLE_GL_ERROR();
 }
 
 bool ShaderProgram::link() const noexcept {
-    glLinkProgram(getID()); CHECK_GL_ERROR();
+    glLinkProgram(getID()); HANDLE_GL_ERROR();
 
     GLint success;
     GLchar infoLog[512];
 
-    glValidateProgram(getID()); CHECK_GL_ERROR();
+    glValidateProgram(getID()); HANDLE_GL_ERROR();
 
-    glGetProgramiv(getID(), GL_LINK_STATUS, &success); CHECK_GL_ERROR();
+    glGetProgramiv(getID(), GL_LINK_STATUS, &success); HANDLE_GL_ERROR();
 
     if (!success) {
-        glGetProgramInfoLog(getID(), 512, NULL, infoLog); CHECK_GL_ERROR();
-        std::cout << "\n| ERROR | Shader program no linked, problems:\n" << infoLog << '\n' << std::endl;
+        glGetProgramInfoLog(getID(), 512, NULL, infoLog); HANDLE_GL_ERROR();
+        ERROR(" Shader program no linked, problems:")
+        std::cout << infoLog << '\n' << std::endl;
 
         return false;
     }

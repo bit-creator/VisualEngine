@@ -1,4 +1,4 @@
-#version 460 core
+#ifdef GLOSSY
 
 #define MAX_LIGHT_COUNT 8
 
@@ -49,3 +49,5 @@ void main() {
 
 	color = _color * uAmbientColor;
 }
+
+#endif // GLOSSY

@@ -15,11 +15,7 @@
 #include <map>
 #include <optional>
 
-#include <GL/glew.h>
-#include <GL/freeglut.h>
-#include <GLFW/glfw3.h>
-
-#include "globject.hpp"
+#include "globject.h"
 
 enum class Attribute
 {

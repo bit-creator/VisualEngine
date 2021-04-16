@@ -6,6 +6,26 @@
  */
 
 #include "ShaderFactory.h"
+#include "engine.h"
+
+//std::string version ="#version 460 core\n";
+
+std::string layoutDef = "\
+#define ATTRIB_COORD_LOC 0\n\
+#define ATTRIB_NORMAL_LOC 1\n\
+#define ATTRIB_TANGENT_LOC 2\n\
+#define ATTRIB_BITANGENT_LOC 3\n\
+#define ATTRIB_COLOR_LOC 4\n\
+#define ATTRIB_TEXCOORD_LOC 5\n\
+#define ATTRIBUTE(LOCATION) layout(location = LOCATION) in\n";
+
+inline std::string typeToDef(const ShaderType type) {
+	if (type == ShaderType::SHADER_BUMP)   return "#define BUMP\n";
+	if (type == ShaderType::SHADER_GLASS)  return "#define GLASS\n";
+	if (type == ShaderType::SHADER_GLOSSY) return "#define GLOSSY\n";
+	if (type == ShaderType::SHADER_PHONG)  return "#define PHONG\n";
+	if (type == ShaderType::SHADER_SKYBOX) return "#define SKYBOX\n";
+}
 
 inline std::string loadShaderFromFile(const std::string& path) noexcept {
     std::ifstream in(path, std::ios::in);
@@ -21,9 +41,12 @@ inline std::string loadShaderFromFile(const std::string& path) noexcept {
             }
             return source.c_str();
 
-        } else std::cout << "| EROR | Shader source file is empty" << std::endl;
-
-    } else  std::cout << "| EROR | Shader source file " << path <<" not open" << std::endl;
+        } else {
+        	ERROR("Shader source file is empty")
+        }
+    } else {
+    	ERROR("Shader source file" << path << " not open")
+    }
 
     return std::string("").c_str();
 }
@@ -36,78 +59,38 @@ ShaderProgram& ShaderFactory::getShader(ShaderType type) {
 	return *_shaders[type];
 }
 
-
-void ShaderFactory::addVertexShaderSourceFile(ShaderType type,
-		std::string vertPath) {
-	if (_vertexShadersSources[type] == nullptr) {
-		_vertexShadersSources[type] = std::make_shared<VertexShader>();
-	}
-	_vertexShadersSources[type]->addSource(std::forward<std::string>(loadShaderFromFile(vertPath)));
-}
-
-void ShaderFactory::addFragmentShaderSourceFile(ShaderType type,
-		std::string fragPath) {
-	if (_fragmentShadersSources[type] == nullptr) {
-		_fragmentShadersSources[type] = std::make_shared<FragmentShader>();
-	}
-	_fragmentShadersSources[type]->addSource(std::forward<std::string>(loadShaderFromFile(fragPath)));
-}
-
 ShaderFactory::ShaderFactory() {
-	addVertexShaderSourceFile(SHADER_BUMP, "shaders/bumpMapping/bump.vert.glsl");
-	addVertexShaderSourceFile(SHADER_PHONG, "shaders/phong/phong.vert.glsl");
-	addVertexShaderSourceFile(SHADER_GLASS, "shaders/glass/glass.vert.glsl");
-	addVertexShaderSourceFile(SHADER_GLOSSY, "shaders/glossy/glossy.vert.glsl");
-	addVertexShaderSourceFile(SHADER_SKYBOX, "shaders/skybox/skybox.vert.glsl");
+	_vertexShadersSources += loadShaderFromFile("shaders/bumpMapping/bump.vert.glsl");
+	_vertexShadersSources += loadShaderFromFile("shaders/phong/phong.vert.glsl");
+	_vertexShadersSources += loadShaderFromFile("shaders/glass/glass.vert.glsl");
+	_vertexShadersSources += loadShaderFromFile("shaders/glossy/glossy.vert.glsl");
+	_vertexShadersSources += loadShaderFromFile("shaders/skybox/skybox.vert.glsl");
 
-	addFragmentShaderSourceFile(SHADER_BUMP, "shaders/bumpMapping/bump.frag.glsl");
-	addFragmentShaderSourceFile(SHADER_PHONG, "shaders/phong/phongMethod.glsl");
-	addFragmentShaderSourceFile(SHADER_PHONG, "shaders/phong/phong.frag.glsl");
-	addFragmentShaderSourceFile(SHADER_GLASS, "shaders/glass/glass.frag.glsl");
-	addFragmentShaderSourceFile(SHADER_GLOSSY, "shaders/glossy/glossy.frag.glsl");
-	addFragmentShaderSourceFile(SHADER_SKYBOX, "shaders/skybox/skybox.frag.glsl");
+	_fragmentShadersSources += loadShaderFromFile("shaders/bumpMapping/bump.frag.glsl");
+	_fragmentShadersSources += loadShaderFromFile("shaders/phong/phongMethod.glsl");
+	_fragmentShadersSources += loadShaderFromFile("shaders/phong/phong.frag.glsl");
+	_fragmentShadersSources += loadShaderFromFile("shaders/glass/glass.frag.glsl");
+	_fragmentShadersSources += loadShaderFromFile("shaders/glossy/glossy.frag.glsl");
+	_fragmentShadersSources += loadShaderFromFile("shaders/skybox/skybox.frag.glsl");
 }
 
 PrgPtr ShaderFactory::createShader(ShaderType type) {
-//	VertexShader vert;
-//	FragmentShader frag;
-//
-//	switch(type) {
-//	case SHADER_BUMP: {
-//		vert.addSource(loadShaderFromFile("shaders/bumpMapping/bump.vert.glsl"));
-//		frag.addSource(loadShaderFromFile("shaders/bumpMapping/bump.frag.glsl"));
-//		break;
-//	}
-//
-//	case SHADER_PHONG: {
-//		vert.addSource(loadShaderFromFile("shaders/phong/phong.vert.glsl"));
-//		frag.addSource(loadShaderFromFile("shaders/phong/phongMethod.glsl"));
-//		frag.addSource(loadShaderFromFile("shaders/phong/phong.frag.glsl"));
-//		break;
-//	}
-//
-//	case SHADER_SKYBOX: {
-//		vert.addSource(loadShaderFromFile("shaders/skybox/skybox.vert.glsl"));
-//		frag.addSource(loadShaderFromFile("shaders/skybox/skybox.frag.glsl"));
-//		break;
-//	}
-//
-//	case SHADER_GLASS: {
-//		vert.addSource(loadShaderFromFile("shaders/glass/glass.vert.glsl"));
-//		frag.addSource(loadShaderFromFile("shaders/glass/glass.frag.glsl"));
-//		break;
-//	}
-//
-//	case SHADER_GLOSSY: {
-//		vert.addSource(loadShaderFromFile("shaders/glossy/glossy.vert.glsl"));
-//		frag.addSource(loadShaderFromFile("shaders/glossy/glossy.frag.glsl"));
-//	}
-//	}
+	VertexShader vertex;
+	FragmentShader frag;
+
+	vertex.addSource(Engine::window.getVersion());
+	vertex.addSource(layoutDef);
+	vertex.addSource(typeToDef(type));
+	vertex.addSource(_vertexShadersSources);
+
+	frag.addSource(Engine::window.getVersion());
+	frag.addSource(typeToDef(type));
+	frag.addSource(_fragmentShadersSources);
 
 	auto shaderPrg = std::make_unique<ShaderProgram>();
 
-	shaderPrg -> attachShader(*_vertexShadersSources[type]);
-	shaderPrg -> attachShader(*_fragmentShadersSources[type]);
+	shaderPrg -> attachShader(vertex);
+	shaderPrg -> attachShader(frag);
 	shaderPrg -> link();
 
 	return shaderPrg;

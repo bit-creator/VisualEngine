@@ -20,7 +20,7 @@ Texture::Texture(const GLenum target)
 }
 
 Texture::~Texture() {
-	glDeleteTextures(1, &getID()); CHECK_GL_ERROR();
+	glDeleteTextures(1, &getID()); HANDLE_GL_ERROR();
 }
 
 GLenum Texture::getTarget() {
@@ -28,16 +28,16 @@ GLenum Texture::getTarget() {
 }
 
 void Texture::bind(int index) {
-	glActiveTexture(GL_TEXTURE0 + index); CHECK_GL_ERROR();
+	glActiveTexture(GL_TEXTURE0 + index); HANDLE_GL_ERROR();
 	bind();
 }
 
 void Texture::bind() {
-	glBindTexture(getTarget(), getID()); CHECK_GL_ERROR();
+	glBindTexture(getTarget(), getID()); HANDLE_GL_ERROR();
 }
 
 void Texture::unbind() {
-	glBindTexture(getTarget(), 0); CHECK_GL_ERROR();
+	glBindTexture(getTarget(), 0); HANDLE_GL_ERROR();
 }
 
 void Texture::loadImage(const char *name, const GLenum target) {
@@ -47,21 +47,21 @@ void Texture::loadImage(const char *name, const GLenum target) {
 
 	if(data == NULL) std::cout << "Couldn\'t load image" << std::endl;
 
-	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);   CHECK_GL_ERROR();
-	glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);  CHECK_GL_ERROR();
-	glPixelStorei(GL_UNPACK_SKIP_PIXELS, 0); CHECK_GL_ERROR();
-	glPixelStorei(GL_UNPACK_SKIP_ROWS, 0);   CHECK_GL_ERROR();
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);   HANDLE_GL_ERROR();
+	glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);  HANDLE_GL_ERROR();
+	glPixelStorei(GL_UNPACK_SKIP_PIXELS, 0); HANDLE_GL_ERROR();
+	glPixelStorei(GL_UNPACK_SKIP_ROWS, 0);   HANDLE_GL_ERROR();
 
-	glTexParameteri(getTarget(), GL_TEXTURE_MAG_FILTER, GL_LINEAR); CHECK_GL_ERROR();
-	glTexParameteri(getTarget(), GL_TEXTURE_MIN_FILTER, GL_LINEAR); CHECK_GL_ERROR();
-	glTexParameteri(getTarget(), GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);     CHECK_GL_ERROR();
-	glTexParameteri(getTarget(), GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);     CHECK_GL_ERROR();
-	glTexParameteri(getTarget(), GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);     CHECK_GL_ERROR();
+	glTexParameteri(getTarget(), GL_TEXTURE_MAG_FILTER, GL_LINEAR); HANDLE_GL_ERROR();
+	glTexParameteri(getTarget(), GL_TEXTURE_MIN_FILTER, GL_LINEAR); HANDLE_GL_ERROR();
+	glTexParameteri(getTarget(), GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);     HANDLE_GL_ERROR();
+	glTexParameteri(getTarget(), GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);     HANDLE_GL_ERROR();
+	glTexParameteri(getTarget(), GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);     HANDLE_GL_ERROR();
 
 	auto format = GL_RGB;
 	if (nrChannels == 4) format = GL_RGBA;
 
-	glTexImage2D(target, 0, format, width, height, 0, format,  GL_UNSIGNED_BYTE, data); CHECK_GL_ERROR();
+	glTexImage2D(target, 0, format, width, height, 0, format,  GL_UNSIGNED_BYTE, data); HANDLE_GL_ERROR();
 
 	stbi_image_free(data);
 }
@@ -73,22 +73,22 @@ void Texture::setEmpty() {
 			0, 0, 0
 	};
 
-	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);   CHECK_GL_ERROR();
-	glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);  CHECK_GL_ERROR();
-	glPixelStorei(GL_UNPACK_SKIP_PIXELS, 0); CHECK_GL_ERROR();
-	glPixelStorei(GL_UNPACK_SKIP_ROWS, 0);   CHECK_GL_ERROR();
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);   HANDLE_GL_ERROR();
+	glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);  HANDLE_GL_ERROR();
+	glPixelStorei(GL_UNPACK_SKIP_PIXELS, 0); HANDLE_GL_ERROR();
+	glPixelStorei(GL_UNPACK_SKIP_ROWS, 0);   HANDLE_GL_ERROR();
 
-	glTexParameteri(getTarget(), GL_TEXTURE_MAG_FILTER, GL_NEAREST); CHECK_GL_ERROR();
+	glTexParameteri(getTarget(), GL_TEXTURE_MAG_FILTER, GL_NEAREST); HANDLE_GL_ERROR();
 
-	glTexImage2D(getTarget(), 0, GL_RGB, 2, 2, 0, GL_RGB,  GL_UNSIGNED_BYTE, data); CHECK_GL_ERROR();
-	glGenerateMipmap(getTarget()); CHECK_GL_ERROR();
+	glTexImage2D(getTarget(), 0, GL_RGB, 2, 2, 0, GL_RGB,  GL_UNSIGNED_BYTE, data); HANDLE_GL_ERROR();
+	glGenerateMipmap(getTarget()); HANDLE_GL_ERROR();
 
 	unbind();
 }
 
 GLuint Texture::gentex() noexcept {
     GLuint ID;
-    glGenTextures(1, &ID); CHECK_GL_ERROR();
+    glGenTextures(1, &ID); HANDLE_GL_ERROR();
     return ID;
 }
 
@@ -105,7 +105,7 @@ TextureCubeMap::TextureCubeMap()
 void Texture2D::loadImage(const char* name) {
 	bind();
 	Texture::loadImage(name, GL_TEXTURE_2D);
-	glGenerateMipmap(getTarget()); CHECK_GL_ERROR();
+	glGenerateMipmap(getTarget()); HANDLE_GL_ERROR();
 	unbind();
 }
 
@@ -114,9 +114,9 @@ void TextureCubeMap::loadImage(const char* name, const BoxSide side) {
 
 	Texture::loadImage(name, (GLuint)side);
 
-	glTexParameteri(getTarget(), GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE); CHECK_GL_ERROR();
-	glTexParameteri(getTarget(), GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE); CHECK_GL_ERROR();
-	glTexParameteri(getTarget(), GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE); CHECK_GL_ERROR();
+	glTexParameteri(getTarget(), GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE); HANDLE_GL_ERROR();
+	glTexParameteri(getTarget(), GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE); HANDLE_GL_ERROR();
+	glTexParameteri(getTarget(), GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE); HANDLE_GL_ERROR();
 
 	unbind();
 }

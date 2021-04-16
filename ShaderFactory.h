@@ -16,8 +16,6 @@
 
 #include "GL/shaderprogram.h"
 
-namespace fs = std::filesystem;
-
 enum ShaderType {
   SHADER_BUMP,
   SHADER_PHONG,
@@ -27,19 +25,16 @@ enum ShaderType {
 };
 
 using shaderTree = std::map < ShaderType, PrgPtr >;
-using shaderSourceTree = std::map < ShaderType, ShaderPtr >;
 
 class ShaderFactory final {
 private:
 	shaderTree								 					_shaders;
-	shaderSourceTree											_vertexShadersSources;
-	shaderSourceTree											_fragmentShadersSources;
+	std::string 												_vertexShadersSources;
+	std::string													_fragmentShadersSources;
 
 public:
 	ShaderFactory();
 	ShaderProgram& getShader(ShaderType type);
-	void addVertexShaderSourceFile(ShaderType type, std::string vertPath);
-	void addFragmentShaderSourceFile(ShaderType type, std::string fragsPath);
 
 private:
 	PrgPtr createShader(ShaderType type);

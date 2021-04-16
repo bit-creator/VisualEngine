@@ -1,4 +1,4 @@
-#version 460 core
+#ifdef PHONG
 
 #define MAX_LIGHT_COUNT 8
 
@@ -48,3 +48,5 @@ vec4 PhongLighting(vec4 ambientColor, vec4 diffuseColor, vec4 specularColor,
 
 	return ambientColor + diffuseColor * diffFactor + specularColor * specFactor;
 }
+
+#endif // PHONG

@@ -12,11 +12,7 @@
 #ifndef BUFFER_H
 #define BUFFER_H
 
-#include <GL/glew.h>
-#include <GL/freeglut.h>
-#include <GLFW/glfw3.h>
-
-#include "globject.hpp"
+#include "globject.h"
 
 class Buffer : public GLObject {
 private:

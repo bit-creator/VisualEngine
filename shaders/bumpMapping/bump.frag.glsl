@@ -1,4 +1,4 @@
-#version 460 core
+#ifdef BUMP
 
 #define MAX_LIGHT_COUNT 8
 
@@ -147,4 +147,6 @@ mat3 cotangent_frame( vec3 N, vec3 p, vec2 uv )
     float invmax = inversesqrt( max( dot(T,T), dot(B,B) ) );
     return mat3( T * invmax, B * invmax, N );
 }
+
+#endif // BUMP
 

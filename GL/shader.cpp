@@ -2,31 +2,26 @@
 
 Shader::Shader(const GLuint shaderType) noexcept
     : GLObject(glCreateShader(shaderType))
-{ CHECK_GL_ERROR(); }
+{ HANDLE_GL_ERROR(); }
 
 Shader::~Shader() noexcept {
-	glDeleteShader(getID()); CHECK_GL_ERROR();
+	glDeleteShader(getID()); HANDLE_GL_ERROR();
 }
 
 bool Shader::compileShader() const noexcept {
-	std::vector<char*> cstrings;
-	cstrings.reserve(_shaderSources.size());
+	glShaderSource(getID(), _shaderSources.size(), &_shaderSources[0], _shaderLength.data()); HANDLE_GL_ERROR();
 
-	for(size_t i = 0; i < _shaderSources.size(); ++i)
-		cstrings.push_back(const_cast<char*>(_shaderSources[i].c_str()));
-
-	glShaderSource(getID(), _shaderSources.size(), &cstrings[0], _shaderLength.data()); CHECK_GL_ERROR();
-
-    glCompileShader(getID()); CHECK_GL_ERROR();
+    glCompileShader(getID()); HANDLE_GL_ERROR();
 
     GLint success;
     GLchar infoLog[512];
 
-    glGetShaderiv(getID(), GL_COMPILE_STATUS, &success); CHECK_GL_ERROR();
+    glGetShaderiv(getID(), GL_COMPILE_STATUS, &success); HANDLE_GL_ERROR();
 
     if(!success) {
-	   glGetShaderInfoLog(getID(), 512, NULL, infoLog); CHECK_GL_ERROR();
-       std::cout << "\n| ERROR | Shader not compile, problems:\n" << infoLog << '\n' << std::endl;
+	   glGetShaderInfoLog(getID(), 512, NULL, infoLog); HANDLE_GL_ERROR();
+	   ERROR("Shader not compile, problems:")
+       std::cout << infoLog << '\n' << std::endl;
 
        return false;
     }
@@ -35,7 +30,7 @@ bool Shader::compileShader() const noexcept {
 }
 
 void Shader::addSource(const std::string& source) noexcept {
-    _shaderSources.push_back(source);
+    _shaderSources.push_back(const_cast<char*>(source.c_str()));
     _shaderLength.push_back(source.size());
 }
 

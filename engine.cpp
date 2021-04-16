@@ -17,7 +17,7 @@ ScenePtr Engine::getScene() const noexcept {
 }
 
 std::pair<int32_t, int32_t> Engine::getWindowSize() noexcept {
-	return _mainWindow.getWindowSize();
+	return window.getWindowSize();
 }
 
 std::vector<EventListenerPtr>& Engine::getListeners() noexcept {

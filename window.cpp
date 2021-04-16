@@ -64,7 +64,7 @@ void Window::setup() noexcept
 {
     if (!glfwInit())
     {
-    	CHECK_GL_ERROR();
+    	HANDLE_GL_ERROR();
     	std::raise(SIGTERM);
     }
 
@@ -80,7 +80,7 @@ void Window::setup() noexcept
 
     if(_window == nullptr)
     {
-    	CHECK_GL_ERROR();
+    	HANDLE_GL_ERROR();
     	glfwTerminate();
         std::raise(SIGTERM);
     }
@@ -91,7 +91,7 @@ void Window::setup() noexcept
 
     if (auto err =glewInit(); err != GLEW_OK)
     {
-    	CHECK_GL_ERROR();
+    	HANDLE_GL_ERROR();
     	glfwTerminate();
         std::raise(SIGTERM);
     }
@@ -105,7 +105,7 @@ void Window::setup() noexcept
     glfwSetCursorPosCallback(_window, mouseCallBack);
     glfwSetMouseButtonCallback(_window, mouseClickCallBack);
 
-    CHECK_GL_ERROR();
+    HANDLE_GL_ERROR();
 }
 
 Window::pointer Window::get() noexcept
@@ -153,4 +153,8 @@ void Window::mouseClickCallBack(pointer window, int button, int action,
 
 	for(EventListenerPtr listener : listenerArray)
     if(listener) listener -> onMouseClick(button, action, mode);
+}
+
+std::string Window::getVersion() const noexcept {
+	return "#version " + std::to_string((int)(_version * 100)) + " core\n";
 }
