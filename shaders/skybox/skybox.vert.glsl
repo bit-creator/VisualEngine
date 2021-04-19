@@ -1,9 +1,9 @@
 #ifdef SKYBOX
-layout(location = 0) in vec3 aCoord;
-
-out vec3 vTexCoords;
+ATTRIBUTE(POSITION_ATTRIBUTE_LOCATION) 	vec3 aCoord;
 
 uniform mat4 uSkyBoxMVPMat;
+
+out vec3 vTexCoords;
 
 void main() {
 	vTexCoords = aCoord;

@@ -12,19 +12,14 @@
 #include <iostream>
 #include <string>
 #include <memory>
-#include <map>
+#include <unordered_map>
 
 #include "GL/shaderprogram.h"
 
-enum ShaderType {
-  SHADER_BUMP,
-  SHADER_PHONG,
-  SHADER_SKYBOX,
-  SHADER_GLASS,
-  SHADER_GLOSSY
-};
+#include "Draw.h"
+#include "MaterialTypes.hpp"
 
-using shaderTree = std::map < ShaderType, PrgPtr >;
+using shaderTree = std::unordered_map < Draw, PrgPtr >;
 
 class ShaderFactory final {
 private:
@@ -34,10 +29,10 @@ private:
 
 public:
 	ShaderFactory();
-	ShaderProgram& getShader(ShaderType type);
+	ShaderProgram& getShader(const Draw& draw);
 
 private:
-	PrgPtr createShader(ShaderType type);
+	PrgPtr createShader(const Draw& draw);
 };
 
 #endif /* SHADERFACTORY_H_ */

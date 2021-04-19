@@ -51,8 +51,13 @@ void Engine::run(const Window& window) noexcept {
 }
 
 void Engine::renderSkyBox() {
-	ShaderProgram* prg = &_factory.getShader(ShaderType::SHADER_SKYBOX);
-	prg->enable();
+	Draw drawSkyBox;
+
+	drawSkyBox._type = (int)ShaderType::SHADER_SKYBOX;
+	drawSkyBox._attribHash =_skyBox.getAttributeHash();
+
+	ShaderProgram& prg = _factory.getShader(drawSkyBox);
+	prg.enable();
 
 	glm::mat4 viewMat = glm::inverse(_scene->getCamera()->getWorldMat());
 	glm::mat4 projMat = _scene->getCamera()->getProjectionMatrix();
@@ -61,8 +66,8 @@ void Engine::renderSkyBox() {
 
 	_scene->getSkyBox()->bind(0);
 
-	prg->setUniform("uSkyBoxMVPMat", MVPmat);
-	prg->setUniform("uSkyBox", 0);
+	prg.setUniform("uSkyBoxMVPMat", MVPmat);
+	prg.setUniform("uSkyBox", 0);
 
 	_skyBox.bindBuffers();
 
@@ -72,129 +77,89 @@ void Engine::renderSkyBox() {
 }
 
 void Engine::render(Object3D &obj, LightList lights) noexcept {
+    enum class TextureUnit {
+    	Ambient  =0,
+    	Diffuse  =1,
+    	Specular =2,
+		Rougness =3,
+		SkyBox   =4,
+		Normal   =5,
+		Height   =6
+    };
+
     auto material = obj.getMaterial();
     auto geom = obj.getGeometry();
-
-    ShaderProgram* prog;
     auto cam = *_scene->getCamera();
 
-    switch(material->getType()) {
-    case MaterialType::MATERIAL_BUMP:
-    	prog = &_factory.getShader(ShaderType::SHADER_BUMP);
-    	break;
+    Draw drawData;
 
-    case MaterialType::MATERIAL_PHONG:
-    	prog = &_factory.getShader(ShaderType::SHADER_PHONG);
-    	break;
+    drawData._type = (int)material->getType();
+    drawData._attribHash = geom->getAttributeHash();
+    drawData._hasPerspectiveCamera = (int)cam.getType();
+    drawData._numOfLight = lights.size();
 
-    case MaterialType::MATERIAL_GLOSSY:
-    	prog = &_factory.getShader(ShaderType::SHADER_GLOSSY);
-    	break;
-
-    case MaterialType::MATERIAL_GLASS:
-    	prog = &_factory.getShader(ShaderType::SHADER_GLASS);
-    	break;
+    if (geom->hasTexCoord()) {
+    	if (material->getAmbientTexture() != nullptr)  drawData._hasAmbientMap = true;
+    	if (material->getDiffuseTexture() != nullptr)  drawData._hasDiffuseMap = true;
+    	if (material->getSpecularTexture() != nullptr) drawData._hasSpecularMap = true;
+    	if (material->getRougnessTexture() != nullptr) drawData._hasRougnessMap = true;
+    	if (material->getNormalTexture() != nullptr)   drawData._hasNormalMap = true;
+    	if (material->getHeightTexture() != nullptr)   drawData._hasHeightMap = true;
     }
 
-    prog->enable();
+    ShaderProgram& prg = _factory.getShader(drawData);
+    prg.enable();
 
     glm::mat4 modelMat = obj.getWorldMat();
     glm::mat4 viewMat = glm::inverse(cam.getWorldMat());
     glm::mat4 projMat = cam.getProjectionMatrix();
     glm::mat3 nMat = glm::inverse(glm::transpose(modelMat));
 
-    enum class TextureUnit {
-    	Ambient =0,
-    	Diffuse =1,
-    	Specular =2,
-		SkyBox =4,
-		Normal = 5,
-		Height = 6
-    };
+    if (drawData._hasAmbientMap)  material->getAmbientTexture() ->bind((int)TextureUnit::Ambient);
+    if (drawData._hasDiffuseMap)  material->getDiffuseTexture() ->bind((int)TextureUnit::Diffuse);
+    if (drawData._hasSpecularMap) material->getSpecularTexture()->bind((int)TextureUnit::Specular);
+    if (drawData._hasRougnessMap) material->getRougnessTexture()->bind((int)TextureUnit::Rougness);
+    if (drawData._hasNormalMap)   material->getNormalTexture()  ->bind((int)TextureUnit::Normal);
+    if (drawData._hasHeightMap)   material->getHeightTexture()  ->bind((int)TextureUnit::Height);
+
+    prg.setUniform("uTexAmbient",  (int)TextureUnit::Ambient);
+    prg.setUniform("uTexDiffuse",  (int)TextureUnit::Diffuse);
+    prg.setUniform("uTexSpecular", (int)TextureUnit::Specular);
+    prg.setUniform("uTexRougness", (int)TextureUnit::Rougness);
+    prg.setUniform("uTexNormal",   (int)TextureUnit::Normal);
+    prg.setUniform("uTexHeight",   (int)TextureUnit::Height);
 
     if (_scene->useSkyBox()) {
-    	prog->setUniform("uHasSkyBox", true);
+    	prg.setUniform("uHasSkyBox", true);
     	_scene->getSkyBox()->bind((int)TextureUnit::SkyBox);
-    	prog->setUniform("uSkyBox", (int)TextureUnit::SkyBox);
-    }
-
-    if (geom->hasTexCoord())
-    {
-    	if (material->getHeightTexture() != nullptr)
-    	{
-    		material->getHeightTexture()->bind((int)TextureUnit::Height);
-    	    prog->setUniform("uHasHeightMap", true);
-    	    prog->setUniform("uTexHeight", (int)TextureUnit::Height);
-    	}
-    	else prog->setUniform("uHasHeightMap", false);
-
-
-    	if (material->getNormalTexture() != nullptr)
-    	{
-    	    material->getNormalTexture()->bind((int)TextureUnit::Normal);
-    	    prog->setUniform("uHasNormalMap", true);
-    		prog->setUniform("uTexNormal", (int)TextureUnit::Normal);
-    	}
-    	else prog->setUniform("uHasNormalMap", false);
-
-
-    	if (material->getAmbientTexture() != nullptr)
-    	{
-    		material->getAmbientTexture()->bind((int)TextureUnit::Ambient);
-    		prog->setUniform("uHasAmbientMap", true);
-    		prog->setUniform("uTexAmbient", (int)TextureUnit::Ambient);
-    	}
-		else prog->setUniform("uHasAmbientMap", false);
-
-    	if (material->getDiffuseTexture() != nullptr)
-    	{
-    		material->getDiffuseTexture()->bind((int)TextureUnit::Diffuse);
-    		prog->setUniform("uHasDiffuseMap", true);
-    		prog->setUniform("uTexDiffuse", (int)TextureUnit::Diffuse);
-    	}
-		else prog->setUniform("uHasDiffuseMap", false);
-
-    	if (material->getSpecularTexture() != nullptr)
-    	{
-    		material->getSpecularTexture()->bind((int)TextureUnit::Specular);
-    		prog->setUniform("uHasSpecularMap", true);
-    		prog->setUniform("uTexSpecular", (int)TextureUnit::Specular);
-    	}
-    	else prog->setUniform("uHasSpecularMap", false);
-    }
-    else
-    {
-    	prog->setUniform("uHasAmbientMap", false);
-    	prog->setUniform("uHasDiffuseMap", false);
-    	prog->setUniform("uHasSpecularMap", false);
-    	prog->setUniform("uHasAmbientMap", false);
-    	prog->setUniform("uHasHeightMap", false);
+    	prg.setUniform("uSkyBox", (int)TextureUnit::SkyBox);
     }
 
     if(material->getType() == MaterialType::MATERIAL_BUMP)
     {
     	auto bumpMaterial = (BumpMaterial*)material.get();
-    	prog->setUniform("uScale", bumpMaterial->_scale);
+    	prg.setUniform("uScale", bumpMaterial->_scale);
     }
 
     auto mVPMat = projMat * viewMat * modelMat;
     auto modelViewMat = viewMat * modelMat;
 
-    prog->setUniform("uAmbientColor", material->getAmbientColor().getColorSource());
-    prog->setUniform("uDiffuseColor", material->getDiffuseColor().getColorSource());
-    prog->setUniform("uSpecularColor", material->getSpecularColor().getColorSource());
-    prog->setUniform("uRoughness", 1 / material->getRoughness());
-    prog->setUniform("uPerspectiveCamera", (int)cam.getType());
-    prog->setUniform("uCamPos", cam.getPosition());
-    prog->setUniform("uFirstRefractiveIndex", 1.33f);
-    prog->setUniform("uSecondRefractiveIndex", 1.52f);
+    prg.setUniform("uAmbientColor", material->getAmbientColor().getColorSource());
+    prg.setUniform("uDiffuseColor", material->getDiffuseColor().getColorSource());
+    prg.setUniform("uSpecularColor", material->getSpecularColor().getColorSource());
 
-    prog->setUniform("uMVPMat", mVPMat);
-    prog->setUniform("uNormalMat", nMat);
-    prog->setUniform("uModelViewMat", modelViewMat);
-    prog->setUniform("uModelMat", modelMat);
-    prog->setUniform("uCameraPos", cam.getPosition());
-    prog->setUniform("uLightCount", (int)lights.size());
+    prg.setUniform("uRoughness", 1 / material->getRoughness());
+
+    prg.setUniform("uCamPos", cam.getPosition());
+
+    prg.setUniform("uFirstRefractiveIndex", 1.33f);
+    prg.setUniform("uSecondRefractiveIndex", 1.52f);
+
+    prg.setUniform("uMVPMat", mVPMat);
+    prg.setUniform("uNormalMat", nMat);
+    prg.setUniform("uModelViewMat", modelViewMat);
+    prg.setUniform("uModelMat", modelMat);
+    prg.setUniform("uCameraPos", cam.getPosition());
 
     int ind = 0;
 
@@ -206,8 +171,8 @@ void Engine::render(Object3D &obj, LightList lights) noexcept {
     	auto dir = glm::mat3(light->getWorldMat()) * glm::normalize(glm::vec3(0., 0., 1.));
     	Color color = light->getColor();
 
-    	prog->setUniform(dirName, dir);
-    	prog->setUniform(colName, color.getColorSource());
+    	prg.setUniform(dirName, dir);
+    	prg.setUniform(colName, color.getColorSource());
 
 		++ind;
     }
@@ -216,22 +181,8 @@ void Engine::render(Object3D &obj, LightList lights) noexcept {
 
     geom->bindBuffers();
 
-//    glEnableVertexAttribArray(0); CHECK_GL_ERROR();
-//    glEnableVertexAttribArray(1); CHECK_GL_ERROR();
-//    glEnableVertexAttribArray(2); CHECK_GL_ERROR();
-//    glEnableVertexAttribArray(3); CHECK_GL_ERROR();
-//    glEnableVertexAttribArray(4); CHECK_GL_ERROR();
-//    glEnableVertexAttribArray(5); CHECK_GL_ERROR();
-
     if (geom->hasIndexes()) glDrawElements(geom->getPoligonConnectMode(), geom->getNumIndices(), GL_UNSIGNED_INT, 0);
     else glDrawArrays(geom->getPoligonConnectMode() , 0, geom->getNumVertexes());
-
-//    glDisableVertexAttribArray(0); CHECK_GL_ERROR();
-//    glDisableVertexAttribArray(1); CHECK_GL_ERROR();
-//    glDisableVertexAttribArray(2); CHECK_GL_ERROR();
-//    glDisableVertexAttribArray(3); CHECK_GL_ERROR();
-//    glDisableVertexAttribArray(4); CHECK_GL_ERROR();
-//    glDisableVertexAttribArray(5); CHECK_GL_ERROR();
 
     geom->unbindBuffers();
 

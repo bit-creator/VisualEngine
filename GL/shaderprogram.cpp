@@ -30,7 +30,7 @@ bool ShaderProgram::link() const noexcept {
 
     if (!success) {
         glGetProgramInfoLog(getID(), 512, NULL, infoLog); HANDLE_GL_ERROR();
-        ERROR(" Shader program no linked, problems:")
+        ERROR(" Shader program no linked, problems:");
         std::cout << infoLog << '\n' << std::endl;
 
         return false;

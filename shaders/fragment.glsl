@@ -1,4 +1,4 @@
-#ifdef BUMP
+#if defined(BUMP) || defined(PHONG)
 
 struct Light
 {
@@ -89,5 +89,5 @@ void main() {
   color = fragmentColor;
 }
 
-#endif // BUMP
+#endif // BUMP || PHONG
 

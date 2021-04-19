@@ -17,13 +17,7 @@
 #include "Color.h"
 
 #include "GL/Texture.h"
-
-enum class MaterialType {
-	MATERIAL_BUMP,
-	MATERIAL_PHONG,
-	MATERIAL_GLASS,
-	MATERIAL_GLOSSY
-};
+#include "MaterialTypes.hpp"
 
 class Material {
 private:
@@ -32,6 +26,7 @@ private:
 	TexPtr								_ambientMap;
 	TexPtr								_diffuseMap;
 	TexPtr								_specularMap;
+	TexPtr								_rougnessMap;
 	TexPtr								_normalMap;
 	TexPtr								_heightMap;
 
@@ -62,12 +57,14 @@ public:
     void setAmbientTexture(TexPtr map);
     void setDiffuseTexture(TexPtr map);
     void setSpecularTexture(TexPtr map);
+    void setRougnessTexture(TexPtr map);
     void setNormalTexture(TexPtr map);
     void setHeightTexture(TexPtr map);
 
     TexPtr getAmbientTexture() const noexcept;
     TexPtr getDiffuseTexture() const noexcept;
     TexPtr getSpecularTexture() const noexcept;
+    TexPtr getRougnessTexture() const noexcept;
     TexPtr getNormalTexture() const noexcept;
     TexPtr getHeightTexture() const noexcept;
 

@@ -21,9 +21,6 @@
 #	undef  CHECK_GL_ERROR
 #	undef  CONSOLE_MESSAGES
 #	undef  CONSOLE_ERRORS
-#   define HANDLE_GL_ERROR() {  }
-#	define MESSAGE(msg)      {  }
-#	define ERROR(msg)        {  }
 #endif // RELEASE
 #ifndef CHECK_GL_ERROR
 #   define HANDLE_GL_ERROR() {  }
@@ -70,8 +67,11 @@
 	}
 #endif // CONSOLE_MESSAGES
 #ifndef CONSOLE_ERRORS
-#	define ERROR (msg) {  }
+#	define ERROR (msg) { "msg"; }
 #else
+#	ifndef _GLIBCXX_CSIGNAL
+# 		include <csignal>
+#	endif // CSIGLAL
 #	define ERROR(msg) {	             						\
 		std::cout << "|  ERRORS  | " 						\
     		      << "file | " << __FILE__					\
@@ -79,6 +79,7 @@
     	    	  << " | line | " << __LINE__   			\
     	    	  << " | " << msg 							\
     	    	  << std::endl;								\
+    	/*std::raise(SIGTERM);*/								\
 	}
 #endif // CONSOLE_ERRORS
 
