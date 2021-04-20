@@ -6,6 +6,7 @@
  */
 
 #include "ShaderFactory.h"
+#include "MaterialTypes.hpp"
 
 inline std::string loadShaderFromFile(const std::string& path) noexcept {
     std::ifstream in(path, std::ios::in);
@@ -40,15 +41,16 @@ ShaderProgram& ShaderFactory::getShader(const Draw& draw) {
 }
 
 ShaderFactory::ShaderFactory() {
-	_vertexShadersSources += loadShaderFromFile("shaders/vertex.glsl");
-	_vertexShadersSources += loadShaderFromFile("shaders/skybox/vertex.glsl");
+	_vertexShadersSources["vertex"] = loadShaderFromFile("shaders/vertex.glsl");
+	_vertexShadersSources["skybox"] = loadShaderFromFile("shaders/skybox/vertex.glsl");
 
-	_fragmentShadersSources += loadShaderFromFile("shaders/phong.glsl");
-	_fragmentShadersSources += loadShaderFromFile("shaders/paralax.glsl");;
-	_fragmentShadersSources += loadShaderFromFile("shaders/fragment.glsl");
-	_fragmentShadersSources += loadShaderFromFile("shaders/glossy/fragment.glsl");
-	_fragmentShadersSources += loadShaderFromFile("shaders/skybox/fragment.glsl");
-//	_fragmentShadersSources += loadShaderFromFile("shaders/glass/glass.frag.glsl");
+	_fragmentShadersSources["phong"]    = loadShaderFromFile("shaders/phong.glsl");
+	_fragmentShadersSources["paralax"]  = loadShaderFromFile("shaders/paralax.glsl");
+	_fragmentShadersSources["fragment"] = loadShaderFromFile("shaders/fragment.glsl");
+	_fragmentShadersSources["glossy"]   = loadShaderFromFile("shaders/glossy/fragment.glsl");
+	_fragmentShadersSources["skybox"]   = loadShaderFromFile("shaders/skybox/fragment.glsl");
+
+	//	_fragmentShadersSources += loadShaderFromFile("shaders/glass/glass.frag.glsl");
 }
 
 PrgPtr ShaderFactory::createShader(const Draw& draw) {
@@ -58,10 +60,20 @@ PrgPtr ShaderFactory::createShader(const Draw& draw) {
 	auto defines = draw.genDefines();
 
 	vertex.addSource(defines);
-	vertex.addSource(_vertexShadersSources);
+	if (draw._type == (int)ShaderType::SHADER_SKYBOX) vertex.addSource(_vertexShadersSources["skybox"]);
+	else vertex.addSource(_vertexShadersSources["vertex"]);
 
 	frag.addSource(defines);
-	frag.addSource(_fragmentShadersSources);
+
+	if (draw._type == (int)ShaderType::SHADER_SKYBOX) frag.addSource(_fragmentShadersSources["skybox"]);
+	else {
+		frag.addSource(_fragmentShadersSources["phong"]);
+		if(draw._type == (int)ShaderType::SHADER_GLOSSY) frag.addSource(_fragmentShadersSources["glossy"]);
+		else {
+			if (draw._type == (int)ShaderType::SHADER_BUMP) frag.addSource(_fragmentShadersSources["paralax"]);
+			frag.addSource(_fragmentShadersSources["fragment"]);
+		}
+	}
 
 	auto shaderPrg = std::make_unique<ShaderProgram>();
 

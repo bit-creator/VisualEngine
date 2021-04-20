@@ -1,4 +1,8 @@
-#if defined(PHONG) || defined(BUMP) || defined(GLOSSY)
+/**
+ * impliment PHONG lighting
+ */
+
+//#if defined(PHONG) || defined(BUMP) || defined(GLOSSY)
 
 vec4 calculateLighting(vec4 ambientColor, vec4 diffuseColor, vec4 specularColor,
 		vec3 lightDir, vec3 normal, vec3 viewDir, float roughness) {
@@ -15,4 +19,4 @@ vec4 calculateLighting(vec4 ambientColor, vec4 diffuseColor, vec4 specularColor,
 	return ambientColor + diffuseColor * diffFactor + specularColor * specFactor;
 }
 
-#endif // PHONG || BUMP
+//#endif // PHONG || BUMP

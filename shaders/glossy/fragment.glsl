@@ -1,4 +1,8 @@
-#ifdef GLOSSY
+/**
+ * FRAGMENT shader for glossy materaial
+ */
+
+//#ifdef GLOSSY
 
 struct Light {
 	vec3 lightDir;
@@ -71,4 +75,4 @@ void main() {
 	color = fragmentColor;
 }
 
-#endif // GLOSSY
+//#endif // GLOSSY

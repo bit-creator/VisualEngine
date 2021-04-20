@@ -25,6 +25,9 @@
 #ifndef CHECK_GL_ERROR
 #   define HANDLE_GL_ERROR() {  }
 #else
+#	ifndef _GLIBCXX_CSIGNAL
+# 		include <csignal>
+#	endif // CSIGLAL
 #	ifndef __glew_h__
 #   	include <GL/glew.h>
 #	endif // __GLEW_H__
@@ -36,6 +39,7 @@
     	    	  	  << " | line | " << __LINE__   			\
     	    	  	  << " | " << glewGetErrorString(res)		\
     	    	  	  << std::endl;								\
+			std::raise(SIGTERM);								\
      	} else {												\
      															\
      	}														\
@@ -69,9 +73,6 @@
 #ifndef CONSOLE_ERRORS
 #	define ERROR (msg) { "msg"; }
 #else
-#	ifndef _GLIBCXX_CSIGNAL
-# 		include <csignal>
-#	endif // CSIGLAL
 #	define ERROR(msg) {	             						\
 		std::cout << "|  ERRORS  | " 						\
     		      << "file | " << __FILE__					\

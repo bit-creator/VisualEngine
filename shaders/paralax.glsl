@@ -1,4 +1,8 @@
-#ifdef BUMP
+/**
+ * omly for material supported BUMP mapping 
+ */
+
+//#ifdef BUMP
 
 vec2 paralax(sampler2D texHeight, vec3 viewVec, vec2 currentTex, float scale) {
 	const float height_scale = scale;
@@ -30,4 +34,4 @@ vec2 paralax(sampler2D texHeight, vec3 viewVec, vec2 currentTex, float scale) {
 	return finalTexCoords;
 }
 
-#endif // BUMP
+//#endif // BUMP

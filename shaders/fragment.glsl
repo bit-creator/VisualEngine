@@ -1,4 +1,8 @@
-#if defined(BUMP) || defined(PHONG)
+/*
+ * FRAGMENT shader for roug material, optional supported BUMP maping
+ */
+
+//#if defined(BUMP) || defined(PHONG)
 
 struct Light {
 	vec3 lightDir;
@@ -94,5 +98,5 @@ void main() {
   	color = fragmentColor;
 }
 
-#endif // BUMP || PHONG
+//#endif // BUMP || PHONG
 
