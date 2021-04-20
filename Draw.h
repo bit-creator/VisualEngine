@@ -12,7 +12,7 @@
 #include <string>
 #include <bitset>
 
-static constexpr int NUM_OF_BINARY_PARAM = 7;
+static constexpr int NUM_OF_BINARY_PARAM = 8;
 
 struct Draw {
 	int						 	_type =0;
@@ -25,6 +25,7 @@ struct Draw {
 	bool						_hasRougnessMap =false;
 	bool						_hasNormalMap   =false;
 	bool						_hasHeightMap	=false;
+	bool						_hasSkyBoxMap   =false;
 
 	bool						_hasPerspectiveCamera =false;
 
@@ -54,7 +55,8 @@ struct std::hash<Draw> {
 		param[3] = draw._hasRougnessMap;
 		param[4] = draw._hasNormalMap;
 		param[5] = draw._hasHeightMap;
-		param[6] = draw._hasPerspectiveCamera;
+		param[6] = draw._hasSkyBoxMap;
+		param[7] = draw._hasPerspectiveCamera;
 
 		hasher(seed, param.to_ullong());
 

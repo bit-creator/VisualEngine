@@ -21,6 +21,7 @@ bool operator ==(const Draw& lhs, const Draw& rhs) noexcept {
 		&& lhs._hasRougnessMap       == rhs._hasRougnessMap
 		&& lhs._hasNormalMap         == rhs._hasNormalMap
 		&& lhs._hasHeightMap         == rhs._hasHeightMap
+		&& lhs._hasSkyBoxMap         == rhs._hasSkyBoxMap
 		&& lhs._hasPerspectiveCamera == rhs._hasPerspectiveCamera;
 }
 
@@ -54,6 +55,7 @@ std::string Draw::genDefines() const {
 	if (_hasRougnessMap)	   defines += "#define HAS_ROUGNESS_MAP\n";
 	if (_hasNormalMap)	  	   defines += "#define HAS_NORMAL_MAP\n";
 	if (_hasHeightMap)	   	   defines += "#define HAS_HEIGHT_MAP\n";
+	if (_hasSkyBoxMap)	   	   defines += "#define HAS_SKYBOX_MAP\n";
 	if (_hasPerspectiveCamera) defines += "#define USE_PERSPECTIVE_CAMERA\n";
 
 	defines += "#define ATTRIBUTE(LOCATION) layout(location = LOCATION) in\n";

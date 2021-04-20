@@ -99,12 +99,13 @@ void Engine::render(Object3D &obj, LightList lights) noexcept {
     drawData._numOfLight = lights.size();
 
     if (geom->hasTexCoord()) {
-    	if (material->getAmbientTexture() != nullptr)  drawData._hasAmbientMap = true;
-    	if (material->getDiffuseTexture() != nullptr)  drawData._hasDiffuseMap = true;
+    	if (material->getAmbientTexture() != nullptr)  drawData._hasAmbientMap  = true;
+    	if (material->getDiffuseTexture() != nullptr)  drawData._hasDiffuseMap  = true;
     	if (material->getSpecularTexture() != nullptr) drawData._hasSpecularMap = true;
     	if (material->getRougnessTexture() != nullptr) drawData._hasRougnessMap = true;
-    	if (material->getNormalTexture() != nullptr)   drawData._hasNormalMap = true;
-    	if (material->getHeightTexture() != nullptr)   drawData._hasHeightMap = true;
+    	if (material->getNormalTexture() != nullptr)   drawData._hasNormalMap   = true;
+    	if (material->getHeightTexture() != nullptr)   drawData._hasHeightMap   = true;
+    	if (_scene->useSkyBox())					   drawData._hasSkyBoxMap   = true;
     }
 
     ShaderProgram& prg = _factory.getShader(drawData);
@@ -121,6 +122,7 @@ void Engine::render(Object3D &obj, LightList lights) noexcept {
     if (drawData._hasRougnessMap) material->getRougnessTexture()->bind((int)TextureUnit::Rougness);
     if (drawData._hasNormalMap)   material->getNormalTexture()  ->bind((int)TextureUnit::Normal);
     if (drawData._hasHeightMap)   material->getHeightTexture()  ->bind((int)TextureUnit::Height);
+    if (drawData._hasSkyBoxMap)   _scene->getSkyBox()->bind((int)TextureUnit::SkyBox);
 
     prg.setUniform("uTexAmbient",  (int)TextureUnit::Ambient);
     prg.setUniform("uTexDiffuse",  (int)TextureUnit::Diffuse);
@@ -128,12 +130,7 @@ void Engine::render(Object3D &obj, LightList lights) noexcept {
     prg.setUniform("uTexRougness", (int)TextureUnit::Rougness);
     prg.setUniform("uTexNormal",   (int)TextureUnit::Normal);
     prg.setUniform("uTexHeight",   (int)TextureUnit::Height);
-
-    if (_scene->useSkyBox()) {
-    	prg.setUniform("uHasSkyBox", true);
-    	_scene->getSkyBox()->bind((int)TextureUnit::SkyBox);
-    	prg.setUniform("uSkyBox", (int)TextureUnit::SkyBox);
-    }
+    prg.setUniform("uSkyBox",      (int)TextureUnit::SkyBox);
 
     if(material->getType() == MaterialType::MATERIAL_BUMP)
     {
@@ -144,6 +141,7 @@ void Engine::render(Object3D &obj, LightList lights) noexcept {
     auto mVPMat = projMat * viewMat * modelMat;
     auto modelViewMat = viewMat * modelMat;
 
+    prg.setUniform("uGlossyColor", material->getAmbientColor().getColorSource());
     prg.setUniform("uAmbientColor", material->getAmbientColor().getColorSource());
     prg.setUniform("uDiffuseColor", material->getDiffuseColor().getColorSource());
     prg.setUniform("uSpecularColor", material->getSpecularColor().getColorSource());

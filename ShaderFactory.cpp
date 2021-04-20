@@ -41,14 +41,14 @@ ShaderProgram& ShaderFactory::getShader(const Draw& draw) {
 
 ShaderFactory::ShaderFactory() {
 	_vertexShadersSources += loadShaderFromFile("shaders/vertex.glsl");
-	_vertexShadersSources += loadShaderFromFile("shaders/skybox/skybox.vert.glsl");
+	_vertexShadersSources += loadShaderFromFile("shaders/skybox/vertex.glsl");
 
 	_fragmentShadersSources += loadShaderFromFile("shaders/phong.glsl");
 	_fragmentShadersSources += loadShaderFromFile("shaders/paralax.glsl");;
 	_fragmentShadersSources += loadShaderFromFile("shaders/fragment.glsl");
-	_fragmentShadersSources += loadShaderFromFile("shaders/glass/glass.frag.glsl");
-	_fragmentShadersSources += loadShaderFromFile("shaders/glossy/glossy.frag.glsl");
-	_fragmentShadersSources += loadShaderFromFile("shaders/skybox/skybox.frag.glsl");
+	_fragmentShadersSources += loadShaderFromFile("shaders/glossy/fragment.glsl");
+	_fragmentShadersSources += loadShaderFromFile("shaders/skybox/fragment.glsl");
+//	_fragmentShadersSources += loadShaderFromFile("shaders/glass/glass.frag.glsl");
 }
 
 PrgPtr ShaderFactory::createShader(const Draw& draw) {
