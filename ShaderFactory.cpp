@@ -20,7 +20,7 @@ inline std::string loadShaderFromFile(const std::string& path) noexcept {
                 }
                 source.push_back('\n');
             }
-            return source.c_str();
+            return source;
 
         } else {
         	ERROR("Shader source file is empty")
@@ -29,7 +29,7 @@ inline std::string loadShaderFromFile(const std::string& path) noexcept {
     	ERROR("Shader source file" << path << " not open")
     }
 
-    return std::string("").c_str();
+    return std::string("");
 }
 
 ShaderProgram& ShaderFactory::getShader(const Draw& draw) {
@@ -41,14 +41,24 @@ ShaderProgram& ShaderFactory::getShader(const Draw& draw) {
 }
 
 ShaderFactory::ShaderFactory() {
-	_vertexShadersSources["vertex"] = loadShaderFromFile("shaders/vertex.glsl");
-	_vertexShadersSources["skybox"] = loadShaderFromFile("shaders/skybox/vertex.glsl");
+	_vertexShadersSources.insert({"vertex", std::move(loadShaderFromFile("shaders/vertex.glsl"))});
+	_vertexShadersSources.insert({"skybox", std::move(loadShaderFromFile("shaders/skybox/vertex.glsl"))});
 
-	_fragmentShadersSources["phong"]    = loadShaderFromFile("shaders/phong.glsl");
-	_fragmentShadersSources["paralax"]  = loadShaderFromFile("shaders/paralax.glsl");
-	_fragmentShadersSources["fragment"] = loadShaderFromFile("shaders/fragment.glsl");
-	_fragmentShadersSources["glossy"]   = loadShaderFromFile("shaders/glossy/fragment.glsl");
-	_fragmentShadersSources["skybox"]   = loadShaderFromFile("shaders/skybox/fragment.glsl");
+	_fragmentShadersSources.insert({"phong",    std::move(loadShaderFromFile("shaders/phong.glsl"))});
+	_fragmentShadersSources.insert({"paralax",  std::move(loadShaderFromFile("shaders/paralax.glsl"))});
+	_fragmentShadersSources.insert({"fragment", std::move(loadShaderFromFile("shaders/fragment.glsl"))});
+	_fragmentShadersSources.insert({"glossy",   std::move(loadShaderFromFile("shaders/glossy/fragment.glsl"))});
+	_fragmentShadersSources.insert({"skybox",   std::move(loadShaderFromFile("shaders/skybox/fragment.glsl"))});
+
+
+//	_vertexShadersSources["vertex"] = loadShaderFromFile("shaders/vertex.glsl");
+//	_vertexShadersSources["skybox"] = loadShaderFromFile("shaders/skybox/vertex.glsl");
+//
+//	_fragmentShadersSources["phong"]    = loadShaderFromFile("shaders/phong.glsl");
+//	_fragmentShadersSources["paralax"]  = loadShaderFromFile("shaders/paralax.glsl");
+//	_fragmentShadersSources["fragment"] = loadShaderFromFile("shaders/fragment.glsl");
+//	_fragmentShadersSources["glossy"]   = loadShaderFromFile("shaders/glossy/fragment.glsl");
+//	_fragmentShadersSources["skybox"]   = loadShaderFromFile("shaders/skybox/fragment.glsl");
 
 	//	_fragmentShadersSources += loadShaderFromFile("shaders/glass/glass.frag.glsl");
 }
@@ -57,13 +67,13 @@ PrgPtr ShaderFactory::createShader(const Draw& draw) {
 	VertexShader vertex;
 	FragmentShader frag;
 
-	auto defines = draw.genDefines();
+	const auto&& defines = draw.genDefines();
 
-	vertex.addSource(defines);
+	vertex.addSource(std::move(defines));
 	if (draw._type == (int)ShaderType::SHADER_SKYBOX) vertex.addSource(_vertexShadersSources["skybox"]);
 	else vertex.addSource(_vertexShadersSources["vertex"]);
 
-	frag.addSource(defines);
+	frag.addSource(std::move(defines));
 
 	if (draw._type == (int)ShaderType::SHADER_SKYBOX) frag.addSource(_fragmentShadersSources["skybox"]);
 	else {

@@ -33,8 +33,8 @@ bool Shader::compileShader() const noexcept {
     return true;
 }
 
-void Shader::addSource(const std::string& source) noexcept {
-    _shaderSources.push_back(const_cast<char*>(source.c_str()));
+void Shader::addSource(std::string_view source) noexcept {
+    _shaderSources.push_back(source.data());
     _shaderLength.push_back(source.size());
 }
 

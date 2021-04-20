@@ -20,7 +20,7 @@
 #include "MaterialTypes.hpp"
 
 using shaderTree = std::unordered_map < Draw, PrgPtr >;
-using sources	 = std::map<std::string, std::string>;
+using sources	 = std::map<std::string, const std::string>;
 
 class ShaderFactory final {
 private:

@@ -27,12 +27,13 @@
 #include <fstream>
 #include <vector>
 #include <memory>
+#include <string_view>
 
 #include "globject.h"
 
 class Shader : public GLObject {
 private:
-	std::vector < char* >					_shaderSources;
+	std::vector < const char* >					_shaderSources;
 	std::vector < GLint >		  			_shaderLength;
 
 public:
@@ -40,7 +41,7 @@ public:
     ~Shader() noexcept;
 
     bool compileShader() const noexcept;
-    void addSource(const std::string& source) noexcept;
+    void addSource(std::string_view source) noexcept;
 }; // Shader
 
 
