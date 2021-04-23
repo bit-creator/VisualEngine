@@ -120,3 +120,9 @@ void TextureCubeMap::loadImage(const char* name, const BoxSide side) {
 
 	unbind();
 }
+
+Texture2D::Texture2D(const char *name)
+	: Texture(GL_TEXTURE_2D) {
+	setEmpty();
+	loadImage(name);
+}

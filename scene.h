@@ -16,15 +16,15 @@
 #include <vector>
 
 #include "camera.h"
-#include "perspectivecamera.h"
+#include "CreateAsPointer.hpp"
 #include "object3d.h"
 #include "Light.h"
+
 
 using DrawList = std::vector < Object3D* >;
 using LightList = std::vector < Light* >;
 
-class Scene
-{
+class Scene : public SharedCreator < Scene > {
 private:
 	glm::vec4									 _background;
     CameraPtr				                     _camera;
@@ -37,6 +37,7 @@ public:
     Scene& operator =(const Scene&) noexcept =delete;
     ~Scene() noexcept =default;
 
+public:
     void setCamera(CameraPtr camera) noexcept;
     CameraPtr getCamera() const noexcept;
 

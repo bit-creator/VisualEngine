@@ -10,7 +10,9 @@
 
 #include <memory>
 
+#include "../CreateAsPointer.hpp"
 #include "globject.h"
+
 
 enum class BoxSide {
 	SIDE_RIGHT  = GL_TEXTURE_CUBE_MAP_POSITIVE_X,
@@ -48,9 +50,11 @@ private:
 	const GLenum								_target;
 };	// CLASS_TEXTURE
 
-class Texture2D final : public Texture {
+class Texture2D final : public Texture,
+	public SharedCreator< Texture2D > {
 public:
 	Texture2D();
+	Texture2D(const char* name);
 	~Texture2D() =default;
 
 	Texture2D(Texture2D &&other) =default;
@@ -59,7 +63,8 @@ public:
 	void loadImage(const char* name);
 };	// CLASS_TEXTURE2D
 
-class TextureCubeMap final : public Texture {
+class TextureCubeMap final : public Texture,
+	public SharedCreator < TextureCubeMap > {
 public:
 	TextureCubeMap();
 	~TextureCubeMap() =default;

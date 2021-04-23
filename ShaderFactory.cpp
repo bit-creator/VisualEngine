@@ -85,7 +85,7 @@ PrgPtr ShaderFactory::createShader(const Draw& draw) {
 		}
 	}
 
-	auto shaderPrg = std::make_unique<ShaderProgram>();
+	auto shaderPrg = ShaderProgram::create();
 
 	shaderPrg -> attachShader(vertex);
 	shaderPrg -> attachShader(frag);

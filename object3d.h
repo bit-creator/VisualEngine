@@ -19,45 +19,39 @@
 
 #include "node.h"
 #include "material.h"
-#include "geometry.h"
-#include "perspectivecamera.h"
-#include "orthographiccamera.h"
+#include "Geometry/geometry.h"
+#include "camera.h"
+#include "CreateAsPointer.hpp"
 
 #include "GL/buffer.h"
 #include "GL/vertexarray.h"
 #include "GL/shaderprogram.h"
 
 
-/**
- * @brief 
- * 
- * 
- * @default colour: white (1.0, 1.0, 1.0, 1.0)
- * 
- */
-class Object3D : public Node
-{
-    private:
-        GeometryPtr                                             _geom;  
+class Object3D final :
+	public Node,
+	public MultiSharedCreator < Object3D, Node > {
+private:
+	GeometryPtr                                             _geom;
 
-    protected:          //  Material
-        MaterialPtr                                             _material;
+protected:          //  Material
+	MaterialPtr                                             _material;
 
-    public:
-        Object3D() noexcept;
-        Object3D(const Object3D& oth) noexcept;
-        Object3D(MaterialPtr material) noexcept;
+public:
+	Object3D() noexcept;
+    Object3D(const Object3D& oth) noexcept;
+    Object3D(MaterialPtr material) noexcept;
 
-        virtual ~Object3D() noexcept;
+    virtual ~Object3D() noexcept;
 
-        void setGeometry(GeometryPtr geometry) noexcept;
-        GeometryPtr getGeometry() const noexcept;
+    void setGeometry(GeometryPtr geometry) noexcept;
+    GeometryPtr getGeometry() const noexcept;
 
-        void setMaterial(MaterialPtr material) noexcept;
-        MaterialPtr getMaterial() const noexcept; 
+    void setMaterial(MaterialPtr material) noexcept;
+    MaterialPtr getMaterial() const noexcept;
 
-    public:
-		void rayCastImpl(Ray& ray, std::list < Intersection >& list) override;
+public:
+	void rayCastImpl(Ray& ray, std::list < Intersection >& list) override;
 };
 
 using ObjPtr = std::shared_ptr < Object3D >;

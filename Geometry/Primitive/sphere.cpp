@@ -1,5 +1,5 @@
 #include "sphere.h"
-#include "../constants.hpp"
+#include "../../constants.hpp"
 
 using indexArray    = std::vector<glm::uvec3>;
 using indexArrayPtr = std::unique_ptr<indexArray>;

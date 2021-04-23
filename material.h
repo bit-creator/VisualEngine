@@ -75,23 +75,31 @@ public:
     const GLenum getPolygonsFillMode() const noexcept;
 };
 
-class BumpMaterial : public Material {
+class BumpMaterial :
+		public Material,
+		public SharedCreator<BumpMaterial, Material> {
 public:
 	BumpMaterial();
 	float 				_scale = 0.2;
 };
 
-class PhongMaterial : public Material {
+class PhongMaterial :
+		public Material,
+		public SharedCreator<PhongMaterial, Material> {
 public:
 	PhongMaterial();
 };
 
-class GlassMaterial : public Material {
+class GlassMaterial :
+		public Material,
+		public SharedCreator<GlassMaterial, Material> {
 public:
 	GlassMaterial();
 };
 
-class GlossyMaterial : public Material {
+class GlossyMaterial :
+		public Material,
+		public SharedCreator<GlossyMaterial, Material> {
 public:
 	GlossyMaterial();
 };

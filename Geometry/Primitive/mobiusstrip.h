@@ -19,7 +19,7 @@
 #include <glm/glm.hpp>
 
 #include "../geometry.h"
-#include "../constants.hpp"
+#include "../../constants.hpp"
 
 static constexpr float DOUBLE_PI = 2 * PI;
 static constexpr float V_MIN = 0;

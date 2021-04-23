@@ -20,7 +20,9 @@ enum class LightType
 	LIGHT_SPOTS
 };
 
-class Light: public Node {
+class Light :
+	public Node,
+	public MultiSharedCreator<Light, Node> {
 private:
 	LightType							_type;
 	Color								_color;
