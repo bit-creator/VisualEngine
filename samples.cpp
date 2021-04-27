@@ -1,7 +1,7 @@
 /*
  * samples.cpp
  *
- *  Created on: 23 квіт. 2021 р.
+ *  Created on: 23 пїЅпїЅпїЅ. 2021 пїЅ.
  *      Author: IAbernikhin
  */
 
@@ -13,6 +13,10 @@
 #include "constants.hpp"
 
 #include "GL/Texture.h"
+
+#include "Material/GlossyMaterial.h"
+#include "Material/PhongMaterial.h"
+#include "Material/BumpMaterial.h"
 
 #include "Geometry/Primitive/triangle.h"
 #include "Geometry/Primitive/rect.h"
@@ -37,7 +41,7 @@ public:
     NodePtr _atom;
     MaterialPtr _selected;
     MaterialPtr _regular;
-    MaterialPtr _bump;
+    BumpMatPtr  _bump;
 
     DemoSampleListener(Scene& sc)
         : scene(sc)
@@ -52,11 +56,11 @@ public:
 
     	if (onEarth) {
 
-	    auto bumpMaterial = (BumpMaterial*)_bump.get();
-	    bumpMaterial->_scale += dir * 0.004;
+//	    auto bumpMaterial = std::dynamic_pointer_cast<BumpMaterial>(_bump);
+    		_bump->_scale += dir * 0.004;
 
-	    if(bumpMaterial->_scale >= 0.2) bumpMaterial->_scale = 0.2;
-	    if(bumpMaterial->_scale <= 0.) bumpMaterial->_scale = 0.0;
+	    if(_bump->_scale >= 0.2) _bump->_scale = 0.2;
+	    if(_bump->_scale <= 0.) _bump->_scale = 0.0;
 
     		return;
     	}
@@ -142,7 +146,7 @@ void DemoSample() {
     auto skyBox      = TextureCubeMap::create();
     auto spaceSkyBox = TextureCubeMap::create();
 
-    auto simple   = BumpMaterial::create();
+    auto simple   = std::make_shared<BumpMaterial>();
     auto glossy   = GlossyMaterial::create();
 	auto selected = GlossyMaterial::create();
     auto sun      = PhongMaterial::create();
@@ -198,11 +202,15 @@ void DemoSample() {
     simple->setHeightTexture(heightTex);
 
 
-    glossy->setAmbientColor(glm::vec4(1.0, 1.0, 1., 1.0));
+    glossy->setColor(glm::vec4(1.0, 1.0, 1., 1.0));
+    glossy->set1RefInd(1.0f);
+    glossy->set2RefInd(1.52f);
     glossy->setRoughness(0.3f);
 
 
-    selected->setAmbientColor(glm::vec4(0.5, 0.5, 1., 1.0));
+    selected->setColor(glm::vec4(0.5, 0.5, 1., 1.0));
+    selected->set1RefInd(1.0f);
+    selected->set2RefInd(1.52f);
     selected->setRoughness(0.3f);
 
 

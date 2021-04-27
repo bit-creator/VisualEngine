@@ -1,7 +1,7 @@
 /*
  * lifecicle.hpp
  *
- *  Created on: 20 квіт. 2021 р.
+ *  Created on: 20 пїЅпїЅпїЅ. 2021 пїЅ.
  *      Author: IAbernikhin
  */
 
@@ -11,25 +11,15 @@
 #include <memory>
 
 template <
-	template < typename... >
-		typename _Ptr,
-	typename _Tp,
-	typename _Base
-> struct PointerSpec {
-	using pointerToBase = _Ptr < _Base >;
-	using pointer = _Ptr < _Tp >;
-};
-
-template <
-	template < typename... >
-		typename _Ptr,
 	typename _Tp,
 	typename _Base,
-	typename _Deleter
-> struct Creator : private PointerSpec < _Ptr, _Tp, _Base > {
-	using Spec = PointerSpec < _Ptr, _Tp, _Base >;
-	using typename Spec::pointerToBase;
-	using typename Spec::pointer;
+	typename _Deleter,
+	template < typename... >
+		typename _Ptr,
+	typename... _PtrArgs
+> struct CreatorImpl {
+	using pointerToBase = _Ptr < _Base, _PtrArgs... >;
+	using pointer = _Ptr < _Tp, _PtrArgs... >;
 	template < typename... Args > pointerToBase
 	static inline createImpl(Args&&... args) {
 		return pointer(new _Tp(std::forward<Args>(args)...)
@@ -43,9 +33,9 @@ template <
 	typename _Base = _Tp,
 	typename _Deleter = std::default_delete<_Tp>
 > struct SharedCreator : private
-	Creator< std::shared_ptr, _Tp, _Base, _Deleter > {
-	using Creator = Creator < std::shared_ptr, _Tp, _Base, _Deleter >;
-	using Creator::createImpl;
+	CreatorImpl < _Tp, _Base, _Deleter, std::shared_ptr > {
+	using CreatorT = CreatorImpl < _Tp, _Base, _Deleter, std::shared_ptr >;
+	using CreatorT::createImpl;
 	template < typename... Args > auto
 	static inline create(Args&&... args) {
 		return createImpl(std::forward<Args>(args)...);
@@ -57,9 +47,9 @@ template <
 	typename _Base = _Tp,
 	typename _Deleter = std::default_delete<_Tp>
 > struct UniqueCreator : private
-	Creator < std::unique_ptr, _Tp, _Base, _Deleter > {
-	using Creator = Creator < std::unique_ptr, _Tp, _Base, _Deleter >;
-	using Creator::createImpl;
+	CreatorImpl < _Tp, _Base, _Deleter, std::unique_ptr, _Deleter > {
+	using CreatorT = CreatorImpl < _Tp, _Base, _Deleter, std::unique_ptr, _Deleter >;
+	using CreatorT::createImpl;
 	template < typename... Args > auto
 	static inline create(Args&&... args) {
 		return createImpl(std::forward<Args>(args)...);
@@ -72,8 +62,8 @@ template <
 	typename _Deleter = std::default_delete<_Tp>
 > struct CreatAsSharedToBase : private
 	SharedCreator < _Tp, _Base, _Deleter > {
-	using SharedCreator = SharedCreator < _Tp, _Base, _Deleter >;
-	using SharedCreator::create;
+	using SharedCreatorT = SharedCreator < _Tp, _Base, _Deleter >;
+	using SharedCreatorT::create;
 	template < typename... Args > auto
 	static inline createSharedBasePtr(Args&&... args) {
 		return create(std::forward<Args>(args)...);
@@ -85,8 +75,8 @@ template <
 	typename _Deleter = std::default_delete<_Tp>
 > struct CreatAsShared : private
 	SharedCreator < _Tp, _Tp, _Deleter > {
-	using SharedCreator = SharedCreator < _Tp, _Tp, _Deleter >;
-	using SharedCreator::create;
+	using SharedCreatorT = SharedCreator < _Tp, _Tp, _Deleter >;
+	using SharedCreatorT::create;
 	template < typename... Args > auto
 	static inline createSharedThisPtr(Args&&... args) {
 		return create(std::forward<Args>(args)...);
@@ -99,8 +89,8 @@ template <
 	typename _Deleter = std::default_delete<_Tp>
 > struct CreatAsUniqueToBase : private
 	UniqueCreator < _Tp, _Base, _Deleter > {
-	using UniqueCreator = UniqueCreator < _Tp, _Base, _Deleter >;
-	using UniqueCreator::create;
+	using UniqueCreatorT = UniqueCreator < _Tp, _Base, _Deleter >;
+	using UniqueCreatorT::create;
 	template < typename... Args > auto
 	static inline createUniqueBasePtr(Args&&... args) {
 		return create(std::forward<Args>(args)...);
@@ -112,8 +102,8 @@ template <
 	typename _Deleter = std::default_delete<_Tp>
 > struct CreatAsUnique : private
 	UniqueCreator < _Tp, _Tp, _Deleter > {
-	using UniqueCreator = UniqueCreator < _Tp, _Tp, _Deleter >;
-	using UniqueCreator::create;
+	using UniqueCreatorT = UniqueCreator < _Tp, _Tp, _Deleter >;
+	using UniqueCreatorT::create;
 	template < typename... Args > auto
 	static inline createUniqueThisPtr(Args&&... args) {
 		return create(std::forward<Args>(args)...);

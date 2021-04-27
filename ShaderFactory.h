@@ -17,7 +17,7 @@
 #include "GL/shaderprogram.h"
 
 #include "Draw.h"
-#include "MaterialTypes.hpp"
+#include "Material/MaterialTypes.hpp"
 
 using shaderTree = std::unordered_map < Draw, PrgPtr >;
 using sources	 = std::map<std::string, const std::string>;

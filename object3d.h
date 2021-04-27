@@ -18,7 +18,6 @@
 #include <glm/gtx/quaternion.hpp>
 
 #include "node.h"
-#include "material.h"
 #include "Geometry/geometry.h"
 #include "camera.h"
 #include "CreateAsPointer.hpp"
@@ -26,6 +25,7 @@
 #include "GL/buffer.h"
 #include "GL/vertexarray.h"
 #include "GL/shaderprogram.h"
+#include "Material/Material.h"
 
 
 class Object3D final :

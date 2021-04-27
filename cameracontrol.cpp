@@ -7,7 +7,7 @@ CameraControl::CameraControl(CameraPtr camera) noexcept
 	: _camera(camera)
 	, _direction(glm::vec3(0.0f, 0.0f, 0.0f))
 	, _eilerAngle(glm::vec3(0.0f, 0.0f, 0.0f))
-	, _velocity(0.005f)
+	, _velocity(0.05f)
 {  }
 
 CameraControl::~CameraControl() noexcept {
