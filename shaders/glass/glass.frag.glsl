@@ -1,4 +1,4 @@
-#version 460 core
+#ifdef GLASS
 
 #define MAX_LIGHT_COUNT 8
 
@@ -55,3 +55,4 @@ vec4 SpecColor(vec4 specularColor, vec3 lightDir, vec3 normal, vec3 viewDir, flo
 
 	  return specularColor * specFactor;
 }
+#endif // GLASS

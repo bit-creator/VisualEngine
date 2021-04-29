@@ -12,31 +12,28 @@
 #include <iostream>
 #include <string>
 #include <memory>
-#include <map>
+#include <unordered_map>
 
 #include "GL/shaderprogram.h"
 
-namespace fs = std::filesystem;
+#include "Draw.h"
+#include "MaterialTypes.hpp"
 
-enum ShaderType {
-  SHADER_BUMP,
-  SHADER_PHONG,
-  SHADER_SKYBOX,
-  SHADER_GLASS,
-  SHADER_GLOSSY
-};
-
-using shaderTree = std::map < ShaderType, PrgPtr >;
+using shaderTree = std::unordered_map < Draw, PrgPtr >;
+using sources	 = std::map<std::string, const std::string>;
 
 class ShaderFactory final {
 private:
 	shaderTree								 					_shaders;
+	sources 													_vertexShadersSources;
+	sources														_fragmentShadersSources;
 
 public:
-	ShaderProgram& getShader(ShaderType type);
+	ShaderFactory();
+	ShaderProgram& getShader(const Draw& draw);
 
 private:
-	PrgPtr createShader(ShaderType type);
+	PrgPtr createShader(const Draw& draw);
 };
 
 #endif /* SHADERFACTORY_H_ */

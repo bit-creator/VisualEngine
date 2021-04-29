@@ -44,11 +44,9 @@ private:
     Engine& operator =(const Engine&) =delete;
 
     void renderSkyBox();
-
-        // std::vector<Window>    _window_array;
-    inline static const Window     _mainWindow = Window(4.6f, 1366u, 720u, "Visual Engine");
-
 public:
+    inline static const Window     window = Window(4.6f, 1366u, 720u, "Visual Engine");
+
     static Engine&
     engine() noexcept;
 
@@ -63,7 +61,7 @@ public:
     std::pair<int32_t, int32_t>
     getWindowSize() noexcept;
 
-    void run(const Window& window = _mainWindow) noexcept;
+    void run(const Window& window = window) noexcept;
 
     void render(Object3D& obj, LightList lights) noexcept;
 };

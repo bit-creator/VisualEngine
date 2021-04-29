@@ -6,11 +6,6 @@
 #ifndef CAMERACONTROL_H
 #define CAMERACONTROL_H
 
-#define GLEW_STATIC
-#include <GL/glew.h>
-#include <GL/freeglut.h>
-#include <GLFW/glfw3.h>
-
 #include <glm/glm.hpp>
 
 #include "abstracteventlistener.hpp"

@@ -1,12 +1,18 @@
-#ifdef BUMP
+/*
+ * FRAGMENT shader for roug material, optional supported BUMP maping
+ */
 
-struct Light
-{
+//#if defined(BUMP) || defined(PHONG)
+
+struct Light {
 	vec3 lightDir;
 	vec4 lightColor;
 };
 
-in mat3 vTBNMat;
+#ifdef BUMP
+	in mat3 vTBNMat;
+#endif // BUMP
+
 in vec3 vNormal;
 in vec3 vView;
 in vec3 vPos;
@@ -40,7 +46,9 @@ uniform vec4 uAmbientColor;
 uniform vec4 uDiffuseColor;
 uniform vec4 uSpecularColor;
 
-uniform float uScale;
+#ifdef BUMP
+	uniform float uScale;
+#endif // BUMP
 
 out vec4 color;
 
@@ -55,7 +63,7 @@ void main() {
 
 	vec2 texCoord = vTexCoords;
 
-	float rougness = 0.05;
+	float rougness = 1.0;
 
 #	ifdef HAS_HEIGHT_MAP
 		texCoord = paralax(uTexHeight, view * vTBNMat, texCoord, uScale);
@@ -75,19 +83,20 @@ void main() {
   		specularColor *= texture(uTexSpecular, texCoord);
 #	endif // HAS_SPECULAR_MAP
 #	ifdef HAS_ROUGNESS_MAP 
-  		rougness = texture(uTexRougness, texCoord);
+  		rougness *= texture(uTexRougness, texCoord);
 #	else
-  		rougness = uRoughness;
-#	endif // HAS_SPECULAR_MAP
+  		rougness *= uRoughness;
+#	endif // HAS_ROUGNESS_MAP
 
-  normal = normalize(normal);
+  	normal = normalize(normal);
 
-  for (uint i = 0; i < NUM_OF_LIGHT; ++i)
-	  fragmentColor += PhongLighting(ambientColor, diffuseColor, specularColor,
-			  (uLights[i].lightDir), normal, view, rougness) * uLights[i].lightColor;
-
-  color = fragmentColor;
+  	for (uint i = 0; i < NUM_OF_LIGHT; ++i) {
+  		fragmentColor += calculateLighting(ambientColor, diffuseColor, specularColor,
+  			(uLights[i].lightDir), normal, view, rougness) * uLights[i].lightColor;
+  	}
+  
+  	color = fragmentColor;
 }
 
-#endif // BUMP
+//#endif // BUMP || PHONG
 

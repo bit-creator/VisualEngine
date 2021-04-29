@@ -1,10 +1,11 @@
 #include <iostream>
-#include <cmath>
+
 #include <cstdlib>
 
 #include "cameracontrol.h"
 #include "ShaderFactory.h"
 #include "engine.h"
+#include "constants.hpp"
 
 #include "GL/Texture.h"
 
@@ -48,8 +49,8 @@ public:
         float f4 = time;
         float f5 = time_;
 
-        time_ += 0.01;
-        time += 0.004;
+        time_ += 0.001;
+        time += 0.0004;
         
     	if (onEarth) {
 //        _atom->setRotate(glm::vec3(f3, f2, f1), f5);
@@ -264,7 +265,7 @@ int main()
     moonObj->setGeometry(sphereGeom);
     cubeObj->setGeometry(cube);
 
-    float angle = 2 * M_PI / electrons.size();
+    float angle = 2 * PI / electrons.size();
     auto index = 0;
     float radius = 5.0;
     float diam = 2 * radius;
@@ -290,7 +291,7 @@ int main()
 
 
 
-    std::cout << atom->getChilds().size() << std::endl;
+//    std::cout << atom->getChilds().size() << std::endl;
 
     atom->setScale(glm::vec3(0.7));
     atom->setEnabled(false);
@@ -336,7 +337,7 @@ int main()
     
     float aspect = 1.0 * width / height;
 
-    CameraPtr cam = std::make_shared<Camera>(PerspectiveCamera(M_PI / 3, aspect, 0.1, 100));
+    CameraPtr cam = std::make_shared<Camera>(PerspectiveCamera(PI / 3, aspect, 0.1, 100));
 
     cam->setPosition(glm::vec3(0.0, 0.0, 1.0));
 

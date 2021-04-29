@@ -49,6 +49,8 @@ class Geometry
         void bindBuffers() noexcept;
         void unbindBuffers() noexcept;
         
+        size_t getAttributeHash() noexcept;
+
         virtual void setupBuffers() noexcept =0;
         virtual std::vector<Intersection> rayCast(Ray ray) const=0;
 

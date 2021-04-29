@@ -16,9 +16,7 @@
 #include <csignal>
 #include <memory>
 
-#define GLEW_STATIC
 #include <GL/glew.h>
-#include <GL/freeglut.h>
 #include <GLFW/glfw3.h>
 
 class Window
@@ -74,6 +72,8 @@ public:
 
     std::pair<int32_t, int32_t> 
     getWindowSize() const noexcept;
+
+    std::string getVersion() const noexcept;
 
 
 private:

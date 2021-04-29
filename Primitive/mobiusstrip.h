@@ -19,8 +19,8 @@
 #include <glm/glm.hpp>
 
 #include "../geometry.h"
+#include "../constants.hpp"
 
-static constexpr float PI = 3.14159265358979f;
 static constexpr float DOUBLE_PI = 2 * PI;
 static constexpr float V_MIN = 0;
 static constexpr float V_MAX = 1;

@@ -4,3 +4,5 @@
 VisualEngine
 .cproject
 
+*.lib 
+*.dll

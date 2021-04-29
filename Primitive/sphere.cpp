@@ -1,4 +1,5 @@
 #include "sphere.h"
+#include "../constants.hpp"
 
 using indexArray    = std::vector<glm::uvec3>;
 using indexArrayPtr = std::unique_ptr<indexArray>;
@@ -121,11 +122,11 @@ void Sphere::setupBuffers() noexcept
 
 glm::vec2 genSphereUV(glm::vec3 c) {
 	return glm::vec2(
-		(std::atan2(c.z, c.x)) / (2.0f * M_PI) + 0.5,
-		-(std::asin(c.y) / M_PI) + 0.5f
+		(std::atan2(c.z, c.x)) / (2.0f * PI) + 0.5,
+		-(std::asin(c.y) / PI) + 0.5f
 	);
 
-//	return glm::vec2(std::atan((c.z / c.x)) / (2.0f * M_PI),  - std::asin(c.y) / M_PI);
+//	return glm::vec2(std::atan((c.z / c.x)) / (2.0f * PI),  - std::asin(c.y) / PI);
 }
 
 void Sphere::refreshUV() {

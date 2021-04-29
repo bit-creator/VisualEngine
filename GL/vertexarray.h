@@ -15,25 +15,23 @@
 #include <map>
 #include <optional>
 
-#include <GL/glew.h>
-#include <GL/freeglut.h>
-#include <GLFW/glfw3.h>
-
-#include "globject.hpp"
+#include "globject.h"
 
 enum class Attribute
 {
    ATTRIB_POSITION = 0,
-   ATTRIB_NORMAL = 1,
-   ATTRIB_TANGENT = 2,
-   ATTRIB_BITANGENT = 3,
-   ATTRIB_COLOR = 4,
-   ATTRIB_TEX = 5
+   ATTRIB_NORMAL,
+   ATTRIB_TANGENT,
+   ATTRIB_BITANGENT,
+   ATTRIB_COLOR,
+   ATTRIB_TEX
 };
+
+constexpr static int NUM_ATTRIBUTES = 6;
 
 class VertexArray : public GLObject {
 private:
-	std::array < std::optional < Attribute >, 6 >                   _atributes;
+	std::array < std::optional < Attribute >, NUM_ATTRIBUTES >                   _atributes;
 
 public:
 	VertexArray() noexcept;

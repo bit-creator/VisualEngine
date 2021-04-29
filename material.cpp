@@ -58,6 +58,10 @@ void Material::setSpecularTexture(TexPtr map) {
 	_specularMap = map;
 }
 
+void Material::setRougnessTexture(TexPtr map) {
+	_rougnessMap = map;
+}
+
 void Material::setNormalTexture(TexPtr map) {
 	_normalMap = map;
 }
@@ -80,6 +84,10 @@ TexPtr Material::getDiffuseTexture() const noexcept {
 
 TexPtr Material::getSpecularTexture() const noexcept {
 	return _specularMap;
+}
+
+TexPtr Material::getRougnessTexture() const noexcept {
+	return _rougnessMap;
 }
 
 TexPtr Material::getHeightTexture() const noexcept {
@@ -110,3 +118,4 @@ GlossyMaterial::GlossyMaterial()
 	: Material(MaterialType::MATERIAL_GLOSSY)
 {
 }
+

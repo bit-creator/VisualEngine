@@ -17,10 +17,6 @@
 #include <memory>
 #include <algorithm>
 
-#include <GL/glew.h>
-#include <GL/freeglut.h>
-#include <GLFW/glfw3.h>
-
 #include <glm/glm.hpp>
 #include <glm/gtx/quaternion.hpp>
 
@@ -58,7 +54,7 @@ class Node
 
         NodeType getNodeType() const noexcept;
 
-        void setRotate(const glm::vec3& axis, const GLfloat angle) noexcept;
+        void setRotate(const glm::vec3& axis, const float angle) noexcept;
         void setRotate(const glm::vec3& angles) noexcept;
 
         glm::quat getRotate() const noexcept;

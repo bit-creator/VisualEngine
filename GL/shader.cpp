@@ -2,54 +2,40 @@
 
 Shader::Shader(const GLuint shaderType) noexcept
     : GLObject(glCreateShader(shaderType))
-{ CHECK_GL_ERROR(); }
+{ HANDLE_GL_ERROR(); }
 
 Shader::~Shader() noexcept {
-	glDeleteShader(getID()); CHECK_GL_ERROR();
+	glDeleteShader(getID()); HANDLE_GL_ERROR();
 }
 
 bool Shader::compileShader() const noexcept {
-    glCompileShader(getID()); CHECK_GL_ERROR();
+	glShaderSource(getID(), _shaderSources.size(), &_shaderSources[0], _shaderLength.data()); HANDLE_GL_ERROR();
+
+    glCompileShader(getID()); HANDLE_GL_ERROR();
 
     GLint success;
     GLchar infoLog[512];
 
-    glGetShaderiv(getID(), GL_COMPILE_STATUS, &success); CHECK_GL_ERROR();
+    glGetShaderiv(getID(), GL_COMPILE_STATUS, &success); HANDLE_GL_ERROR();
 
     if(!success) {
-	   glGetShaderInfoLog(getID(), 512, NULL, infoLog); CHECK_GL_ERROR();
-       std::cout << "\n| ERROR | Shader not compile, problems:\n" << infoLog << '\n' << std::endl;
+	   glGetShaderInfoLog(getID(), 512, NULL, infoLog); HANDLE_GL_ERROR();
+	   ERROR("Shader not compile, problems:");
+       std::cout << infoLog << '\n' << std::endl;
 
+	   std::cout << _shaderSources[0];
+	   std::cout << _shaderSources[1];
+	   std::cout << _shaderSources[2];
+	   std::raise(SIGTERM);
        return false;
     }
 
     return true;
 }
 
-void Shader::addSource(const std::string& source) const noexcept {
-    auto sourceArray = source.c_str();
-    glShaderSource(getID(), 1, &sourceArray, NULL); CHECK_GL_ERROR();
-}
-
-std::string loadShaderFromFile(const std::string& path) noexcept {
-    std::ifstream in(path, std::ios::in);
-
-    if (in.is_open()) {
-        if (in.peek() != EOF) {
-            std::string source = "", sourceline = "\n";
-            while (getline(in, sourceline, '\n')) {
-            	if(!sourceline.empty()) {
-            		source.append(sourceline);
-                }
-                source.push_back('\n');
-            }
-            return source.c_str();
-
-        } else std::cout << "| EROR | Shader source file is empty" << std::endl;
-
-    } else  std::cout << "| EROR | Shader source file not open" << std::endl;
-
-    return std::string("").c_str();
+void Shader::addSource(std::string_view source) noexcept {
+    _shaderSources.push_back(source.data());
+    _shaderLength.push_back(source.size());
 }
 
 VertexShader::VertexShader()
