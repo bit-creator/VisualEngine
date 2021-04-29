@@ -17,6 +17,7 @@
 #include "Material/GlossyMaterial.h"
 #include "Material/PhongMaterial.h"
 #include "Material/BumpMaterial.h"
+#include "Material/WrapMaterial.h"
 
 #include "Geometry/Primitive/triangle.h"
 #include "Geometry/Primitive/rect.h"
@@ -288,3 +289,57 @@ void DemoSample() {
     eng.addEventListener(std::make_shared<DemoSampleListener>(listener));
 }
 
+
+void WrapSample() {
+    auto& eng = Engine::engine();
+
+    auto scene = Scene::create();
+
+    eng.setScene(scene);
+
+    auto [width, height] = eng.getWindowSize();
+    float aspect = 1.0 * width / height;
+
+    auto lighter = Light::createSharedThisPtr(LightDirectional());
+    lighter->setPosition(glm::vec3(0.0f, 0.0f, 0.0f));
+
+    auto cam = Camera::createSharedThisPtr(PerspectiveCamera(PI / 3, aspect, 0.1, 100));
+
+    cam->setPosition(glm::vec3(0.0, 0.0, 0.0));
+
+    auto controler = CameraControl::create(cam);
+    eng.addEventListener(controler);
+
+    scene->setCamera(cam);
+
+    auto sphereGeom = Sphere::create(5);
+
+    auto wrapMaterial = std::make_shared<WrapMaterial>();
+    auto bulbMaterial = PhongMaterial::create();
+
+    wrapMaterial->setAmbientColor(glm::vec4(0.1, 0.1, 0.1, 1.0));
+    wrapMaterial->setDiffuseColor(glm::vec4(0.5, 0.5, 0.5, 1.0));
+    wrapMaterial->setSpecularColor(glm::vec4(0., 0.0, 1., 1.0));
+    wrapMaterial->setRoughness(0.01f);
+
+    bulbMaterial->setAmbientColor(glm::vec4(1.0, 1.0, 1.0, 1.0));
+    bulbMaterial->setDiffuseColor(glm::vec4(1.0, 1.0, 1.0, 1.0));
+    bulbMaterial->setSpecularColor(glm::vec4(1.0, 1.0, 1.0, 1.0));
+    bulbMaterial->setRoughness(0.01f);
+
+    auto wrapSphere = Object3D::createSharedThisPtr(wrapMaterial);
+    auto lightbulb = Object3D::createSharedThisPtr(bulbMaterial);
+
+    wrapSphere->setPosition(glm::vec3(0.0, 0.0, 5.0));
+
+    lightbulb->setScale(glm::vec3(0.3));
+
+    lighter->addChild(lightbulb);
+
+    scene->getRoot()->addChild(lighter);
+
+    lightbulb->setGeometry(sphereGeom);
+    wrapSphere->setGeometry(sphereGeom);
+
+    scene->getRoot()->addChild(wrapSphere);
+}

@@ -2,7 +2,7 @@
 
 VertexArray::VertexArray() noexcept
     : GLObject(genVAO())
-    , _atributes({std::nullopt, std::nullopt, std::nullopt})
+    , _atributes({std::nullopt, std::nullopt, std::nullopt, std::nullopt, std::nullopt, std::nullopt})
 { HANDLE_GL_ERROR(); }
 
 VertexArray::~VertexArray() noexcept {

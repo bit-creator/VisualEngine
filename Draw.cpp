@@ -37,6 +37,7 @@ std::string Draw::genDefines() const {
 	};
 
 	if (_type == (int)ShaderType::SHADER_BUMP)   defines += "#define BUMP\n";
+	if (_type == (int)ShaderType::SHADER_WRAP)   defines += "#define WRAP\n";
 	if (_type == (int)ShaderType::SHADER_GLASS)  defines += "#define GLASS\n";
 	if (_type == (int)ShaderType::SHADER_GLOSSY) defines += "#define GLOSSY\n";
 	if (_type == (int)ShaderType::SHADER_PHONG)  defines += "#define PHONG\n";

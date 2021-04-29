@@ -50,6 +50,12 @@ uniform vec4 uSpecularColor;
 	uniform float uScale;
 #endif // BUMP
 
+#ifdef WRAP
+	uniform float uWrap;
+	uniform float uScatterWeight;
+	uniform vec4  uColor;
+#endif // WRAP
+
 out vec4 color;
 
 void main() {
@@ -87,12 +93,23 @@ void main() {
 #	else
   		rougness *= uRoughness;
 #	endif // HAS_ROUGNESS_MAP
+  		
+  	float wrap = 0.0;
+  	float scatterWeight = 0.0;
+  	vec4 scatterColor = vec4(0.0, 0.0, 0.0, 0.0);
+
+  	
+#	ifdef WRAP
+		wrap = uWrap;
+		scatterWeight = uScatterWeight;
+		scatterColor = uColor;
+#	endif // WRAP
 
   	normal = normalize(normal);
 
   	for (uint i = 0; i < NUM_OF_LIGHT; ++i) {
-  		fragmentColor += calculateLighting(ambientColor, diffuseColor, specularColor,
-  			(uLights[i].lightDir), normal, view, rougness) * uLights[i].lightColor;
+  		fragmentColor += calculateLighting(ambientColor, diffuseColor, specularColor, scatterColor,
+  			(uLights[i].lightDir), normal, view, rougness, scatterWeight, wrap) * uLights[i].lightColor;
   	}
   
   	color = fragmentColor;

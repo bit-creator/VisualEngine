@@ -10,6 +10,8 @@
 
 void DemoSample();
 
+void WrapSample();
+
 
 
 #endif /* SAMPLES_H_ */

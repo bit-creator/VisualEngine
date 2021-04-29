@@ -67,8 +67,8 @@ void main() {
 	vec3 R_1 = reflect(I, normal);
 	
 	for (uint i = 0; i < NUM_OF_LIGHT; ++i)
-		fragmentColor += calculateLighting(vec4(0.0), vec4(0.0), specularColor,
-				-(uLights[i].lightDir), normal, view, rougness) * uLights[i].lightColor;
+		fragmentColor += calculateLighting(vec4(0.0), vec4(0.0), specularColor, vec4(0.0),
+				-(uLights[i].lightDir), normal, view, rougness, 0.0, 0.0) * uLights[i].lightColor;
 	
 	fragmentColor = uGlossyColor * mix(texture(uSkyBox, R), texture(uSkyBox, R_1), dot(normal, I) > BrusterAngle ? 1 : 0);
 

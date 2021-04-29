@@ -3,8 +3,6 @@
 Material::Material(MaterialType type) noexcept
 	: _type(type)
 	, _rougnessMap(nullptr)
-//	, _normalMap  (nullptr)
-//	, _heightMap  (nullptr)
     , _roughness(1.0)
 	, _fillMode(GL_FILL)
 {  }
@@ -13,7 +11,7 @@ Material::~Material() noexcept {  }
 
 void Material::setUniforms(const ShaderProgram &prg) {
 	if(_rougnessMap) prg.setUniform("uTexRougness",(int)TextureUnit::Rougness);
-	else 			 prg.setUniform("uRoughness", _roughness);
+	else 			 prg.setUniform("uRoughness", 1 / _roughness);
 }
 
 void Material::unbindMaps() {

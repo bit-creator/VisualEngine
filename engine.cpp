@@ -109,7 +109,6 @@ void Engine::render(Object3D &obj, LightList lights) noexcept {
 
     material->setUniforms(prg);
 
-    prg.setUniform("uRoughness", 1 / material->getRoughness());
     prg.setUniform("uCamPos", cam->getPosition());
 
     prg.setUniform("uMVPMat", mVPMat);

@@ -10,6 +10,7 @@
 
 enum class MaterialType {
 	MATERIAL_BUMP =0,
+	MATERIAL_WRAP,
 	MATERIAL_PHONG,
 	MATERIAL_GLASS,
 	MATERIAL_GLOSSY
@@ -17,6 +18,7 @@ enum class MaterialType {
 
 enum class ShaderType {
   SHADER_BUMP   = (int)MaterialType::MATERIAL_BUMP,
+  SHADER_WRAP   = (int)MaterialType::MATERIAL_WRAP,
   SHADER_PHONG  = (int)MaterialType::MATERIAL_PHONG,
   SHADER_GLASS  = (int)MaterialType::MATERIAL_GLASS,
   SHADER_GLOSSY = (int)MaterialType::MATERIAL_GLOSSY,
