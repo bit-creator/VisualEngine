@@ -15,8 +15,7 @@
 #include <memory>
 
 #include "abstracteventlistener.hpp"
-#include "orthographiccamera.h"
-#include "perspectivecamera.h"
+#include "camera.h"
 #include "ShaderFactory.h"
 #include "object3d.h"
 #include "window.h"
@@ -25,7 +24,7 @@
 #include "GL/shaderprogram.h"
 #include "GL/Texture.h"
 
-#include "Primitive/cube.h"
+#include "Geometry/Primitive/cube.h"
 
 class Engine
 {

@@ -47,3 +47,4 @@ void Object3D::rayCastImpl(Ray &ray, std::list<Intersection> &list) {
 		list.push_back(intersec);
 	}
 }
+

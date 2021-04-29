@@ -1,4 +1,4 @@
-#if defined(BUMP) || defined(GLASS) || defined(GLOSSY) || defined(PHONG)
+//#if defined(BUMP) || defined(GLASS) || defined(GLOSSY) || defined(PHONG)
  
 ATTRIBUTE(POSITION_ATTRIBUTE_LOCATION) 	vec3 aCoord;
 ATTRIBUTE(NORMAL_ATTRIBUTE_LOCATION) 	vec3 aNormal;
@@ -50,4 +50,4 @@ void main() {
     	vView = vec3(0.0, 0.0, 1.0);
 #	endif
 }
-#endif // BUMP || GLASS || GLOSSY || PHONG
+//#endif // BUMP || GLASS || GLOSSY || PHONG

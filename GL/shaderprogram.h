@@ -19,7 +19,11 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-class ShaderProgram : public GLObject {
+#include "../CreateAsPointer.hpp"
+
+class ShaderProgram :
+	public GLObject,
+	public UniqueCreator<ShaderProgram> {
 private:
 	mutable std::map<std::string, GLuint>						_locations;
 

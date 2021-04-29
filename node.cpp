@@ -3,6 +3,10 @@
 
 #include <glm/gtc/type_ptr.hpp>
 
+Node::Node() noexcept
+	: Node(NodeType::NODE_NODE) {
+}
+
 Node::Node(NodeType type) noexcept
 	: _childs({})
 	, _parent()
@@ -146,6 +150,9 @@ Node::rayCast(Ray ray) {
 	std::list< Intersection > result;
 	rayCastImpl(ray, result);
 	return result;
+}
+
+Node::~Node() {
 }
 
 void Node::rayCastImpl(Ray& ray, std::list< Intersection >& list) {

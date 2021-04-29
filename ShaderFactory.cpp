@@ -6,7 +6,7 @@
  */
 
 #include "ShaderFactory.h"
-#include "MaterialTypes.hpp"
+#include "Material/MaterialTypes.hpp"
 
 inline std::string loadShaderFromFile(const std::string& path) noexcept {
     std::ifstream in(path, std::ios::in);
@@ -85,7 +85,7 @@ PrgPtr ShaderFactory::createShader(const Draw& draw) {
 		}
 	}
 
-	auto shaderPrg = std::make_unique<ShaderProgram>();
+	auto shaderPrg = ShaderProgram::create();
 
 	shaderPrg -> attachShader(vertex);
 	shaderPrg -> attachShader(frag);

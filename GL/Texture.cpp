@@ -7,7 +7,6 @@
 
 #include "Texture.h"
 
-#define STB_IMAGE_IMPLEMENTATION
 #include "../3rdparty/stb_image.h"
 
 //		TEXTURE_BASE		//
@@ -119,4 +118,10 @@ void TextureCubeMap::loadImage(const char* name, const BoxSide side) {
 	glTexParameteri(getTarget(), GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE); HANDLE_GL_ERROR();
 
 	unbind();
+}
+
+Texture2D::Texture2D(const char *name)
+	: Texture(GL_TEXTURE_2D) {
+	setEmpty();
+	loadImage(name);
 }

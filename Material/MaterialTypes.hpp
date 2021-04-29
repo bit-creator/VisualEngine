@@ -1,7 +1,7 @@
 /*
  * MaterialTypes.hpp
  *
- *  Created on: 19 квіт. 2021 р.
+ *  Created on: 19 пїЅпїЅпїЅ. 2021 пїЅ.
  *      Author: IAbernikhin
  */
 
@@ -21,6 +21,16 @@ enum class ShaderType {
   SHADER_GLASS  = (int)MaterialType::MATERIAL_GLASS,
   SHADER_GLOSSY = (int)MaterialType::MATERIAL_GLOSSY,
   SHADER_SKYBOX
+};
+
+enum class TextureUnit {
+	Ambient  =0,
+	Diffuse  =1,
+	Specular =2,
+	Rougness =3,
+	SkyBox   =4,
+	Normal   =5,
+	Height   =6
 };
 
 #endif /* MATERIALTYPES_HPP_ */

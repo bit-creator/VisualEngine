@@ -26,22 +26,33 @@ enum class CameraType
     CAMERA_CUSTOM = 2
 };
 
-class Camera : public Node
-{
-    private:
-        glm::mat4                       _projectionMatr;
-        const CameraType                _type;
+class Camera : virtual
+	public Node,
+	public MultiSharedCreator<Camera, Node> {
+private:
+	glm::mat4                       _projectionMatr;
+    const CameraType                _type;
 
-    public:
-        Camera(const glm::mat4& projMatr, CameraType type) noexcept;
+public:
+	Camera(const glm::mat4& projMatr, CameraType type) noexcept;
 
-        void setProjection(const glm::mat4& projMatr) noexcept;
+    void setProjection(const glm::mat4& projMatr) noexcept;
         
-        glm::mat4 getProjectionMatrix() const noexcept;
+    glm::mat4 getProjectionMatrix() const noexcept;
 
-        CameraType getType() const noexcept;
+    CameraType getType() const noexcept;
 
-        Ray getRay(glm::vec2 screenPos);
+  	Ray getRay(glm::vec2 screenPos);
+};
+
+class OrthographicCamera : public Camera {
+public:
+	OrthographicCamera(float left, float right, float bottom, float top, float zNear, float zFar);
+};
+
+class PerspectiveCamera : public Camera {
+public:
+	PerspectiveCamera(float fovy, float aspect, float near, float far);
 };
 
 using CameraPtr = std::shared_ptr<Camera>;
