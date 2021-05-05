@@ -41,6 +41,7 @@ std::string Draw::genDefines() const {
 	if (_type == (int)ShaderType::SHADER_GLOSSY) defines += "#define GLOSSY\n";
 	if (_type == (int)ShaderType::SHADER_PHONG)  defines += "#define PHONG\n";
 	if (_type == (int)ShaderType::SHADER_SKYBOX) defines += "#define SKYBOX\n";
+	if (_type == (int)ShaderType::SHADER_SCREEN) defines += "#define SCREEN\n";
 
 	if (hash[(int)Attribute::ATTRIB_BITANGENT]) defines += atribDefGenerator("BITANGENT", (int)Attribute::ATTRIB_BITANGENT);
 	if (hash[(int)Attribute::ATTRIB_COLOR])     defines += atribDefGenerator("COLOR",     (int)Attribute::ATTRIB_COLOR);

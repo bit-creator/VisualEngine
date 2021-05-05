@@ -20,7 +20,8 @@ enum class ShaderType {
   SHADER_PHONG  = (int)MaterialType::MATERIAL_PHONG,
   SHADER_GLASS  = (int)MaterialType::MATERIAL_GLASS,
   SHADER_GLOSSY = (int)MaterialType::MATERIAL_GLOSSY,
-  SHADER_SKYBOX
+  SHADER_SKYBOX,
+  SHADER_SCREEN
 };
 
 enum class TextureUnit {

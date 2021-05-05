@@ -1,4 +1,5 @@
 #include "engine.h"
+#include "GL/FrameBuffer.h"
 
 Engine& Engine::engine() noexcept {
 	static Engine engine; return engine;
@@ -25,14 +26,23 @@ std::vector<EventListenerPtr>& Engine::getListeners() noexcept {
 }
 
 void Engine::run(const Window& window) noexcept {
-	glEnable(GL_DEPTH_TEST);
+	FrameBuffer fbo;
+	fbo.enableDepthBuffer();
+
+	if (!fbo.readyToWork()) {
+		ERROR("FRAMEBUFFER NOT READY")
+	}
+
+	fbo.unbind();
 
     while (!glfwWindowShouldClose(window))
     {
+    	fbo.bind();
+
+    	glEnable(GL_DEPTH_TEST);
+
     	for(EventListenerPtr listener : _eventListeners)
         	if(listener) listener -> onRender();
-
-        glfwPollEvents();
 
         auto c = _scene->getBackgroundColor();
         glClearColor(c.x, c.y, c.z, c.w);
@@ -46,7 +56,14 @@ void Engine::run(const Window& window) noexcept {
         for(auto obj : _scene->getDrawList())
         	render(*obj, _scene->getLightList());
 
+        fbo.unbind();
+
+        glDisable(GL_DEPTH_TEST);
+
+        renderScreen(fbo.getColorTextures()[0]);
+
         glfwSwapBuffers(window);
+        glfwPollEvents();
     }
 }
 
@@ -74,6 +91,26 @@ void Engine::renderSkyBox() {
 	glDrawElements(_skyBox.getPoligonConnectMode(), _skyBox.getNumIndices(), GL_UNSIGNED_INT, 0);
 
 	_skyBox.unbindBuffers();
+}
+
+void Engine::renderScreen(TexPtr screenTexture) {
+	Draw drawScreen;
+
+	drawScreen._type = (int)ShaderType::SHADER_SCREEN;
+	drawScreen._attribHash = _screen.getAttributeHash();
+
+	ShaderProgram& prg = _factory.getShader(drawScreen);
+	prg.enable();
+
+	screenTexture->bind(0);
+	prg.setUniform("uScreen", 0);
+
+	_screen.bindBuffers();
+
+	glDrawArrays(_screen.getPoligonConnectMode(), 0, _screen.getNumVertexes());
+
+	_screen.unbindBuffers();
+
 }
 
 void Engine::render(Object3D &obj, LightList lights) noexcept {

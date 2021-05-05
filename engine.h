@@ -25,12 +25,14 @@
 #include "GL/Texture.h"
 
 #include "Geometry/Primitive/cube.h"
+#include "Geometry/Primitive/rect.h"
 
 class Engine
 {
 private:
 	ScenePtr                        		 _scene;
     Cube	   								 _skyBox;
+    Rect									 _screen;
     ShaderFactory							 _factory;
 
 private:
@@ -43,6 +45,8 @@ private:
     Engine& operator =(const Engine&) =delete;
 
     void renderSkyBox();
+    void renderScreen(TexPtr screenTexture);
+
 public:
     inline static const Window     window = Window(4.6f, 1366u, 720u, "Visual Engine");
 

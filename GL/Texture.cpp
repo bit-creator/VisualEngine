@@ -85,6 +85,17 @@ void Texture::setEmpty() {
 	unbind();
 }
 
+void Texture::allocate(GLuint width, GLuint height, GLenum format, GLenum type) {
+	bind();
+
+	glTexImage2D(getTarget(), 0, format, width, height, 0, format,  type, NULL); HANDLE_GL_ERROR();
+
+	glTexParameteri(getTarget(), GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(getTarget(), GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	unbind();
+}
+
 GLuint Texture::gentex() noexcept {
     GLuint ID;
     glGenTextures(1, &ID); HANDLE_GL_ERROR();
@@ -125,3 +136,8 @@ Texture2D::Texture2D(const char *name)
 	setEmpty();
 	loadImage(name);
 }
+
+void Texture2D::allocate(GLuint width, GLuint height, GLenum format, GLenum type) {
+	Texture::allocate(width, height, format, type);
+}
+
