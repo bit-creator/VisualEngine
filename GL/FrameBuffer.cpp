@@ -1,14 +1,14 @@
 /*
  * FrameBuffer.cpp
  *
- *  Created on: 5 трав. 2021 р.
+ *  Created on: 5 пїЅпїЅпїЅпїЅ. 2021 пїЅ.
  *      Author: IAbernikhin
  */
 
 #include "FrameBuffer.h"
 #include "../engine.h"
 
-FrameBuffer::FrameBuffer(FBAcsessPolytics pol)
+FrameBuffer::FrameBuffer(GLenum pol)
 	: GLObject(genFB())
 	, _polytics(pol)
 	, _colorAttachment(GL_COLOR_ATTACHMENT0)
@@ -28,28 +28,33 @@ FrameBuffer::~FrameBuffer() {
 }
 
 void FrameBuffer::bind() {
-	glBindFramebuffer((GLuint)_polytics, getID());  HANDLE_GL_ERROR();
+	glBindFramebuffer(_polytics, getID());  HANDLE_GL_ERROR();
 }
 
 bool FrameBuffer::readyToWork() {
-	bool ready = glCheckFramebufferStatus((GLuint)_polytics) == GL_FRAMEBUFFER_COMPLETE; HANDLE_GL_ERROR();
+	bool ready = glCheckFramebufferStatus(_polytics) == GL_FRAMEBUFFER_COMPLETE; HANDLE_GL_ERROR();
 	return ready;
 }
 
 void FrameBuffer::unbind() {
 	if (readyToWork()) {
-		glBindFramebuffer((GLuint)_polytics, 0);  HANDLE_GL_ERROR();
+		glBindFramebuffer(_polytics, 0);  HANDLE_GL_ERROR();
 	} else {
 		ERROR("FRAMEBUFFER NOT READY")
 	}
 }
 
-FBAcsessPolytics FrameBuffer::getAcsessPolytics() {
+GLenum FrameBuffer::getAcsessPolytics() const {
 	return _polytics;
 }
 
-GLuint FrameBuffer::getNumberOfColorTex() {
+GLuint FrameBuffer::getNumberOfColorTex() const {
 	return _colorAttachment - GL_COLOR_ATTACHMENT0;
+}
+
+const std::vector<TexPtr>&
+FrameBuffer::getColorTextures() const {
+	return _colorTextures;
 }
 
 void FrameBuffer::attachNewColorTex() {
@@ -58,18 +63,18 @@ void FrameBuffer::attachNewColorTex() {
 		return;
 	}
 
-	TexPtr colorTex = createTexture(GL_RGBA); HANDLE_GL_ERROR();
+	TexPtr colorTex = createTexture(GL_RGB); HANDLE_GL_ERROR();
 
 	colorTex->bind(); HANDLE_GL_ERROR();
 
 	glFramebufferTexture2D (
-			(GLuint)_polytics,
+			_polytics,
 			_colorAttachment,
 			colorTex->getTarget(),
 			colorTex->getID(), 0
 	); HANDLE_GL_ERROR();
 
-//	colorTex->unbind(); HANDLE_GL_ERROR();
+	colorTex->unbind(); HANDLE_GL_ERROR();
 
 	++_colorAttachment;
 
@@ -84,7 +89,7 @@ void FrameBuffer::enableDepthBuffer() {
 	_depthBuffer->bind(); HANDLE_GL_ERROR();
 
 	glFramebufferTexture2D (
-			(GLuint)_polytics,
+			_polytics,
 			GL_DEPTH_ATTACHMENT,
 			_depthBuffer->getTarget(),
 			_depthBuffer->getID(), 0
@@ -99,7 +104,7 @@ void FrameBuffer::enableStencilBuffer() {
 	_stencilBuffer->bind(); HANDLE_GL_ERROR();
 
 	glFramebufferTexture2D (
-			(GLuint)_polytics,
+			_polytics,
 			GL_STENCIL_ATTACHMENT,
 			_stencilBuffer->getTarget(),
 			_stencilBuffer->getID(), 0
@@ -114,7 +119,7 @@ void FrameBuffer::enableDepthStencilBuffer() {
 	_depthStencilBuffer->bind(); HANDLE_GL_ERROR();
 
 	glFramebufferTexture2D (
-			(GLuint)_polytics,
+			_polytics,
 			GL_DEPTH_STENCIL_ATTACHMENT,
 			_depthStencilBuffer->getTarget(),
 			_depthStencilBuffer->getID(), 0
@@ -124,15 +129,27 @@ void FrameBuffer::enableDepthStencilBuffer() {
 
 }
 
+void FrameBuffer::useRenderBuffer() {
+	_renderBuffer.allocate(); HANDLE_GL_ERROR();
+
+	_renderBuffer.bind(); HANDLE_GL_ERROR();
+	glFramebufferRenderbuffer(
+			_polytics,
+			GL_DEPTH_STENCIL_ATTACHMENT,
+			GL_RENDERBUFFER,
+			_renderBuffer.getID()
+	); HANDLE_GL_ERROR();
+	_renderBuffer.bind(); HANDLE_GL_ERROR();
+}
+
 TexPtr FrameBuffer::createTexture(GLenum format, GLenum type) {
 	auto [width, height] = Engine::window.getWindowSize();
 
 	auto tex = Texture2D::create(); HANDLE_GL_ERROR();
 
-	tex->bind();
+	tex->bind(); HANDLE_GL_ERROR();
 	tex->allocate(width, height, format, type); HANDLE_GL_ERROR();
-	tex->unbind();
-
+	tex->unbind(); HANDLE_GL_ERROR();
 
 	return tex;
 }
@@ -141,8 +158,4 @@ GLuint FrameBuffer::genFB() {
 	GLuint fbo;
 	glGenFramebuffers(1, &fbo);  HANDLE_GL_ERROR();
 	return fbo;
-}
-
-std::vector<TexPtr> FrameBuffer::getColorTextures() {
-	return _colorTextures;
 }

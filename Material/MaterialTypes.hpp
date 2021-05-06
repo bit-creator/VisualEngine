@@ -24,14 +24,4 @@ enum class ShaderType {
   SHADER_SCREEN
 };
 
-enum class TextureUnit {
-	Ambient  =0,
-	Diffuse  =1,
-	Specular =2,
-	Rougness =3,
-	SkyBox   =4,
-	Normal   =5,
-	Height   =6
-};
-
 #endif /* MATERIALTYPES_HPP_ */

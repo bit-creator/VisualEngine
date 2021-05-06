@@ -26,7 +26,7 @@ void Material::setDrawData(Draw &drawData) {
 }
 
 void Material::bindMaps() {
-	if(_rougnessMap) _rougnessMap->bind((int)TextureUnit::Rougness);
+	if(_rougnessMap) _rougnessMap->bind(TextureUnit::Rougness);
 }
 
 void Material::setRoughness(const float roughness) noexcept

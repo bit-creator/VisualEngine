@@ -27,7 +27,8 @@ std::vector<EventListenerPtr>& Engine::getListeners() noexcept {
 
 void Engine::run(const Window& window) noexcept {
 	FrameBuffer fbo;
-	fbo.enableDepthBuffer();
+//	fbo.enableDepthBuffer();
+	fbo.useRenderBuffer();
 
 	if (!fbo.readyToWork()) {
 		ERROR("FRAMEBUFFER NOT READY")
@@ -81,10 +82,10 @@ void Engine::renderSkyBox() {
 
 	auto MVPmat = projMat * glm::mat4(glm::mat3(viewMat));
 
-	_scene->getSkyBox()->bind(0);
+	_scene->getSkyBox()->bind(TextureUnit::SkyBox);
 
 	prg.setUniform("uSkyBoxMVPMat", MVPmat);
-	prg.setUniform("uSkyBox", 0);
+	prg.setUniform("uSkyBox", (int)TextureUnit::SkyBox);
 
 	_skyBox.bindBuffers();
 
@@ -102,8 +103,8 @@ void Engine::renderScreen(TexPtr screenTexture) {
 	ShaderProgram& prg = _factory.getShader(drawScreen);
 	prg.enable();
 
-	screenTexture->bind(0);
-	prg.setUniform("uScreen", 0);
+	screenTexture->bind(TextureUnit::Screen);
+	prg.setUniform("uScreen", (int)TextureUnit::Screen);
 
 	_screen.bindBuffers();
 
@@ -111,6 +112,7 @@ void Engine::renderScreen(TexPtr screenTexture) {
 
 	_screen.unbindBuffers();
 
+	screenTexture->unbind();
 }
 
 void Engine::render(Object3D &obj, LightList lights) noexcept {
@@ -140,7 +142,7 @@ void Engine::render(Object3D &obj, LightList lights) noexcept {
     glm::mat4 mVPMat = projMat * viewMat * modelMat;
 
     if (drawData._hasSkyBoxMap) {
-    	_scene->getSkyBox()->bind((int)TextureUnit::SkyBox);
+    	_scene->getSkyBox()->bind(TextureUnit::SkyBox);
 		prg.setUniform("uSkyBox",      (int)TextureUnit::SkyBox);
     }
 

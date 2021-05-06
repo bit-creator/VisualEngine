@@ -26,7 +26,14 @@ GLenum Texture::getTarget() {
 	return _target;
 }
 
-void Texture::bind(int index) {
+void Texture::bind(TextureUnit unit) {
+	auto index = (int)unit;
+
+	if (index > 31) {
+		ERROR("texture not bind, to many textures");
+		return;
+	}
+
 	glActiveTexture(GL_TEXTURE0 + index); HANDLE_GL_ERROR();
 	bind();
 }

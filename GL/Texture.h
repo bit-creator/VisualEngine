@@ -13,6 +13,16 @@
 #include "../CreateAsPointer.hpp"
 #include "globject.h"
 
+enum class TextureUnit {
+	Ambient  =0,
+	Diffuse  =1,
+	Specular =2,
+	Rougness =3,
+	SkyBox   =4,
+	Normal   =5,
+	Height   =6,
+	Screen   =7
+};
 
 enum class BoxSide {
 	SIDE_RIGHT  = GL_TEXTURE_CUBE_MAP_POSITIVE_X,
@@ -35,7 +45,7 @@ public:
 
 	GLenum getTarget();
 
-	void bind(int index);
+	void bind(TextureUnit unit);
 	void bind();
 	void unbind();
 

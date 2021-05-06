@@ -1,7 +1,7 @@
 /*
  * FrameBuffer.h
  *
- *  Created on: 5 трав. 2021 р.
+ *  Created on: 5 пїЅпїЅпїЅпїЅ. 2021 пїЅ.
  *      Author: IAbernikhin
  */
 
@@ -12,16 +12,12 @@
 
 #include "globject.h"
 #include "Texture.h"
-
-enum class FBAcsessPolytics {
-	READ = GL_READ_FRAMEBUFFER,
-	WRITE = GL_DRAW_FRAMEBUFFER,
-	READ_WRITE = GL_FRAMEBUFFER
-};
+#include "RenderBuffer.h"
 
 class FrameBuffer final : public GLObject {
 private:
-	FBAcsessPolytics					_polytics;
+	RenderBuffer						_renderBuffer;
+	GLenum								_polytics;
 	GLuint								_colorAttachment;
 	TexPtr								_depthBuffer;
 	TexPtr								_stencilBuffer;
@@ -29,21 +25,25 @@ private:
 	std::vector < TexPtr >				_colorTextures;
 
 public:
-	FrameBuffer(FBAcsessPolytics pol = FBAcsessPolytics::READ_WRITE);
+	FrameBuffer(GLenum pol = GL_FRAMEBUFFER);
 	~FrameBuffer();
 
 	void bind();
 	void unbind();
 
-	FBAcsessPolytics getAcsessPolytics();
-	GLuint getNumberOfColorTex();
-	std::vector < TexPtr > getColorTextures();
+	GLenum getAcsessPolytics() const;
+	GLuint getNumberOfColorTex() const;
+
+	const std::vector < TexPtr >&
+	getColorTextures() const;
 
 	bool readyToWork();
 
 	void enableDepthBuffer();
 	void enableStencilBuffer();
 	void enableDepthStencilBuffer();
+	void useRenderBuffer();
+
 	void attachNewColorTex();
 
 private:

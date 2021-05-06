@@ -45,9 +45,9 @@ void PhongMaterial::setUniforms(const ShaderProgram &prg) {
 void PhongMaterial::bindMaps() {
 	Material::bindMaps();
 
-    if (_ambientMap)  _ambientMap->bind((int)TextureUnit::Ambient);
-    if (_diffuseMap)  _diffuseMap->bind((int)TextureUnit::Diffuse);
-    if (_specularMap) _specularMap->bind((int)TextureUnit::Specular);
+    if (_ambientMap)  _ambientMap->bind(TextureUnit::Ambient);
+    if (_diffuseMap)  _diffuseMap->bind(TextureUnit::Diffuse);
+    if (_specularMap) _specularMap->bind(TextureUnit::Specular);
 }
 
 void PhongMaterial::setDrawData(Draw &drawData) {

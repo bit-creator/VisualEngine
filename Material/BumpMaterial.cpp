@@ -40,8 +40,8 @@ void BumpMaterial::setDrawData(Draw &drawData) {
 void BumpMaterial::bindMaps() {
 	PhongMaterial::bindMaps();
 
-	if (_normalMap) _normalMap ->bind((int)TextureUnit::Normal);
-	if (_heightMap) _heightMap ->bind((int)TextureUnit::Height);
+	if (_normalMap) _normalMap ->bind(TextureUnit::Normal);
+	if (_heightMap) _heightMap ->bind(TextureUnit::Height);
 }
 
 
