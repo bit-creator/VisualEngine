@@ -56,8 +56,7 @@ public:
 
     	if (onEarth) {
 
-//	    auto bumpMaterial = std::dynamic_pointer_cast<BumpMaterial>(_bump);
-    		_bump->_scale += dir * 0.004;
+    	_bump->_scale += dir * 0.004;
 
 	    if(_bump->_scale >= 0.2) _bump->_scale = 0.2;
 	    if(_bump->_scale <= 0.) _bump->_scale = 0.0;
@@ -81,11 +80,18 @@ public:
         salSys->setRotate(glm::vec3(0.0f, 1.0f, 0.0f), f4);
         earthSys->setRotate(glm::vec3(0.0f, 1.0f, 0.0f), f5);
 
+        glm::mat3 indenityKernel = {
+        	0, 0, 0,
+			0, 1, 0,
+			0, 0, 0
+        };
+
     	if (glm::distance(scene.getCamera()->getPosition(), glm::vec3(earth->getWorldMat() * glm::vec4(earth->getPosition(), 1.0))) <= 0.75f) {
     		scene.setSkyBox(_skybox);
     		_cube->setEnabled(true);
     		_atom->setEnabled(true);
     		salSys->setEnabled(false);
+    		Engine::engine().setPostProcesingKernel(indenityKernel);
     		onEarth = true;
     		std::cout << "on  earth" << std::endl;
     	}
@@ -116,6 +122,16 @@ void DemoSample() {
     auto& eng = Engine::engine();
 
     auto scene = Scene::create();
+
+    glm::mat3 blurKernel = {
+    	1.0, 2.0, 1.0,
+    	2.0, 4.0, 2.0,
+    	1.0, 2.0, 1.0
+    };
+
+    blurKernel /= 16;
+
+    eng.setPostProcesingKernel(blurKernel);
 
     eng.setScene(scene);
 

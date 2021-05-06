@@ -34,6 +34,7 @@ private:
     Cube	   								 _skyBox;
     Rect									 _screen;
     ShaderFactory							 _factory;
+    glm::mat3								 _postProcesingKernel;
 
 private:
     std::vector < EventListenerPtr >		 _eventListeners;
@@ -67,6 +68,9 @@ public:
     void run(const Window& window = window) noexcept;
 
     void render(Object3D& obj, LightList lights) noexcept;
+
+	const glm::mat3& getPostProcesingKernel() const;
+	void setPostProcesingKernel(const glm::mat3 &postProcesingKernel);
 };
 
 #endif // ENGINE_H

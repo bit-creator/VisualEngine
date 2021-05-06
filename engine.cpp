@@ -105,6 +105,8 @@ void Engine::renderScreen(TexPtr screenTexture) {
 
 	screenTexture->bind(TextureUnit::Screen);
 	prg.setUniform("uScreen", (int)TextureUnit::Screen);
+	prg.setUniform("uKernel", _postProcesingKernel);
+	prg.setUniform("uOffset", 1.0f / 400);
 
 	_screen.bindBuffers();
 
@@ -180,4 +182,12 @@ void Engine::render(Object3D &obj, LightList lights) noexcept {
 
     geom->unbindBuffers();
     material->unbindMaps();
+}
+
+const glm::mat3& Engine::getPostProcesingKernel() const {
+	return _postProcesingKernel;
+}
+
+void Engine::setPostProcesingKernel(const glm::mat3 &postProcesingKernel) {
+	_postProcesingKernel = postProcesingKernel;
 }
