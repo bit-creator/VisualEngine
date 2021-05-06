@@ -11,14 +11,12 @@
 FrameBuffer::FrameBuffer(GLenum pol)
 	: GLObject(genFB())
 	, _polytics(pol)
-	, _colorAttachment(GL_COLOR_ATTACHMENT0)
 	, _depthBuffer(nullptr)
 	, _stencilBuffer(nullptr)
 	, _depthStencilBuffer(nullptr)
 {
-	_colorTextures.reserve(15);
 	bind();
-	attachNewColorTex();
+	attachNewColorTex(RenderingTarget::SCREEN);
 
 	HANDLE_GL_ERROR();
 }
@@ -48,17 +46,14 @@ GLenum FrameBuffer::getAcsessPolytics() const {
 	return _polytics;
 }
 
-GLuint FrameBuffer::getNumberOfColorTex() const {
-	return _colorAttachment - GL_COLOR_ATTACHMENT0;
+GLuint FrameBuffer::getNumberOfTarget() const {
+	return _colorTextures.size();
 }
 
-const std::vector<TexPtr>&
-FrameBuffer::getColorTextures() const {
-	return _colorTextures;
-}
+void FrameBuffer::attachNewColorTex(RenderingTarget target) {
+	GLuint attachment = GL_COLOR_ATTACHMENT0 + (int)target;
 
-void FrameBuffer::attachNewColorTex() {
-	if(_colorAttachment > GL_COLOR_ATTACHMENT15) {
+	if(attachment > GL_COLOR_ATTACHMENT15) {
 		ERROR("to more Texture attached to framebuffer");
 		return;
 	}
@@ -69,16 +64,14 @@ void FrameBuffer::attachNewColorTex() {
 
 	glFramebufferTexture2D (
 			_polytics,
-			_colorAttachment,
+			attachment,
 			colorTex->getTarget(),
 			colorTex->getID(), 0
 	); HANDLE_GL_ERROR();
 
 	colorTex->unbind(); HANDLE_GL_ERROR();
 
-	++_colorAttachment;
-
-	_colorTextures.push_back(colorTex);
+	_colorTextures[target] = colorTex;
 
 	return;
 }
@@ -140,6 +133,16 @@ void FrameBuffer::useRenderBuffer() {
 			_renderBuffer.getID()
 	); HANDLE_GL_ERROR();
 	_renderBuffer.bind(); HANDLE_GL_ERROR();
+}
+
+void FrameBuffer::bindTextures() {
+	for (auto [target, texture] : _colorTextures)
+		texture->bind(target);
+}
+
+void FrameBuffer::unbindTextures() {
+	for (auto [target, texture] : _colorTextures)
+		texture->unbind();
 }
 
 TexPtr FrameBuffer::createTexture(GLenum format, GLenum type) {

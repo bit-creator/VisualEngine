@@ -24,6 +24,10 @@ enum class TextureUnit {
 	Screen   =7
 };
 
+enum class RenderingTarget {
+	SCREEN = 0
+};
+
 enum class BoxSide {
 	SIDE_RIGHT  = GL_TEXTURE_CUBE_MAP_POSITIVE_X,
 	SIDE_LEFT   = GL_TEXTURE_CUBE_MAP_NEGATIVE_X,
@@ -45,6 +49,7 @@ public:
 
 	GLenum getTarget();
 
+	void bind(RenderingTarget target);
 	void bind(TextureUnit unit);
 	void bind();
 	void unbind();
@@ -56,6 +61,7 @@ protected:
 
 private:
 	GLuint gentex() noexcept;
+	void bind(GLuint index);
 
 private:
 	const GLenum								_target;

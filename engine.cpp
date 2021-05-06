@@ -61,7 +61,9 @@ void Engine::run(const Window& window) noexcept {
 
         glDisable(GL_DEPTH_TEST);
 
-        renderScreen(fbo.getColorTextures()[0]);
+        fbo.bindTextures();
+        renderScreen();
+        fbo.unbindTextures();
 
         glfwSwapBuffers(window);
         glfwPollEvents();
@@ -94,7 +96,7 @@ void Engine::renderSkyBox() {
 	_skyBox.unbindBuffers();
 }
 
-void Engine::renderScreen(TexPtr screenTexture) {
+void Engine::renderScreen() {
 	Draw drawScreen;
 
 	drawScreen._type = (int)ShaderType::SHADER_SCREEN;
@@ -103,8 +105,7 @@ void Engine::renderScreen(TexPtr screenTexture) {
 	ShaderProgram& prg = _factory.getShader(drawScreen);
 	prg.enable();
 
-	screenTexture->bind(TextureUnit::Screen);
-	prg.setUniform("uScreen", (int)TextureUnit::Screen);
+	prg.setUniform("uScreen", (int)RenderingTarget::SCREEN);
 	prg.setUniform("uKernel", _postProcesingKernel);
 	prg.setUniform("uOffset", 1.0f / 400);
 
@@ -113,8 +114,6 @@ void Engine::renderScreen(TexPtr screenTexture) {
 	glDrawArrays(_screen.getPoligonConnectMode(), 0, _screen.getNumVertexes());
 
 	_screen.unbindBuffers();
-
-	screenTexture->unbind();
 }
 
 void Engine::render(Object3D &obj, LightList lights) noexcept {

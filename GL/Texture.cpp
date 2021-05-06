@@ -27,16 +27,13 @@ GLenum Texture::getTarget() {
 }
 
 void Texture::bind(TextureUnit unit) {
-	auto index = (int)unit;
-
-	if (index > 31) {
-		ERROR("texture not bind, to many textures");
-		return;
-	}
-
-	glActiveTexture(GL_TEXTURE0 + index); HANDLE_GL_ERROR();
-	bind();
+	bind((int)unit);
 }
+
+void Texture::bind(RenderingTarget target) {
+	bind((int)target);
+}
+
 
 void Texture::bind() {
 	glBindTexture(getTarget(), getID()); HANDLE_GL_ERROR();
@@ -148,3 +145,12 @@ void Texture2D::allocate(GLuint width, GLuint height, GLenum format, GLenum type
 	Texture::allocate(width, height, format, type);
 }
 
+void Texture::bind(GLuint index) {
+	if (index > 31) {
+		ERROR("texture not bind, to many textures");
+		return;
+	}
+
+	glActiveTexture(GL_TEXTURE0 + index); HANDLE_GL_ERROR();
+	bind();
+}

@@ -46,7 +46,7 @@ private:
     Engine& operator =(const Engine&) =delete;
 
     void renderSkyBox();
-    void renderScreen(TexPtr screenTexture);
+    void renderScreen();
 
 public:
     inline static const Window     window = Window(4.6f, 1366u, 720u, "Visual Engine");

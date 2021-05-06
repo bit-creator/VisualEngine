@@ -8,7 +8,7 @@
 #ifndef GL_FRAMEBUFFER_H_
 #define GL_FRAMEBUFFER_H_
 
-#include <vector>
+#include <map>
 
 #include "globject.h"
 #include "Texture.h"
@@ -16,13 +16,12 @@
 
 class FrameBuffer final : public GLObject {
 private:
-	RenderBuffer						_renderBuffer;
-	GLenum								_polytics;
-	GLuint								_colorAttachment;
-	TexPtr								_depthBuffer;
-	TexPtr								_stencilBuffer;
-	TexPtr								_depthStencilBuffer;
-	std::vector < TexPtr >				_colorTextures;
+	RenderBuffer										_renderBuffer;
+	GLenum												_polytics;
+	TexPtr												_depthBuffer;
+	TexPtr												_stencilBuffer;
+	TexPtr												_depthStencilBuffer;
+	std::map < RenderingTarget, TexPtr >				_colorTextures;
 
 public:
 	FrameBuffer(GLenum pol = GL_FRAMEBUFFER);
@@ -31,11 +30,11 @@ public:
 	void bind();
 	void unbind();
 
-	GLenum getAcsessPolytics() const;
-	GLuint getNumberOfColorTex() const;
+	void bindTextures();
+	void unbindTextures();
 
-	const std::vector < TexPtr >&
-	getColorTextures() const;
+	GLenum getAcsessPolytics() const;
+	GLuint getNumberOfTarget() const;
 
 	bool readyToWork();
 
@@ -44,7 +43,7 @@ public:
 	void enableDepthStencilBuffer();
 	void useRenderBuffer();
 
-	void attachNewColorTex();
+	void attachNewColorTex(RenderingTarget target);
 
 private:
 	GLuint genFB();
