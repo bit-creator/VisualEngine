@@ -4,6 +4,9 @@
 
 //#if defined(BUMP) || defined(PHONG)
 
+TARGET(SCREEN_TARGET_LOCATION) vec4 color;
+TARGET(PICKER_TARGET_LOCATION) float objectColor;
+
 struct Light {
 	vec3 lightDir;
 	vec4 lightColor;
@@ -49,8 +52,10 @@ uniform vec4 uSpecularColor;
 #ifdef BUMP
 	uniform float uScale;
 #endif // BUMP
-
-out vec4 color;
+	
+#ifdef HAS_PICKER_TARGET
+	uniform float uObjectColor;
+#endif // HAS_PICKER_TARGET
 
 void main() {
 	vec4 ambientColor  = uAmbientColor;
@@ -94,8 +99,14 @@ void main() {
   		fragmentColor += calculateLighting(ambientColor, diffuseColor, specularColor,
   			(uLights[i].lightDir), normal, view, rougness) * uLights[i].lightColor;
   	}
-  
-  	color = fragmentColor;
+ 
+#	ifdef HAS_SCREEN_TARGET
+  		color = fragmentColor;
+#	endif // HAS_SCREEN_TARGET
+#	ifdef HAS_PICKER_TARGET
+  		objectColor = uObjectColor;
+#	endif // HAS_PICKER_TARGET
+  		
 }
 
 //#endif // BUMP || PHONG

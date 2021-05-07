@@ -23,6 +23,7 @@
 
 #include "GL/shaderprogram.h"
 #include "GL/Texture.h"
+#include "GL/FrameBuffer.h"
 
 #include "Geometry/Primitive/cube.h"
 #include "Geometry/Primitive/rect.h"
@@ -34,13 +35,14 @@ private:
     Cube	   								 _skyBox;
     Rect									 _screen;
     ShaderFactory							 _factory;
+    FrameBuffer								 _FBO;
     glm::mat3								 _postProcesingKernel;
 
 private:
     std::vector < EventListenerPtr >		 _eventListeners;
 
 private:
-    Engine() noexcept =default;
+    Engine() noexcept;
     ~Engine() noexcept =default;
     Engine(const Engine&) =delete;
     Engine& operator =(const Engine&) =delete;
@@ -68,6 +70,8 @@ public:
     void run(const Window& window = window) noexcept;
 
     void render(Object3D& obj, LightList lights) noexcept;
+
+    float getPickerKey();
 
 	const glm::mat3& getPostProcesingKernel() const;
 	void setPostProcesingKernel(const glm::mat3 &postProcesingKernel);

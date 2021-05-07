@@ -4,6 +4,9 @@
 
 //#ifdef GLOSSY
 
+TARGET(SCREEN_TARGET_LOCATION) vec4 color;
+TARGET(PICKER_TARGET_LOCATION) float objectColor;
+
 struct Light {
 	vec3 lightDir;
 	vec4 lightColor;
@@ -37,8 +40,10 @@ uniform float uSecondRefractiveIndex;
 #else
 	uniform float uRoughness;
 #endif // HAS_ROUGNESS_MAP
-
-out vec4 color;
+	
+#ifdef HAS_PICKER_TARGET
+	uniform float uObjectColor;
+#endif // HAS_PICKER_TARGET
 
 void main() {
 	vec4 specularColor = uSpecularColor;
@@ -72,7 +77,12 @@ void main() {
 	
 	fragmentColor = uGlossyColor * mix(texture(uSkyBox, R), texture(uSkyBox, R_1), dot(normal, I) > BrusterAngle ? 1 : 0);
 
-	color = fragmentColor;
+#	ifdef HAS_SCREEN_TARGET
+  		color = fragmentColor;
+#	endif // HAS_SCREEN_TARGET
+#	ifdef HAS_PICKER_TARGET
+  		objectColor = uObjectColor;
+#	endif // HAS_PICKER_TARGET
 }
 
 //#endif // GLOSSY

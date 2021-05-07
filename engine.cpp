@@ -1,6 +1,13 @@
 #include "engine.h"
 #include "GL/FrameBuffer.h"
 
+Engine::Engine() noexcept {
+	_FBO.attachNewColorTex(RenderingTarget::SCREEN);
+	_FBO.attachNewColorTex(RenderingTarget::PICKER, GL_RED);
+//	_FBO.enableDepthBuffer();
+	_FBO.useRenderBuffer();
+}
+
 Engine& Engine::engine() noexcept {
 	static Engine engine; return engine;
 }
@@ -26,19 +33,13 @@ std::vector<EventListenerPtr>& Engine::getListeners() noexcept {
 }
 
 void Engine::run(const Window& window) noexcept {
-	FrameBuffer fbo;
-//	fbo.enableDepthBuffer();
-	fbo.useRenderBuffer();
-
-	if (!fbo.readyToWork()) {
+	if (!_FBO.readyToWork()) {
 		ERROR("FRAMEBUFFER NOT READY")
 	}
 
-	fbo.unbind();
-
     while (!glfwWindowShouldClose(window))
     {
-    	fbo.bind();
+    	_FBO.bind();
 
     	glEnable(GL_DEPTH_TEST);
 
@@ -54,16 +55,23 @@ void Engine::run(const Window& window) noexcept {
 
         if (_scene -> useSkyBox()) renderSkyBox();
 
-        for(auto obj : _scene->getDrawList())
-        	render(*obj, _scene->getLightList());
+        const auto& drawList = _scene->getDrawList();
 
-        fbo.unbind();
+        float dicr = drawList.size() + 2;
+
+        float index = 1.0;
+        for(auto obj : drawList) {
+        	obj->setColorKey((++index) / dicr);
+        	render(*obj, _scene->getLightList());
+        }
+
+        _FBO.unbind();
 
         glDisable(GL_DEPTH_TEST);
 
-        fbo.bindTextures();
-        renderScreen();
-        fbo.unbindTextures();
+        _FBO.bindTextures();
+        	renderScreen();
+        _FBO.unbindTextures();
 
         glfwSwapBuffers(window);
         glfwPollEvents();
@@ -105,7 +113,7 @@ void Engine::renderScreen() {
 	ShaderProgram& prg = _factory.getShader(drawScreen);
 	prg.enable();
 
-	prg.setUniform("uScreen", (int)RenderingTarget::SCREEN);
+	prg.setUniform("uScreen", (int)RenderingTarget::PICKER);
 	prg.setUniform("uKernel", _postProcesingKernel);
 	prg.setUniform("uOffset", 1.0f / 400);
 
@@ -124,6 +132,7 @@ void Engine::render(Object3D &obj, LightList lights) noexcept {
     Draw drawData;
 
     drawData._attribHash = geom->getAttributeHash();
+    drawData._renderTargets = _FBO.TargetHash();
     drawData._hasPerspectiveCamera = (int)cam->getType();
     drawData._numOfLight = lights.size();
 
@@ -155,6 +164,10 @@ void Engine::render(Object3D &obj, LightList lights) noexcept {
     prg.setUniform("uMVPMat", mVPMat);
     prg.setUniform("uNormalMat", nMat);
     prg.setUniform("uModelMat", modelMat);
+
+//    std::cout << obj.getColorKey() << std::endl;
+
+    prg.setUniform("uObjectColor", obj.getColorKey());
 
     int ind = 0;
 
@@ -189,4 +202,8 @@ const glm::mat3& Engine::getPostProcesingKernel() const {
 
 void Engine::setPostProcesingKernel(const glm::mat3 &postProcesingKernel) {
 	_postProcesingKernel = postProcesingKernel;
+}
+
+float Engine::getPickerKey() {
+	return _FBO.getPickerKey(glm::vec2(0.0, 0.0));
 }

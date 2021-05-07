@@ -98,20 +98,28 @@ public:
     }
 
     void onMouseClick(int button, int action, int mode) noexcept {
-    	auto res = scene.getRoot()->rayCast(scene.getCamera()->getRay(glm::vec2(0.0, 0.0)));
-    	if (res.empty()) {
-    		std::cout << "no object" << std::endl;
-    	} else {
-    		Intersection* el = &(res.front());
-    		for (auto elem : res) if(elem._distance <= el->_distance) el = &elem;
-    			if(el->_obj->getMaterial() == _selected) {
-    				el->_obj->setMaterial(_regular);
-    			} else if (el->_obj->getMaterial() == _regular) {
-    				el->_obj->setMaterial(_selected);
-    			} else if(el->_obj->getMaterial() == _bump) {
-    		    	dir *= -1;
-    			}
-    	}
+//    	auto& eng = Engine::engine();
+
+    	std::cout <<  Engine::engine().getPickerKey() << std::endl;
+
+
+
+
+
+//    	auto res = scene.getRoot()->rayCast(scene.getCamera()->getRay(glm::vec2(0.0, 0.0)));
+//    	if (res.empty()) {
+//    		std::cout << "no object" << std::endl;
+//    	} else {
+//    		Intersection* el = &(res.front());
+//    		for (auto elem : res) if(elem._distance <= el->_distance) el = &elem;
+//    			if(el->_obj->getMaterial() == _selected) {
+//    				el->_obj->setMaterial(_regular);
+//    			} else if (el->_obj->getMaterial() == _regular) {
+//    				el->_obj->setMaterial(_selected);
+//    			} else if(el->_obj->getMaterial() == _bump) {
+//    		    	dir *= -1;
+//    			}
+//    	}
     }
 
     ~DemoSampleListener() noexcept override {

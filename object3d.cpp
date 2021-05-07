@@ -2,7 +2,7 @@
 
 Object3D::Object3D() noexcept
     : Node(NodeType::NODE_OBJECT)
-//    , _material ( std::make_shared<Material>() )
+	, _colorKey(1.0)
 {  }
 
 Object3D::Object3D(MaterialPtr material) noexcept
@@ -29,6 +29,7 @@ GeometryPtr Object3D::getGeometry() const noexcept
 Object3D::Object3D(const Object3D &oth) noexcept
 	: Node(oth)
 	, _geom(oth._geom)
+	, _colorKey(oth._colorKey)
 	, _material(oth._material)
 	{
 }
@@ -48,3 +49,10 @@ void Object3D::rayCastImpl(Ray &ray, std::list<Intersection> &list) {
 	}
 }
 
+float Object3D::getColorKey() const {
+	return _colorKey;
+}
+
+void Object3D::setColorKey(float colorKey) {
+	_colorKey = colorKey;
+}

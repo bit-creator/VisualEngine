@@ -33,9 +33,11 @@ class Object3D final :
 	public MultiSharedCreator < Object3D, Node > {
 private:
 	GeometryPtr                                             _geom;
+	float													_colorKey;
 
 protected:          //  Material
 	MaterialPtr                                             _material;
+
 
 public:
 	Object3D() noexcept;
@@ -52,6 +54,10 @@ public:
 
 public:
 	void rayCastImpl(Ray& ray, std::list < Intersection >& list) override;
+
+	float getColorKey() const;
+
+	void setColorKey(float colorKey);
 };
 
 using ObjPtr = std::shared_ptr < Object3D >;
