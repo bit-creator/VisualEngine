@@ -67,15 +67,27 @@ std::string Draw::genDefines() const {
 	targetDefGenerator(RenderingTarget::SCREEN, "SCREEN");
 	targetDefGenerator(RenderingTarget::PICKER, "PICKER");
 
-//	if (hash[(int)Attribute::ATTRIB_BITANGENT]) defines += atribDefGenerator("BITANGENT", Attribute::ATTRIB_BITANGENT);
-//	if (hash[(int)Attribute::ATTRIB_COLOR])     defines += atribDefGenerator("COLOR",     Attribute::ATTRIB_COLOR);
-//	if (hash[(int)Attribute::ATTRIB_NORMAL])    defines += atribDefGenerator("NORMAL",    Attribute::ATTRIB_NORMAL);
-//	if (hash[(int)Attribute::ATTRIB_POSITION])  defines += atribDefGenerator("POSITION",  Attribute::ATTRIB_POSITION);
-//	if (hash[(int)Attribute::ATTRIB_TANGENT])   defines += atribDefGenerator("TANGENT",   Attribute::ATTRIB_TANGENT);
-//	if (hash[(int)Attribute::ATTRIB_TEX])       defines += atribDefGenerator("TEXTURE",   Attribute::ATTRIB_TEX);
-
-//	if (targetsHash[(int)RenderingTarget::SCREEN]) defines += targetDefGenerator("SCREEN", RenderingTarget::SCREEN);
-//	if (targetsHash[(int)RenderingTarget::PICKER]) defines += targetDefGenerator("PICKER", RenderingTarget::PICKER);
+	if (targetsHash[(int)RenderingTarget::PICKER]) {
+		defines += "#define PICKER_COMPONENT " + std::to_string(sizeof(Object3D::ID_t)) + "\n";
+		switch (sizeof(Object3D::ID_t)) {
+		case 1:
+			defines += "#define PICKER_INTERNAL_TYPE float\n";
+			defines += "#define PICKER_SWIZZLE .r\n";
+			break;
+		case 2:
+			defines += "#define PICKER_INTERNAL_TYPE vec2\n";
+			defines += "#define PICKER_SWIZZLE .rg\n";
+			break;
+		case 3:
+			defines += "#define PICKER_INTERNAL_TYPE vec3\n";
+			defines += "#define PICKER_SWIZZLE .rgb\n";
+			break;
+		case 4:
+			defines += "#define PICKER_INTERNAL_TYPE vec4\n";
+			defines += "#define PICKER_SWIZZLE\n";
+			break;
+		}
+	}
 
 	if (_hasAmbientMap)		   defines += "#define HAS_AMBIENT_MAP\n";
 	if (_hasDiffuseMap)		   defines += "#define HAS_DIFFUSE_MAP\n";

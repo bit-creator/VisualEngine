@@ -3,9 +3,10 @@
 
 Engine::Engine() noexcept {
 	_FBO.attachNewColorTex(RenderingTarget::SCREEN);
-	_FBO.attachNewColorTex(RenderingTarget::PICKER, GL_RED);
 //	_FBO.enableDepthBuffer();
 	_FBO.useRenderBuffer();
+
+	_FBO.attachNewColorTex(RenderingTarget::PICKER, Object3D::getColorKeyFormat());
 }
 
 Engine& Engine::engine() noexcept {
@@ -57,11 +58,12 @@ void Engine::run(const Window& window) noexcept {
 
         const auto& drawList = _scene->getDrawList();
 
-        float dicr = drawList.size() + 2;
-
-        float index = 1.0;
+        float index = 0.0;
         for(auto obj : drawList) {
-        	obj->setColorKey((++index) / dicr);
+        	if(obj->isClicable()) {
+        		obj->setID(Object3D::maxID - (++index));    // TEMPORARY, CHANGE ARGUMENT TO ++index;
+        	} else obj->resetID();
+
         	render(*obj, _scene->getLightList());
         }
 
@@ -83,6 +85,7 @@ void Engine::renderSkyBox() {
 
 	drawSkyBox._type = (int)ShaderType::SHADER_SKYBOX;
 	drawSkyBox._attribHash =_skyBox.getAttributeHash();
+	drawSkyBox._renderTargets = _FBO.TargetHash();
 
 	ShaderProgram& prg = _factory.getShader(drawSkyBox);
 	prg.enable();
@@ -113,7 +116,7 @@ void Engine::renderScreen() {
 	ShaderProgram& prg = _factory.getShader(drawScreen);
 	prg.enable();
 
-	prg.setUniform("uScreen", (int)RenderingTarget::PICKER);
+	prg.setUniform("uScreen", (int)RenderingTarget::SCREEN);
 	prg.setUniform("uKernel", _postProcesingKernel);
 	prg.setUniform("uOffset", 1.0f / 400);
 
@@ -204,6 +207,6 @@ void Engine::setPostProcesingKernel(const glm::mat3 &postProcesingKernel) {
 	_postProcesingKernel = postProcesingKernel;
 }
 
-float Engine::getPickerKey() {
-	return _FBO.getPickerKey(glm::vec2(0.0, 0.0));
+float Engine::getPickerKey(const glm::vec2& mousePosition) {
+	return _FBO.getPickerKey(mousePosition);
 }

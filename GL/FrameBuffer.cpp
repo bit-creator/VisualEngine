@@ -205,17 +205,22 @@ float FrameBuffer::getPickerKey(const glm::vec2& mousePosition) {
 	}
 
 	auto [width, height] = Engine::window.getWindowSize();
+	GLubyte data[sizeof(Object3D::ID_t)];
 
-	GLubyte  *data = new GLubyte[width * height / 4];
+	bind();
+
+	glReadBuffer(GL_COLOR_ATTACHMENT0 + (int)RenderingTarget::PICKER); HANDLE_GL_ERROR();
+
 	_colorTextures[RenderingTarget::PICKER]->bind();
 
-	glReadPixels(width / 2, height / 2, width, height, GL_RED, GL_UNSIGNED_BYTE, data);  HANDLE_GL_ERROR();  // NEED FIX
-//	glReadPixels(mousePosition.x, mousePosition.y, width, height, GL_RED, GL_UNSIGNED_BYTE, &key);
+	glReadPixels(width / 2, height / 2, 1, 1, Object3D::getColorKeyFormat(), GL_UNSIGNED_BYTE, &data);  HANDLE_GL_ERROR();  // NEED FIX
 
-	float key = data[0];
-	delete [] data;
+	unbind();
 
-	return key / 256;
+	Object3D::ID_t id;
+	memcpy(&id, data, sizeof(Object3D::ID_t));
+
+	return id;
 }
 
 void FrameBuffer::validateHashedData() {

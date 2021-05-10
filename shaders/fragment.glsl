@@ -5,7 +5,7 @@
 //#if defined(BUMP) || defined(PHONG)
 
 TARGET(SCREEN_TARGET_LOCATION) vec4 color;
-TARGET(PICKER_TARGET_LOCATION) float objectColor;
+TARGET(PICKER_TARGET_LOCATION) PICKER_INTERNAL_TYPE objectColor;
 
 struct Light {
 	vec3 lightDir;
@@ -54,7 +54,7 @@ uniform vec4 uSpecularColor;
 #endif // BUMP
 	
 #ifdef HAS_PICKER_TARGET
-	uniform float uObjectColor;
+	uniform vec4 uObjectColor;
 #endif // HAS_PICKER_TARGET
 
 void main() {
@@ -104,7 +104,7 @@ void main() {
   		color = fragmentColor;
 #	endif // HAS_SCREEN_TARGET
 #	ifdef HAS_PICKER_TARGET
-  		objectColor = uObjectColor;
+  		objectColor = uObjectColor PICKER_SWIZZLE;
 #	endif // HAS_PICKER_TARGET
   		
 }

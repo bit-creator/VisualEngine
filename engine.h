@@ -71,7 +71,7 @@ public:
 
     void render(Object3D& obj, LightList lights) noexcept;
 
-    float getPickerKey();
+    float getPickerKey(const glm::vec2& mousePosition);
 
 	const glm::mat3& getPostProcesingKernel() const;
 	void setPostProcesingKernel(const glm::mat3 &postProcesingKernel);
