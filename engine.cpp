@@ -1,6 +1,14 @@
 #include "engine.h"
 #include "GL/FrameBuffer.h"
 
+Engine::Engine() noexcept {
+	_FBO.attachNewColorTex(RenderingTarget::SCREEN);
+//	_FBO.enableDepthBuffer();
+	_FBO.useRenderBuffer();
+
+	_FBO.attachNewColorTex(RenderingTarget::PICKER, Object3D::getColorKeyFormat());
+}
+
 Engine& Engine::engine() noexcept {
 	static Engine engine; return engine;
 }
@@ -26,19 +34,13 @@ std::vector<EventListenerPtr>& Engine::getListeners() noexcept {
 }
 
 void Engine::run(const Window& window) noexcept {
-	FrameBuffer fbo;
-//	fbo.enableDepthBuffer();
-	fbo.useRenderBuffer();
-
-	if (!fbo.readyToWork()) {
+	if (!_FBO.readyToWork()) {
 		ERROR("FRAMEBUFFER NOT READY")
 	}
 
-	fbo.unbind();
-
     while (!glfwWindowShouldClose(window))
     {
-    	fbo.bind();
+    	_FBO.bind();
 
     	glEnable(GL_DEPTH_TEST);
 
@@ -54,16 +56,24 @@ void Engine::run(const Window& window) noexcept {
 
         if (_scene -> useSkyBox()) renderSkyBox();
 
-        for(auto obj : _scene->getDrawList())
-        	render(*obj, _scene->getLightList());
+        const auto& drawList = _scene->getDrawList();
 
-        fbo.unbind();
+        float index = 0.0;
+        for(auto obj : drawList) {
+        	if(obj->isClicable()) {
+        		obj->setID(Object3D::maxID - (++index));    // TEMPORARY, CHANGE ARGUMENT TO ++index;
+        	} else obj->resetID();
+
+        	render(*obj, _scene->getLightList());
+        }
+
+        _FBO.unbind();
 
         glDisable(GL_DEPTH_TEST);
 
-        fbo.bindTextures();
-        renderScreen();
-        fbo.unbindTextures();
+        _FBO.bindTextures();
+        	renderScreen();
+        _FBO.unbindTextures();
 
         glfwSwapBuffers(window);
         glfwPollEvents();
@@ -75,6 +85,7 @@ void Engine::renderSkyBox() {
 
 	drawSkyBox._type = (int)ShaderType::SHADER_SKYBOX;
 	drawSkyBox._attribHash =_skyBox.getAttributeHash();
+	drawSkyBox._renderTargets = _FBO.TargetHash();
 
 	ShaderProgram& prg = _factory.getShader(drawSkyBox);
 	prg.enable();
@@ -124,6 +135,7 @@ void Engine::render(Object3D &obj, LightList lights) noexcept {
     Draw drawData;
 
     drawData._attribHash = geom->getAttributeHash();
+    drawData._renderTargets = _FBO.TargetHash();
     drawData._hasPerspectiveCamera = (int)cam->getType();
     drawData._numOfLight = lights.size();
 
@@ -155,6 +167,10 @@ void Engine::render(Object3D &obj, LightList lights) noexcept {
     prg.setUniform("uMVPMat", mVPMat);
     prg.setUniform("uNormalMat", nMat);
     prg.setUniform("uModelMat", modelMat);
+
+//    std::cout << obj.getColorKey() << std::endl;
+
+    prg.setUniform("uObjectColor", obj.getColorKey());
 
     int ind = 0;
 
@@ -189,4 +205,8 @@ const glm::mat3& Engine::getPostProcesingKernel() const {
 
 void Engine::setPostProcesingKernel(const glm::mat3 &postProcesingKernel) {
 	_postProcesingKernel = postProcesingKernel;
+}
+
+float Engine::getPickerKey(const glm::vec2& mousePosition) {
+	return _FBO.getPickerKey(mousePosition);
 }

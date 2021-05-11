@@ -85,6 +85,8 @@ public: 		// CHILD
     std::list < Intersection >
     rayCast(Ray ray);
 
+    virtual Object3D* search(int id);
+
 	void unvalidateWorldMat() noexcept;
 
 protected:

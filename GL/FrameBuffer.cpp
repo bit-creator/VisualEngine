@@ -10,13 +10,12 @@
 
 FrameBuffer::FrameBuffer(GLenum pol)
 	: GLObject(genFB())
-	, _polytics(pol)
+	, _acsessPolytics(pol)
 	, _depthBuffer(nullptr)
 	, _stencilBuffer(nullptr)
 	, _depthStencilBuffer(nullptr)
 {
 	bind();
-	attachNewColorTex(RenderingTarget::SCREEN);
 
 	HANDLE_GL_ERROR();
 }
@@ -26,44 +25,59 @@ FrameBuffer::~FrameBuffer() {
 }
 
 void FrameBuffer::bind() {
-	glBindFramebuffer(_polytics, getID());  HANDLE_GL_ERROR();
+	glBindFramebuffer(_acsessPolytics, getID());  HANDLE_GL_ERROR();
+
+	if(_dirtyHashedData) {
+		_attachments.clear();
+		for(auto& [target, tex] : _colorTextures) {
+			_attachments.push_back(GL_COLOR_ATTACHMENT0 + (int)target);
+		}
+		_sizeOfAttachment = _attachments.size();
+
+		_dirtyHashedData = false;
+	}
+
+	glDrawBuffers(_sizeOfAttachment, _attachments.data());
 }
 
 bool FrameBuffer::readyToWork() {
-	bool ready = glCheckFramebufferStatus(_polytics) == GL_FRAMEBUFFER_COMPLETE; HANDLE_GL_ERROR();
+	bool ready = glCheckFramebufferStatus(_acsessPolytics) == GL_FRAMEBUFFER_COMPLETE; HANDLE_GL_ERROR();
 	return ready;
 }
 
 void FrameBuffer::unbind() {
 	if (readyToWork()) {
-		glBindFramebuffer(_polytics, 0);  HANDLE_GL_ERROR();
+		glBindFramebuffer(_acsessPolytics, 0);  HANDLE_GL_ERROR();
 	} else {
 		ERROR("FRAMEBUFFER NOT READY")
 	}
 }
 
 GLenum FrameBuffer::getAcsessPolytics() const {
-	return _polytics;
+	return _acsessPolytics;
 }
 
 GLuint FrameBuffer::getNumberOfTarget() const {
 	return _colorTextures.size();
 }
 
-void FrameBuffer::attachNewColorTex(RenderingTarget target) {
+void FrameBuffer::attachNewColorTex(RenderingTarget target, GLenum format) {
 	GLuint attachment = GL_COLOR_ATTACHMENT0 + (int)target;
+
+	_dirtyHashedData = true;
+	_dirtyTargetHash = true;
 
 	if(attachment > GL_COLOR_ATTACHMENT15) {
 		ERROR("to more Texture attached to framebuffer");
 		return;
 	}
 
-	TexPtr colorTex = createTexture(GL_RGB); HANDLE_GL_ERROR();
+	TexPtr colorTex = createTexture(format); HANDLE_GL_ERROR();
 
 	colorTex->bind(); HANDLE_GL_ERROR();
 
 	glFramebufferTexture2D (
-			_polytics,
+			_acsessPolytics,
 			attachment,
 			colorTex->getTarget(),
 			colorTex->getID(), 0
@@ -82,7 +96,7 @@ void FrameBuffer::enableDepthBuffer() {
 	_depthBuffer->bind(); HANDLE_GL_ERROR();
 
 	glFramebufferTexture2D (
-			_polytics,
+			_acsessPolytics,
 			GL_DEPTH_ATTACHMENT,
 			_depthBuffer->getTarget(),
 			_depthBuffer->getID(), 0
@@ -97,7 +111,7 @@ void FrameBuffer::enableStencilBuffer() {
 	_stencilBuffer->bind(); HANDLE_GL_ERROR();
 
 	glFramebufferTexture2D (
-			_polytics,
+			_acsessPolytics,
 			GL_STENCIL_ATTACHMENT,
 			_stencilBuffer->getTarget(),
 			_stencilBuffer->getID(), 0
@@ -112,7 +126,7 @@ void FrameBuffer::enableDepthStencilBuffer() {
 	_depthStencilBuffer->bind(); HANDLE_GL_ERROR();
 
 	glFramebufferTexture2D (
-			_polytics,
+			_acsessPolytics,
 			GL_DEPTH_STENCIL_ATTACHMENT,
 			_depthStencilBuffer->getTarget(),
 			_depthStencilBuffer->getID(), 0
@@ -127,7 +141,7 @@ void FrameBuffer::useRenderBuffer() {
 
 	_renderBuffer.bind(); HANDLE_GL_ERROR();
 	glFramebufferRenderbuffer(
-			_polytics,
+			_acsessPolytics,
 			GL_DEPTH_STENCIL_ATTACHMENT,
 			GL_RENDERBUFFER,
 			_renderBuffer.getID()
@@ -143,6 +157,23 @@ void FrameBuffer::bindTextures() {
 void FrameBuffer::unbindTextures() {
 	for (auto [target, texture] : _colorTextures)
 		texture->unbind();
+}
+
+GLuint FrameBuffer::TargetHash() const {
+	if (!_dirtyTargetHash) return _targetHash;
+
+	std::bitset<NUM_RENDERING_TARGET> hash;
+	auto setTarget = [&hash, this] (RenderingTarget target) mutable -> void {
+		hash.set((int)target, hasTarget(target));
+	};
+
+	setTarget(RenderingTarget::SCREEN);
+	setTarget(RenderingTarget::PICKER);
+
+	_targetHash = hash.to_ullong();
+	_dirtyTargetHash = false;
+
+	return _targetHash;
 }
 
 TexPtr FrameBuffer::createTexture(GLenum format, GLenum type) {
@@ -161,4 +192,43 @@ GLuint FrameBuffer::genFB() {
 	GLuint fbo;
 	glGenFramebuffers(1, &fbo);  HANDLE_GL_ERROR();
 	return fbo;
+}
+
+bool FrameBuffer::hasTarget(RenderingTarget target) const {
+	return _colorTextures.contains(target);
+}
+
+float FrameBuffer::getPickerKey(const glm::vec2& mousePosition) {
+	if(!hasTarget(RenderingTarget::PICKER)) {
+		ERROR("Picker image not attached");
+		return 0.0;
+	}
+
+	auto [width, height] = Engine::window.getWindowSize();
+	GLubyte data[sizeof(Object3D::ID_t)];
+
+	bind();
+
+	glReadBuffer(GL_COLOR_ATTACHMENT0 + (int)RenderingTarget::PICKER); HANDLE_GL_ERROR();
+
+	_colorTextures[RenderingTarget::PICKER]->bind();
+
+	glReadPixels(width / 2, height / 2, 1, 1, Object3D::getColorKeyFormat(), GL_UNSIGNED_BYTE, &data);  HANDLE_GL_ERROR();  // NEED FIX
+
+	unbind();
+
+	Object3D::ID_t id;
+	memcpy(&id, data, sizeof(Object3D::ID_t));
+
+	return id;
+}
+
+void FrameBuffer::validateHashedData() {
+	_attachments.clear();
+	for(auto& [target, tex] : _colorTextures) {
+		_attachments.push_back(GL_COLOR_ATTACHMENT0 + (int)target);
+	}
+	_sizeOfAttachment = _attachments.size();
+
+	_dirtyHashedData = false;
 }

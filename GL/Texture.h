@@ -13,6 +13,9 @@
 #include "../CreateAsPointer.hpp"
 #include "globject.h"
 
+constexpr static int NUM_TEXTURE_UNIT = 7;
+constexpr static int NUM_RENDERING_TARGET = 2;
+
 enum class TextureUnit {
 	Ambient  =0,
 	Diffuse  =1,
@@ -20,12 +23,12 @@ enum class TextureUnit {
 	Rougness =3,
 	SkyBox   =4,
 	Normal   =5,
-	Height   =6,
-	Screen   =7
+	Height   =6
 };
 
 enum class RenderingTarget {
-	SCREEN = 0
+	SCREEN = 0,
+	PICKER = 1
 };
 
 enum class BoxSide {

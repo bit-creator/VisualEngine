@@ -1,8 +1,9 @@
 #include "object3d.h"
+#include <GL/glew.h>
 
 Object3D::Object3D() noexcept
     : Node(NodeType::NODE_OBJECT)
-//    , _material ( std::make_shared<Material>() )
+	, _ID(0)
 {  }
 
 Object3D::Object3D(MaterialPtr material) noexcept
@@ -29,6 +30,7 @@ GeometryPtr Object3D::getGeometry() const noexcept
 Object3D::Object3D(const Object3D &oth) noexcept
 	: Node(oth)
 	, _geom(oth._geom)
+	, _ID(oth._ID)
 	, _material(oth._material)
 	{
 }
@@ -48,3 +50,44 @@ void Object3D::rayCastImpl(Ray &ray, std::list<Intersection> &list) {
 	}
 }
 
+Object3D::ID_t Object3D::getID() const {
+	return _ID;
+}
+
+glm::vec4 Object3D::getColorKey() const {
+	GLubyte id[sizeof(_ID)];
+	memcpy(id, &_ID, sizeof(Object3D::ID_t));
+
+	glm::vec4 res;
+
+	switch (sizeof(ID_t)) {
+	case 1: res = glm::vec4(id[0], 0.0, 0.0, 0.0);		 break;
+	case 2: res = glm::vec4(id[0], id[1], 0.0, 0.0);	 break;
+	case 3: res = glm::vec4(id[0], id[1], id[2], 0.0);	 break;
+	case 4: res = glm::vec4(id[0], id[1], id[2], id[3]); break;
+	default: ERROR("Object3D ID very big");
+	};
+
+	return res / 255.0f;
+}
+
+void Object3D::setID(Object3D::ID_t id) {
+	_ID = id;
+}
+
+void Object3D::setClicable(bool clicable) {
+	_clicable = clicable;
+}
+
+bool Object3D::isClicable() const {
+	return _clicable;
+}
+
+void Object3D::resetID() {
+	_ID = 0;
+}
+
+Object3D* Object3D::search(int id) {
+	if (id == _ID) return this;
+	return nullptr;
+}

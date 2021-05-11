@@ -98,19 +98,18 @@ public:
     }
 
     void onMouseClick(int button, int action, int mode) noexcept {
-    	auto res = scene.getRoot()->rayCast(scene.getCamera()->getRay(glm::vec2(0.0, 0.0)));
-    	if (res.empty()) {
-    		std::cout << "no object" << std::endl;
-    	} else {
-    		Intersection* el = &(res.front());
-    		for (auto elem : res) if(elem._distance <= el->_distance) el = &elem;
-    			if(el->_obj->getMaterial() == _selected) {
-    				el->_obj->setMaterial(_regular);
-    			} else if (el->_obj->getMaterial() == _regular) {
-    				el->_obj->setMaterial(_selected);
-    			} else if(el->_obj->getMaterial() == _bump) {
-    		    	dir *= -1;
+    	auto& eng = Engine::engine();
+
+    	if (auto id = eng.getPickerKey(glm::vec2(0.0, 0.0)); id) {
+    		if (auto res = scene.getRoot()->search(id); res) {
+    			if(res->getMaterial() == _selected) {
+    				res->setMaterial(_regular);
+    			} else if (res->getMaterial() == _regular) {
+    				res->setMaterial(_selected);
+    			} else if(res->getMaterial() == _bump) {
+    				dir *= -1;
     			}
+    		}
     	}
     }
 
@@ -178,9 +177,15 @@ void DemoSample() {
     auto moonObj  = Object3D::createSharedThisPtr(moon);
     auto cubeObj  = Object3D::createSharedThisPtr(simple);
 
+    sunObj->setClicable(true);
+    moonObj->setClicable(true);
+    earthObj->setClicable(true);
+    cubeObj->setClicable(true);
+
     std::vector<ObjPtr> electrons{10, ObjPtr()};
     for(auto& el : electrons){
     	el = Object3D::createSharedThisPtr(glossy);
+    	el->setClicable(true);
     }
 
     sunObj->setGeometry(sphereGeom);

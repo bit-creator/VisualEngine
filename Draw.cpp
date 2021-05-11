@@ -14,6 +14,7 @@
 bool operator ==(const Draw& lhs, const Draw& rhs) noexcept {
 	return lhs._type                 == rhs._type
 		&& lhs._attribHash           == rhs._attribHash
+		&& lhs._renderTargets        == rhs._renderTargets
 		&& lhs._numOfLight           == rhs._numOfLight
 		&& lhs._hasAmbientMap        == rhs._hasAmbientMap
 		&& lhs._hasDiffuseMap        == rhs._hasDiffuseMap
@@ -26,29 +27,67 @@ bool operator ==(const Draw& lhs, const Draw& rhs) noexcept {
 }
 
 std::string Draw::genDefines() const {
-	std::bitset<NUM_ATTRIBUTES> 	hash(_attribHash);
+	std::bitset<NUM_ATTRIBUTES> 		hash(_attribHash);
+	std::bitset<NUM_RENDERING_TARGET> 	targetsHash(_renderTargets);
+
 	std::string defines = Engine::window.getVersion();
 
-	auto atribDefGenerator = [](std::string Attr, int loc) -> std::string {
-		return "#define HAS_" + Attr + "_ATTRUBUTE\n"
-				+ "#define " + Attr + "_ATTRIBUTE_LOCATION "
-				+ std::to_string(loc)
+	auto shaderTypeDefGenerator = [&defines, this](ShaderType type, std::string def) mutable -> void {
+		if (_type == (int)type) defines += "#define " +  def + "\n";
+	};
+
+	auto atribDefGenerator = [&defines, hash, this](Attribute attr, std::string def) -> void {
+		if (hash[(int)attr]) defines += "#define HAS_" + def + "_ATTRUBUTE\n"
+				+ "#define " + def + "_ATTRIBUTE_LOCATION "
+				+ std::to_string((int)attr)
 				+ "\n";
 	};
 
-	if (_type == (int)ShaderType::SHADER_BUMP)   defines += "#define BUMP\n";
-	if (_type == (int)ShaderType::SHADER_GLASS)  defines += "#define GLASS\n";
-	if (_type == (int)ShaderType::SHADER_GLOSSY) defines += "#define GLOSSY\n";
-	if (_type == (int)ShaderType::SHADER_PHONG)  defines += "#define PHONG\n";
-	if (_type == (int)ShaderType::SHADER_SKYBOX) defines += "#define SKYBOX\n";
-	if (_type == (int)ShaderType::SHADER_SCREEN) defines += "#define SCREEN\n";
+	auto targetDefGenerator = [&defines, targetsHash, this](RenderingTarget target, std::string def) -> void {
+		if(targetsHash[(int)target]) defines += "#define HAS_" + def + "_TARGET\n"
+				+ "#define " + def + "_TARGET_LOCATION "
+				+ std::to_string((int)target)
+				+ "\n";
+	};
 
-	if (hash[(int)Attribute::ATTRIB_BITANGENT]) defines += atribDefGenerator("BITANGENT", (int)Attribute::ATTRIB_BITANGENT);
-	if (hash[(int)Attribute::ATTRIB_COLOR])     defines += atribDefGenerator("COLOR",     (int)Attribute::ATTRIB_COLOR);
-	if (hash[(int)Attribute::ATTRIB_NORMAL])    defines += atribDefGenerator("NORMAL",    (int)Attribute::ATTRIB_NORMAL);
-	if (hash[(int)Attribute::ATTRIB_POSITION])  defines += atribDefGenerator("POSITION",  (int)Attribute::ATTRIB_POSITION);
-	if (hash[(int)Attribute::ATTRIB_TANGENT])   defines += atribDefGenerator("TANGENT",   (int)Attribute::ATTRIB_TANGENT);
-	if (hash[(int)Attribute::ATTRIB_TEX])       defines += atribDefGenerator("TEXTURE",   (int)Attribute::ATTRIB_TEX);
+	shaderTypeDefGenerator(ShaderType::SHADER_BUMP,   "BUMP");
+	shaderTypeDefGenerator(ShaderType::SHADER_GLASS,  "GLASS");
+	shaderTypeDefGenerator(ShaderType::SHADER_GLOSSY, "GLOSSY");
+	shaderTypeDefGenerator(ShaderType::SHADER_PHONG,  "PHONG");
+	shaderTypeDefGenerator(ShaderType::SHADER_SKYBOX, "SKYBOX");
+	shaderTypeDefGenerator(ShaderType::SHADER_SCREEN, "SCREEN");
+
+	atribDefGenerator(Attribute::ATTRIB_BITANGENT, "BITANGENT");
+	atribDefGenerator(Attribute::ATTRIB_COLOR, 	   "COLOR");
+	atribDefGenerator(Attribute::ATTRIB_NORMAL,    "NORMAL");
+	atribDefGenerator(Attribute::ATTRIB_POSITION,  "POSITION");
+	atribDefGenerator(Attribute::ATTRIB_TANGENT,   "TANGENT");
+	atribDefGenerator(Attribute::ATTRIB_TEX,       "TEXTURE");
+
+	targetDefGenerator(RenderingTarget::SCREEN, "SCREEN");
+	targetDefGenerator(RenderingTarget::PICKER, "PICKER");
+
+	if (targetsHash[(int)RenderingTarget::PICKER]) {
+		defines += "#define PICKER_COMPONENT " + std::to_string(sizeof(Object3D::ID_t)) + "\n";
+		switch (sizeof(Object3D::ID_t)) {
+		case 1:
+			defines += "#define PICKER_INTERNAL_TYPE float\n";
+			defines += "#define PICKER_SWIZZLE .r\n";
+			break;
+		case 2:
+			defines += "#define PICKER_INTERNAL_TYPE vec2\n";
+			defines += "#define PICKER_SWIZZLE .rg\n";
+			break;
+		case 3:
+			defines += "#define PICKER_INTERNAL_TYPE vec3\n";
+			defines += "#define PICKER_SWIZZLE .rgb\n";
+			break;
+		case 4:
+			defines += "#define PICKER_INTERNAL_TYPE vec4\n";
+			defines += "#define PICKER_SWIZZLE\n";
+			break;
+		}
+	}
 
 	if (_hasAmbientMap)		   defines += "#define HAS_AMBIENT_MAP\n";
 	if (_hasDiffuseMap)		   defines += "#define HAS_DIFFUSE_MAP\n";
@@ -60,11 +99,10 @@ std::string Draw::genDefines() const {
 	if (_hasPerspectiveCamera) defines += "#define USE_PERSPECTIVE_CAMERA\n";
 
 	defines += "#define ATTRIBUTE(LOCATION) layout(location = LOCATION) in\n";
+	defines += "#define TARGET(LOCATION) layout(location = LOCATION) out\n";
+
 	defines += "#define NUM_OF_LIGHT " + std::to_string(_numOfLight) + "\n";
 
 	return defines;
 
 }
-
-
-

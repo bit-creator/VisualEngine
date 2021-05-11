@@ -1,5 +1,4 @@
 //#if defined(BUMP) || defined(GLASS) || defined(GLOSSY) || defined(PHONG)
- 
 ATTRIBUTE(POSITION_ATTRIBUTE_LOCATION) 	vec3 aCoord;
 ATTRIBUTE(NORMAL_ATTRIBUTE_LOCATION) 	vec3 aNormal;
 

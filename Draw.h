@@ -15,9 +15,10 @@
 static constexpr int NUM_OF_BINARY_PARAM = 8;
 
 struct Draw {
-	int						 	_type =0;
-	int							_attribHash =0;
-	int							_numOfLight =1;
+	int						 	_type 			=0;
+	int							_attribHash 	=0;
+	int 						_renderTargets 	=0;
+	int							_numOfLight 	=1;
 
 	bool						_hasAmbientMap  =false;
 	bool						_hasDiffuseMap  =false;
@@ -45,6 +46,7 @@ struct std::hash<Draw> {
 		size_t seed = draw._type;
 
 		hasher(seed, draw._attribHash);
+		hasher(seed, draw._renderTargets);
 		hasher(seed, draw._numOfLight);
 
 		std::bitset<NUM_OF_BINARY_PARAM> param;

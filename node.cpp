@@ -158,3 +158,11 @@ Node::~Node() {
 void Node::rayCastImpl(Ray& ray, std::list< Intersection >& list) {
 	for(auto child : _childs) child->rayCastImpl(ray, list);
 }
+
+Object3D* Node::search(int id) {
+	Object3D* res = nullptr;
+	for(auto child : _childs) {
+		res = child->search(id);
+		if(res) return res;
+	} return res;
+}
