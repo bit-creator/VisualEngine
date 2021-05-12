@@ -15,7 +15,8 @@
 static constexpr int NUM_OF_BINARY_PARAM = 8;
 
 struct Draw {
-	int						 	_type 			=0;
+	int						 	_shaderType 	=0;
+	int							_materialType   =0;
 	int							_attribHash 	=0;
 	int 						_renderTargets 	=0;
 	int							_numOfLight 	=1;
@@ -43,8 +44,9 @@ struct std::hash<Draw> {
 			seed ^= val + 0x9e3779b9 + (seed<<6) + (seed>>2);
 		};
 
-		size_t seed = draw._type;
+		size_t seed = draw._materialType;
 
+		hasher(seed, draw._shaderType);
 		hasher(seed, draw._attribHash);
 		hasher(seed, draw._renderTargets);
 		hasher(seed, draw._numOfLight);

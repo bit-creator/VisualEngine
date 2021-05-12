@@ -3,10 +3,14 @@
 
 Engine::Engine() noexcept {
 	_FBO.attachNewColorTex(RenderingTarget::SCREEN);
+	_FBO.attachNewColorTex(RenderingTarget::ALBEDO, GL_RGBA);
+	_FBO.attachNewColorTex(RenderingTarget::NORMAL);
+	_FBO.attachNewColorTex(RenderingTarget::VIEW);
+	_FBO.attachNewColorTex(RenderingTarget::ROUGHNESS, GL_RED);
+	_FBO.attachNewColorTex(RenderingTarget::PICKER, Object3D::getColorKeyFormat());
 //	_FBO.enableDepthBuffer();
 	_FBO.useRenderBuffer();
 
-	_FBO.attachNewColorTex(RenderingTarget::PICKER, Object3D::getColorKeyFormat());
 }
 
 Engine& Engine::engine() noexcept {
@@ -40,7 +44,7 @@ void Engine::run(const Window& window) noexcept {
 
     while (!glfwWindowShouldClose(window))
     {
-    	_FBO.bind();
+        _FBO.bind();
 
     	glEnable(GL_DEPTH_TEST);
 
@@ -56,6 +60,15 @@ void Engine::run(const Window& window) noexcept {
 
         if (_scene -> useSkyBox()) renderSkyBox();
 
+    	glEnable(GL_STENCIL_TEST);
+    	glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+
+    	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+    	glClear(GL_STENCIL_BUFFER_BIT);
+
+    	glStencilFunc(GL_ALWAYS, 1, 0xFF);
+        glStencilMask(0xFF);
+
         const auto& drawList = _scene->getDrawList();
 
         float index = 0.0;
@@ -67,12 +80,24 @@ void Engine::run(const Window& window) noexcept {
         	render(*obj, _scene->getLightList());
         }
 
-        _FBO.unbind();
-
         glDisable(GL_DEPTH_TEST);
 
         _FBO.bindTextures();
-        	renderScreen();
+
+        	glStencilFunc(GL_EQUAL, 1, 0xFF);
+        	glStencilMask(0x00);
+
+        	lightPass(_scene->getLightList());
+
+        	glStencilMask(0xFF);
+        	glDisable(GL_STENCIL_TEST);
+
+        _FBO.unbindTextures();
+
+        _FBO.unbind();
+
+        _FBO.bindTextures();
+        renderScreen();
         _FBO.unbindTextures();
 
         glfwSwapBuffers(window);
@@ -83,7 +108,8 @@ void Engine::run(const Window& window) noexcept {
 void Engine::renderSkyBox() {
 	Draw drawSkyBox;
 
-	drawSkyBox._type = (int)ShaderType::SHADER_SKYBOX;
+	drawSkyBox._shaderType = (int)ShaderType::SHADER_SKYBOX;
+	drawSkyBox._materialType = (int)ShaderType::SHADER_SKYBOX;
 	drawSkyBox._attribHash =_skyBox.getAttributeHash();
 	drawSkyBox._renderTargets = _FBO.TargetHash();
 
@@ -110,15 +136,58 @@ void Engine::renderSkyBox() {
 void Engine::renderScreen() {
 	Draw drawScreen;
 
-	drawScreen._type = (int)ShaderType::SHADER_SCREEN;
+		drawScreen._shaderType = (int)ShaderType::SHADER_TEXTURE_RENDER;
+		drawScreen._materialType = (int)ShaderType::SHADER_TEXTURE_RENDER;
+		drawScreen._renderTargets = _FBO.TargetHash();
+		drawScreen._attribHash = _screen.getAttributeHash();
+
+		ShaderProgram& prg = _factory.getShader(drawScreen);
+		prg.enable();
+
+		prg.setUniform("uScreen", (int)RenderingTarget::SCREEN);
+		prg.setUniform("uKernel", _postProcesingKernel);
+		prg.setUniform("uOffset", 1.0f / 400);
+
+		_screen.bindBuffers();
+
+		glDrawArrays(_screen.getPoligonConnectMode(), 0, _screen.getNumVertexes());
+
+		_screen.unbindBuffers();
+}
+
+void Engine::lightPass(LightList lights) {
+	Draw drawScreen;
+
+	drawScreen._shaderType = (int)ShaderType::SHADER_SCREEN;
+	drawScreen._materialType = (int)ShaderType::SHADER_SCREEN;
+	drawScreen._renderTargets = _FBO.TargetHash();
 	drawScreen._attribHash = _screen.getAttributeHash();
 
 	ShaderProgram& prg = _factory.getShader(drawScreen);
 	prg.enable();
 
-	prg.setUniform("uScreen", (int)RenderingTarget::SCREEN);
-	prg.setUniform("uKernel", _postProcesingKernel);
-	prg.setUniform("uOffset", 1.0f / 400);
+	prg.setUniform("uAlbedoMap", (int)RenderingTarget::ALBEDO);
+	prg.setUniform("uNormalMap", (int)RenderingTarget::NORMAL);
+	prg.setUniform("uViewMap", (int)RenderingTarget::VIEW);
+	prg.setUniform("uRoughnessMap", (int)RenderingTarget::ROUGHNESS);
+	prg.setUniform("uPickerMap", (int)RenderingTarget::PICKER);
+
+    int ind = 0;
+    for(auto light : lights) {
+    	auto dirName = getLightsName(ind).append("lightDir");
+    	auto colName = getLightsName(ind).append("lightColor");
+
+    	auto dir = glm::mat3(light->getWorldMat()) * glm::normalize(glm::vec3(0., 0., 1.));
+    	Color color = light->getColor();
+
+    	prg.setUniform(dirName, dir);
+    	prg.setUniform(colName, color.getColorSource());
+
+		++ind;
+    }
+
+//	prg.setUniform("uKernel", _postProcesingKernel);
+//	prg.setUniform("uOffset", 1.0f / 400);
 
 	_screen.bindBuffers();
 
@@ -143,6 +212,8 @@ void Engine::render(Object3D &obj, LightList lights) noexcept {
     	material->setDrawData(drawData);
     	if (_scene->useSkyBox()) drawData._hasSkyBoxMap   = true;
     }
+
+    drawData._shaderType = (int)ShaderType::SHADER_GEOMETRY_PASS;
 
     ShaderProgram& prg = _factory.getShader(drawData);
     prg.enable();
@@ -170,7 +241,7 @@ void Engine::render(Object3D &obj, LightList lights) noexcept {
 
 //    std::cout << obj.getColorKey() << std::endl;
 
-    prg.setUniform("uObjectColor", obj.getColorKey());
+    prg.setUniform("uObjectColorKey", obj.getColorKey());
 
     int ind = 0;
 

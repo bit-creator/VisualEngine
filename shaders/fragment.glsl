@@ -101,7 +101,8 @@ void main() {
   	}
  
 #	ifdef HAS_SCREEN_TARGET
-  		color = fragmentColor;
+//  		color = fragmentColor;
+  	color = vec4((normal+1)/2, 1.0);
 #	endif // HAS_SCREEN_TARGET
 #	ifdef HAS_PICKER_TARGET
   		objectColor = uObjectColor PICKER_SWIZZLE;

@@ -12,7 +12,8 @@
 #include "GL/vertexarray.h"
 
 bool operator ==(const Draw& lhs, const Draw& rhs) noexcept {
-	return lhs._type                 == rhs._type
+	return lhs._shaderType			 == rhs._shaderType
+		&& lhs._materialType         == rhs._materialType
 		&& lhs._attribHash           == rhs._attribHash
 		&& lhs._renderTargets        == rhs._renderTargets
 		&& lhs._numOfLight           == rhs._numOfLight
@@ -32,8 +33,8 @@ std::string Draw::genDefines() const {
 
 	std::string defines = Engine::window.getVersion();
 
-	auto shaderTypeDefGenerator = [&defines, this](ShaderType type, std::string def) mutable -> void {
-		if (_type == (int)type) defines += "#define " +  def + "\n";
+	auto shaderTypeDefGenerator = [&defines, this](MaterialType type, std::string def) mutable -> void {
+		if (_materialType == (int)type) defines += "#define " +  def + "\n";
 	};
 
 	auto atribDefGenerator = [&defines, hash, this](Attribute attr, std::string def) -> void {
@@ -50,12 +51,10 @@ std::string Draw::genDefines() const {
 				+ "\n";
 	};
 
-	shaderTypeDefGenerator(ShaderType::SHADER_BUMP,   "BUMP");
-	shaderTypeDefGenerator(ShaderType::SHADER_GLASS,  "GLASS");
-	shaderTypeDefGenerator(ShaderType::SHADER_GLOSSY, "GLOSSY");
-	shaderTypeDefGenerator(ShaderType::SHADER_PHONG,  "PHONG");
-	shaderTypeDefGenerator(ShaderType::SHADER_SKYBOX, "SKYBOX");
-	shaderTypeDefGenerator(ShaderType::SHADER_SCREEN, "SCREEN");
+	shaderTypeDefGenerator(MaterialType::MATERIAL_BUMP,   "BUMP");
+	shaderTypeDefGenerator(MaterialType::MATERIAL_GLASS,  "GLASS");
+	shaderTypeDefGenerator(MaterialType::MATERIAL_GLOSSY, "GLOSSY");
+	shaderTypeDefGenerator(MaterialType::MATERIAL_PHONG,  "PHONG");
 
 	atribDefGenerator(Attribute::ATTRIB_BITANGENT, "BITANGENT");
 	atribDefGenerator(Attribute::ATTRIB_COLOR, 	   "COLOR");
@@ -64,8 +63,12 @@ std::string Draw::genDefines() const {
 	atribDefGenerator(Attribute::ATTRIB_TANGENT,   "TANGENT");
 	atribDefGenerator(Attribute::ATTRIB_TEX,       "TEXTURE");
 
-	targetDefGenerator(RenderingTarget::SCREEN, "SCREEN");
-	targetDefGenerator(RenderingTarget::PICKER, "PICKER");
+	targetDefGenerator(RenderingTarget::ALBEDO,    "ALBEDO");
+	targetDefGenerator(RenderingTarget::NORMAL,    "NORMAL");
+	targetDefGenerator(RenderingTarget::VIEW,      "VIEW");
+	targetDefGenerator(RenderingTarget::ROUGHNESS, "ROUGHNESS");
+	targetDefGenerator(RenderingTarget::PICKER,    "PICKER");
+	targetDefGenerator(RenderingTarget::SCREEN,    "SCREEN");
 
 	if (targetsHash[(int)RenderingTarget::PICKER]) {
 		defines += "#define PICKER_COMPONENT " + std::to_string(sizeof(Object3D::ID_t)) + "\n";

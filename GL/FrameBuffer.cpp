@@ -168,6 +168,10 @@ GLuint FrameBuffer::TargetHash() const {
 	};
 
 	setTarget(RenderingTarget::SCREEN);
+	setTarget(RenderingTarget::ALBEDO);
+	setTarget(RenderingTarget::NORMAL);
+	setTarget(RenderingTarget::VIEW);
+	setTarget(RenderingTarget::ROUGHNESS);
 	setTarget(RenderingTarget::PICKER);
 
 	_targetHash = hash.to_ullong();

@@ -67,7 +67,8 @@ void main() {
 			(uFirstRefractiveIndex * uFirstRefractiveIndex) /
 			(uSecondRefractiveIndex * uSecondRefractiveIndex)));
 	
-	vec3 I = normalize(vPos - uCameraPos);
+//	vec3 I = normalize(vPos - uCameraPos);
+	vec3 I = view;
 	vec3 R = refract(I, normal, uFirstRefractiveIndex / uSecondRefractiveIndex);
 	vec3 R_1 = reflect(I, normal);
 	
@@ -75,7 +76,7 @@ void main() {
 		fragmentColor += calculateLighting(vec4(0.0), vec4(0.0), specularColor,
 				-(uLights[i].lightDir), normal, view, rougness) * uLights[i].lightColor;
 	
-	fragmentColor = uGlossyColor * mix(texture(uSkyBox, R), texture(uSkyBox, R_1), dot(normal, I) > BrusterAngle ? 1 : 0);
+	fragmentColor += uGlossyColor * mix(texture(uSkyBox, R), texture(uSkyBox, R_1), dot(normal, I) > BrusterAngle ? 1 : 0);
 
 #	ifdef HAS_SCREEN_TARGET
   		color = fragmentColor;

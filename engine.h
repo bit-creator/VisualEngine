@@ -49,6 +49,7 @@ private:
 
     void renderSkyBox();
     void renderScreen();
+    void lightPass(LightList lights);
 
 public:
     inline static const Window     window = Window(4.6f, 1366u, 720u, "Visual Engine");

@@ -21,7 +21,7 @@ void Material::unbindMaps() {
 }
 
 void Material::setDrawData(Draw &drawData) {
-	drawData._type = (int)_type;
+	drawData._materialType = (int)_type;
 	if(_rougnessMap) drawData._hasRougnessMap = true;
 }
 
