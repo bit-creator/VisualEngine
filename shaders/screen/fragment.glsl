@@ -20,31 +20,45 @@ in vec2 vTexCoord;
 uniform sampler2D uAlbedoMap;
 uniform sampler2D uNormalMap;
 uniform sampler2D uViewMap;
-uniform sampler2D uRoughnessMap;
-//uniform sampler2D uPickerMap;
+//uniform sampler2D uRoughnessMap;
 
 void main() {
     vec4 fragmentColor = vec4(0.0);
+    vec4 normPix = texture(uNormalMap, vTexCoord);
+    vec4 viewPix = texture(uViewMap, vTexCoord);
+    vec4 albdPix = texture(uAlbedoMap, vTexCoord);
 
-    vec3 normal = texture(uNormalMap, vTexCoord).xyz * 2 - 1;
-    vec3 view   = texture(uViewMap,   vTexCoord).xyz * 2 - 1;
+    vec3 normal = normalize(normPix.xyz * 2 - 1);
+    float roughness = normPix.a;
+//    float roughness = 125;
 
-    vec4 diffuseColor = vec4(texture(uAlbedoMap, vTexCoord).xyz, 1.0);
-    float SpecularIntensity = texture(uAlbedoMap, vTexCoord).a;
 
-    float roughness = texture(uRoughnessMap, vTexCoord).r;
+    vec3 view = normalize(viewPix.xyz * 2 - 1);
+    float materialID = viewPix.a;
 
-  	for (uint i = 0; i < NUM_OF_LIGHT; ++i) {
-//  		if (texture(uPickerMap, vTexCoord).r == 0.0) fragmentColor = diffuseColor; else
-  		fragmentColor += calculateLighting(vec4(0.1), diffuseColor, SpecularIntensity * vec4(1.0),
-  			(uLights[i].lightDir), normal, view, roughness) * uLights[i].lightColor;
+    vec4 diffuseColor = vec4(albdPix.xyz, 1.0);
+    float SpecularIntensity = albdPix.a;
+
+    if(materialID == 0.0)
+    	for (uint i = 0; i < NUM_OF_LIGHT; ++i) {
+    		fragmentColor += calculateLighting(vec4(0.1), diffuseColor, SpecularIntensity * vec4(1.0),
+    				(uLights[i].lightDir), normal, view, 1 / roughness) * uLights[i].lightColor;
   	}
 
-#	ifdef GLOSSY
+#	ifdef HAS_SKYBOX_MAP
+  	if(materialID == 1.0) {
+  		float BrusterAngle = sqrt(1 - (
+  					(1.0) /
+  					(1.33 * 1.33)));
 
-//  	fragmentColor += uGlossyColor * mix(texture(uSkyBox, R), texture(uSkyBox, R_1), dot(normal, I) > BrusterAngle ? 1 : 0);
-#	endif // GLOSSY
-//  	fragmentColor.a = 0.0;
+  			vec3 I = view;
+  			vec3 R = refract(I, normal, 1.0 / 1.33);
+  			vec3 R_1 = reflect(I, normal);
+
+  		fragmentColor = diffuseColor * mix(texture(uSkyBox, R), texture(uSkyBox, R_1), dot(normal, I) > BrusterAngle ? 1 : 0);
+  	}
+#	endif // HAS_SKYBOX_MAP
 
 	color = fragmentColor;
+//	color = vec4(roughness);
 }

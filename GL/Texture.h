@@ -14,7 +14,7 @@
 #include "globject.h"
 
 constexpr static int NUM_TEXTURE_UNIT = 7;
-constexpr static int NUM_RENDERING_TARGET = 6;
+constexpr static int NUM_RENDERING_TARGET = 5;
 
 enum class TextureUnit {
 	Ambient  =0,
@@ -30,7 +30,7 @@ enum class RenderingTarget {
 	ALBEDO = 0,
 	NORMAL,
 	VIEW,
-	ROUGHNESS,
+//	ROUGHNESS,
 	PICKER,
 	SCREEN,
 };

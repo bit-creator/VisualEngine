@@ -3,10 +3,10 @@
 
 Engine::Engine() noexcept {
 	_FBO.attachNewColorTex(RenderingTarget::SCREEN);
-	_FBO.attachNewColorTex(RenderingTarget::ALBEDO, GL_RGBA);
+	_FBO.attachNewColorTex(RenderingTarget::ALBEDO);
 	_FBO.attachNewColorTex(RenderingTarget::NORMAL);
 	_FBO.attachNewColorTex(RenderingTarget::VIEW);
-	_FBO.attachNewColorTex(RenderingTarget::ROUGHNESS, GL_RED);
+//	_FBO.attachNewColorTex(RenderingTarget::ROUGHNESS, GL_RED);
 	_FBO.attachNewColorTex(RenderingTarget::PICKER, Object3D::getColorKeyFormat());
 //	_FBO.enableDepthBuffer();
 	_FBO.useRenderBuffer();
@@ -158,6 +158,7 @@ void Engine::renderScreen() {
 void Engine::lightPass(LightList lights) {
 	Draw drawScreen;
 
+	if (_scene -> useSkyBox()) drawScreen._hasSkyBoxMap = true;
 	drawScreen._shaderType = (int)ShaderType::SHADER_SCREEN;
 	drawScreen._materialType = (int)ShaderType::SHADER_SCREEN;
 	drawScreen._renderTargets = _FBO.TargetHash();
@@ -169,8 +170,11 @@ void Engine::lightPass(LightList lights) {
 	prg.setUniform("uAlbedoMap", (int)RenderingTarget::ALBEDO);
 	prg.setUniform("uNormalMap", (int)RenderingTarget::NORMAL);
 	prg.setUniform("uViewMap", (int)RenderingTarget::VIEW);
-	prg.setUniform("uRoughnessMap", (int)RenderingTarget::ROUGHNESS);
 	prg.setUniform("uPickerMap", (int)RenderingTarget::PICKER);
+    if (_scene -> useSkyBox()) {
+    	_scene->getSkyBox()->bind(TextureUnit::SkyBox);
+		prg.setUniform("uSkyBox",      (int)TextureUnit::SkyBox);
+    }
 
     int ind = 0;
     for(auto light : lights) {
@@ -232,7 +236,7 @@ void Engine::render(Object3D &obj, LightList lights) noexcept {
 
     material->setUniforms(prg);
 
-    prg.setUniform("uRoughness", 1 / material->getRoughness());
+//    prg.setUniform("uRoughness", 1 / material->getRoughness());
     prg.setUniform("uCamPos", cam->getPosition());
 
     prg.setUniform("uMVPMat", mVPMat);

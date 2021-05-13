@@ -34,7 +34,8 @@ std::string Draw::genDefines() const {
 	std::string defines = Engine::window.getVersion();
 
 	auto shaderTypeDefGenerator = [&defines, this](MaterialType type, std::string def) mutable -> void {
-		if (_materialType == (int)type) defines += "#define " +  def + "\n";
+		if (_materialType == (int)type) defines += "#define " +  def + "\n"
+				+ "#define MATERIAL_ID " + std::to_string((int)type + 1) + "\n";
 	};
 
 	auto atribDefGenerator = [&defines, hash, this](Attribute attr, std::string def) -> void {
@@ -66,7 +67,7 @@ std::string Draw::genDefines() const {
 	targetDefGenerator(RenderingTarget::ALBEDO,    "ALBEDO");
 	targetDefGenerator(RenderingTarget::NORMAL,    "NORMAL");
 	targetDefGenerator(RenderingTarget::VIEW,      "VIEW");
-	targetDefGenerator(RenderingTarget::ROUGHNESS, "ROUGHNESS");
+//	targetDefGenerator(RenderingTarget::ROUGHNESS, "ROUGHNESS");
 	targetDefGenerator(RenderingTarget::PICKER,    "PICKER");
 	targetDefGenerator(RenderingTarget::SCREEN,    "SCREEN");
 

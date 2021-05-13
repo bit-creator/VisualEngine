@@ -40,6 +40,10 @@ void PhongMaterial::setUniforms(const ShaderProgram &prg) {
     prg.setUniform("uTexAmbient",  (int)TextureUnit::Ambient);
     prg.setUniform("uTexDiffuse",  (int)TextureUnit::Diffuse);
     prg.setUniform("uTexSpecular", (int)TextureUnit::Specular);
+    prg.setUniform("uSpecularIntensivity", _specularColor.getColorSource().x);
+
+
+
 }
 
 void PhongMaterial::bindMaps() {

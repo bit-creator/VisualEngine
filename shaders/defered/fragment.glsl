@@ -1,10 +1,10 @@
 //#ifdef DEFERED
 
 TARGET(ALBEDO_TARGET_LOCATION)	  vec4  tAlbedo;
-TARGET(NORMAL_TARGET_LOCATION)	  vec3  tNormal;
-TARGET(VIEW_TARGET_LOCATION)	  vec3  tView;
+TARGET(NORMAL_TARGET_LOCATION)	  vec4  tNormal;
+TARGET(VIEW_TARGET_LOCATION)	  vec4  tView;
 
-TARGET(ROUGHNESS_TARGET_LOCATION) float tRoughness;
+//TARGET(ROUGHNESS_TARGET_LOCATION) float tRoughness;
 
 #ifdef HAS_PICKER_TARGET
 	TARGET(PICKER_TARGET_LOCATION) PICKER_INTERNAL_TYPE objectColorKey;
@@ -61,17 +61,22 @@ in GEOMETRY_PASS {
 } g_in;
 
 void main() {
-	vec4 albedo = vec4(0.0);
+	vec4 result_albedo = vec4(0.0);
+	vec4 result_normal = vec4(0.0);
+	vec4 result_view   = vec4(0.0);
+
 	vec3 normal = g_in.gNormal;
 	vec3 view   = normalize(g_in.gView);
 
-	float rougness = 1.0;
+	float roughness = 1.0;
+	float materialID = 0.0;
 
 	vec4 ambientColor = uAmbientColor;
 	vec4 albedoColor = vec4(0.0);
 
 #	ifdef GLOSSY
 	albedoColor = uGlossyColor;
+	materialID = 1.0;
 #	else
 	albedoColor = uDiffuseColor;
 #endif // GLOSSY
@@ -101,19 +106,31 @@ void main() {
   		specularColor = uSpecularIntensivity;
 #	endif // HAS_SPECULAR_MAP
 #	ifdef HAS_ROUGNESS_MAP
-  		rougness *= texture(uTexRougness, texCoord);
+  		roughness *= texture(uTexRougness, texCoord).r;
 #	else
-  		rougness *= uRoughness;
+  		roughness *= uRoughness;
 #	endif // HAS_ROUGNESS_MAP
 
-  	albedo.xyz = albedoColor.xyz;
-  	albedo.a   = specularColor;
   	normal = normalize(normal);
+  	normal = (normal + 1) / 2;
 
-  	tNormal = (normal + 1) / 2;
-  	tView   = (view + 1) / 2;
-  	tAlbedo = albedo;
-  	tRoughness = rougness;
+  	view   = normalize(view);
+  	view   = (view + 1) / 2;
+
+
+  	result_albedo.xyz = albedoColor.xyz;
+  	result_albedo.a   = specularColor;
+
+  	result_normal.xyz = normal;
+  	result_normal.a   = roughness;
+
+  	result_view.xyz   = view;
+  	result_view.a   = materialID;
+
+  	tNormal = result_normal;
+  	tView   = result_view;
+  	tAlbedo = result_albedo;
+//  	tRoughness = rougness;
 
 #	ifdef HAS_PICKER_TARGET
   		objectColorKey = uObjectColorKey PICKER_SWIZZLE;

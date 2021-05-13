@@ -59,7 +59,7 @@ public:
 	void enableDepthStencilBuffer();
 	void useRenderBuffer();
 
-	void attachNewColorTex(RenderingTarget target, GLenum format =GL_RGB);
+	void attachNewColorTex(RenderingTarget target, GLenum format =GL_RGBA);
 
 private:
 	GLuint genFB();

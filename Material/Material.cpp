@@ -66,7 +66,6 @@ MaterialType Material::getType() const {
 	return _type;
 }
 
-
 const GLenum Material::getPolygonsFillMode() const noexcept {
 	return _fillMode;
 }
