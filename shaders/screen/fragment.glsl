@@ -1,8 +1,8 @@
-//#ifdef HAS_SCREEN_TARGET
+#ifdef HAS_SCREEN_TARGET
 	TARGET(SCREEN_TARGET_LOCATION) vec4 color;
-//#else
-//	out vec4 color;
-//#endif // SCREEN_TARGET_LOCATION
+#else
+	out vec4 color;
+#endif // SCREEN_TARGET_LOCATION
 
 struct Light {
 	vec3 lightDir;
@@ -32,7 +32,6 @@ void main() {
     float roughness = normPix.a;
 //    float roughness = 125;
 
-
     vec3 view = normalize(viewPix.xyz * 2 - 1);
     float materialID = viewPix.a;
 
@@ -60,5 +59,5 @@ void main() {
 #	endif // HAS_SKYBOX_MAP
 
 	color = fragmentColor;
-//	color = vec4(roughness);
+//	color = vec4(1.0);
 }

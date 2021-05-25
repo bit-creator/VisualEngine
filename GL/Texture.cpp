@@ -89,10 +89,10 @@ void Texture::setEmpty() {
 	unbind();
 }
 
-void Texture::allocate(GLuint width, GLuint height, GLenum format, GLenum type) {
+void Texture::allocate(GLuint width, GLuint height, GLenum format,  GLenum internalFormat, GLenum type) {
 	bind();
 
-	glTexImage2D(getTarget(), 0, format, width, height, 0, format,  type, NULL); HANDLE_GL_ERROR();
+	glTexImage2D(getTarget(), 0, internalFormat, width, height, 0, format,  type, NULL); HANDLE_GL_ERROR();
 
 	glTexParameteri(getTarget(), GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(getTarget(), GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -141,8 +141,9 @@ Texture2D::Texture2D(const char *name)
 	loadImage(name);
 }
 
-void Texture2D::allocate(GLuint width, GLuint height, GLenum format, GLenum type) {
-	Texture::allocate(width, height, format, type);
+void Texture2D::allocate(GLuint width, GLuint height, GLenum format, GLenum internalFormat, GLenum type) {
+	if(internalFormat == GL_ZERO) internalFormat = format;
+	Texture::allocate(width, height, format, internalFormat, type);
 }
 
 void Texture::bind(GLuint index) {

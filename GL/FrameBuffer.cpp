@@ -21,6 +21,7 @@ FrameBuffer::FrameBuffer(GLenum pol)
 }
 
 FrameBuffer::~FrameBuffer() {
+	unbind();
 	glDeleteFramebuffers(1, &getID()); HANDLE_GL_ERROR();
 }
 
@@ -41,6 +42,7 @@ void FrameBuffer::bind() {
 }
 
 bool FrameBuffer::readyToWork() {
+	bind();
 	bool ready = glCheckFramebufferStatus(_acsessPolytics) == GL_FRAMEBUFFER_COMPLETE; HANDLE_GL_ERROR();
 	return ready;
 }
@@ -64,13 +66,12 @@ GLuint FrameBuffer::getNumberOfTarget() const {
 void FrameBuffer::attachNewColorTex(RenderingTarget target, GLenum format) {
 	GLuint attachment = GL_COLOR_ATTACHMENT0 + (int)target;
 
-	_dirtyHashedData = true;
-	_dirtyTargetHash = true;
-
 	if(attachment > GL_COLOR_ATTACHMENT15) {
 		ERROR("to more Texture attached to framebuffer");
 		return;
 	}
+
+	bind();
 
 	TexPtr colorTex = createTexture(format); HANDLE_GL_ERROR();
 
@@ -87,10 +88,17 @@ void FrameBuffer::attachNewColorTex(RenderingTarget target, GLenum format) {
 
 	_colorTextures[target] = colorTex;
 
+	_dirtyHashedData = true;
+	_dirtyTargetHash = true;
+
+	bind();
+
 	return;
 }
 
 void FrameBuffer::enableDepthBuffer() {
+	bind();
+
 	_depthBuffer = createTexture(GL_DEPTH_COMPONENT); HANDLE_GL_ERROR();
 
 	_depthBuffer->bind(); HANDLE_GL_ERROR();
@@ -106,7 +114,9 @@ void FrameBuffer::enableDepthBuffer() {
 }
 
 void FrameBuffer::enableStencilBuffer() {
-	_stencilBuffer = createTexture(GL_STENCIL_INDEX); HANDLE_GL_ERROR();
+	bind();
+
+	_stencilBuffer = createTexture(GL_STENCIL_INDEX, GL_STENCIL_INDEX8); HANDLE_GL_ERROR();
 
 	_stencilBuffer->bind(); HANDLE_GL_ERROR();
 
@@ -121,7 +131,9 @@ void FrameBuffer::enableStencilBuffer() {
 }
 
 void FrameBuffer::enableDepthStencilBuffer() {
-	_depthStencilBuffer = createTexture(GL_DEPTH24_STENCIL8, GL_UNSIGNED_INT_24_8); HANDLE_GL_ERROR();
+	bind();
+
+	_depthStencilBuffer = createTexture(GL_DEPTH_STENCIL, GL_DEPTH24_STENCIL8, GL_UNSIGNED_INT_24_8); HANDLE_GL_ERROR();
 
 	_depthStencilBuffer->bind(); HANDLE_GL_ERROR();
 
@@ -133,10 +145,11 @@ void FrameBuffer::enableDepthStencilBuffer() {
 	); HANDLE_GL_ERROR();
 
 	_depthStencilBuffer->unbind(); HANDLE_GL_ERROR();
-
 }
 
 void FrameBuffer::useRenderBuffer() {
+	bind();
+
 	_renderBuffer.allocate(); HANDLE_GL_ERROR();
 
 	_renderBuffer.bind(); HANDLE_GL_ERROR();
@@ -180,13 +193,13 @@ GLuint FrameBuffer::TargetHash() const {
 	return _targetHash;
 }
 
-TexPtr FrameBuffer::createTexture(GLenum format, GLenum type) {
+TexPtr FrameBuffer::createTexture(GLenum format, GLenum internalformat, GLenum type) {
 	auto [width, height] = Engine::window.getWindowSize();
 
 	auto tex = Texture2D::create(); HANDLE_GL_ERROR();
 
 	tex->bind(); HANDLE_GL_ERROR();
-	tex->allocate(width, height, format, type); HANDLE_GL_ERROR();
+	tex->allocate(width, height, format, internalformat, type); HANDLE_GL_ERROR();
 	tex->unbind(); HANDLE_GL_ERROR();
 
 	return tex;

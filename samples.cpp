@@ -100,14 +100,16 @@ public:
     void onMouseClick(int button, int action, int mode) noexcept {
     	auto& eng = Engine::engine();
 
-    	if (auto id = eng.getPickerKey(glm::vec2(0.0, 0.0)); id) {
-    		if (auto res = scene.getRoot()->search(id); res) {
-    			if(res->getMaterial() == _selected) {
-    				res->setMaterial(_regular);
-    			} else if (res->getMaterial() == _regular) {
-    				res->setMaterial(_selected);
-    			} else if(res->getMaterial() == _bump) {
-    				dir *= -1;
+    	if(button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE) {
+    		if (auto id = eng.getPickerKey(glm::vec2(0.0, 0.0)); id) {
+    			if (auto res = scene.getRoot()->search(id); res) {
+    				if(res->getMaterial() == _selected) {
+    					res->setMaterial(_regular);
+    				} else if (res->getMaterial() == _regular) {
+    					res->setMaterial(_selected);
+    				} else if(res->getMaterial() == _bump) {
+    					dir *= -1;
+    				}
     			}
     		}
     	}
@@ -122,15 +124,20 @@ void DemoSample() {
 
     auto scene = Scene::create();
 
-    glm::mat3 blurKernel = {
-    	1.0, 2.0, 1.0,
-    	2.0, 4.0, 2.0,
-    	1.0, 2.0, 1.0
+//    glm::mat3 blurKernel = {
+//    	1.0, 2.0, 1.0,
+//    	2.0, 4.0, 2.0,
+//    	1.0, 2.0, 1.0
+//    };
+//
+//    blurKernel /= 16;
+//
+    glm::mat3 indenityKernel = {
+    	0, 0, 0,
+		0, 1, 0,
+		0, 0, 0
     };
-
-    blurKernel /= 16;
-
-    eng.setPostProcesingKernel(blurKernel);
+    eng.setPostProcesingKernel(indenityKernel);
 
     eng.setScene(scene);
 
@@ -277,6 +284,7 @@ void DemoSample() {
     salarySystem->setEnabled(true);
 
     cubeObj->setPosition(glm::vec3(0.0, 0.0, 4.0));
+//    cubeObj->setScale(glm::vec3(1.0, 1.0, 50.0));
     atom->setPosition(cubeObj->getPosition());
     moonObj->setPosition(glm::vec3(1.0f, 0.0f, 0.0f));
     planetSystem->setPosition(glm::vec3(3.0f, 0.0f, 0.0f));

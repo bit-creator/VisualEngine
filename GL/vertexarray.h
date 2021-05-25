@@ -12,7 +12,8 @@
 #ifndef VERTEXARRAY_H
 #define VERTEXARRAY_H
 
-#include <map>
+#include <array>
+#include <bitset>
 #include <optional>
 
 #include "globject.h"
@@ -32,6 +33,7 @@ constexpr static int NUM_ATTRIBUTES = 6;
 class VertexArray : public GLObject {
 private:
 	std::array < std::optional < Attribute >, NUM_ATTRIBUTES >                   _atributes;
+	std::bitset < NUM_ATTRIBUTES >												 _hash;
 
 public:
 	VertexArray() noexcept;
@@ -47,6 +49,7 @@ public:
     void addAttribute(Attribute attr, GLsizei stride, GLsizei offset) noexcept;
 
     bool hasAttribute(Attribute attr) const noexcept;
+    std::size_t getAttribHash() const;
 
 private:
     GLuint genVAO() noexcept;

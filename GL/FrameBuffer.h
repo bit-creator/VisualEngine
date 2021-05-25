@@ -17,7 +17,7 @@
 #include "Texture.h"
 #include "RenderBuffer.h"
 
-class FrameBuffer final : public GLObject {
+class FrameBuffer : public GLObject {
 private:
 	std::map < RenderingTarget, TexPtr >				_colorTextures;
 	RenderBuffer										_renderBuffer;
@@ -38,7 +38,7 @@ private: // HASHED_DATA
 
 public:
 	FrameBuffer(GLenum pol = GL_FRAMEBUFFER);
-	~FrameBuffer();
+	virtual ~FrameBuffer();
 
 	void bind();
 	void unbind();
@@ -63,7 +63,7 @@ public:
 
 private:
 	GLuint genFB();
-	TexPtr createTexture(GLenum format, GLenum type = GL_UNSIGNED_BYTE);
+	TexPtr createTexture(GLenum format, GLenum internalformat = GL_ZERO, GLenum type = GL_UNSIGNED_BYTE);
 	bool   hasTarget(RenderingTarget target) const;
 	void   validateHashedData();
 };

@@ -27,12 +27,11 @@ enum class TextureUnit {
 };
 
 enum class RenderingTarget {
-	ALBEDO = 0,
+	SCREEN = 0,
+	ALBEDO,
 	NORMAL,
 	VIEW,
-//	ROUGHNESS,
 	PICKER,
-	SCREEN,
 };
 
 enum class BoxSide {
@@ -64,7 +63,7 @@ public:
 protected:
 	void loadImage(const char* name, const GLenum target);
 	void setEmpty();
-	void allocate(GLuint width, GLuint height, GLenum format, GLenum type);
+	void allocate(GLuint width, GLuint height, GLenum format, GLenum internalFormat, GLenum type);
 
 private:
 	GLuint gentex() noexcept;
@@ -85,7 +84,7 @@ public:
 	Texture2D& operator=(Texture2D &&other) =default;
 
 	void loadImage(const char* name);
-	void allocate(GLuint width, GLuint height, GLenum format, GLenum type = GL_UNSIGNED_BYTE);
+	void allocate(GLuint width, GLuint height, GLenum format, GLenum internalFormat =GL_ZERO, GLenum type =GL_UNSIGNED_BYTE);
 };	// CLASS_TEXTURE2D
 
 class TextureCubeMap final : public Texture,

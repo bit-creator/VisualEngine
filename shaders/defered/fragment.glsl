@@ -4,8 +4,6 @@ TARGET(ALBEDO_TARGET_LOCATION)	  vec4  tAlbedo;
 TARGET(NORMAL_TARGET_LOCATION)	  vec4  tNormal;
 TARGET(VIEW_TARGET_LOCATION)	  vec4  tView;
 
-//TARGET(ROUGHNESS_TARGET_LOCATION) float tRoughness;
-
 #ifdef HAS_PICKER_TARGET
 	TARGET(PICKER_TARGET_LOCATION) PICKER_INTERNAL_TYPE objectColorKey;
 #endif // HAS_PICKER_TARGET
@@ -117,8 +115,16 @@ void main() {
   	view   = normalize(view);
   	view   = (view + 1) / 2;
 
+//  	float zNear = 0.1;
+//  	float zFar  = 100;
+
+//  	float z = gl_FragCoord.z * 2.0 - 1.0;
+//  	z = (2.0 * zNear * zFar) / (zFar + zNear - z * (zFar - zNear));
+//  	z /= zFar;
+//  	z -= texture(uLocalThikness, gl_FragCoord.xy).r;
 
   	result_albedo.xyz = albedoColor.xyz;
+//  	result_albedo.xyz = vec3(z);
   	result_albedo.a   = specularColor;
 
   	result_normal.xyz = normal;
@@ -130,7 +136,6 @@ void main() {
   	tNormal = result_normal;
   	tView   = result_view;
   	tAlbedo = result_albedo;
-//  	tRoughness = rougness;
 
 #	ifdef HAS_PICKER_TARGET
   		objectColorKey = uObjectColorKey PICKER_SWIZZLE;

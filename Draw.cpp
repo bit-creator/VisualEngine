@@ -67,7 +67,6 @@ std::string Draw::genDefines() const {
 	targetDefGenerator(RenderingTarget::ALBEDO,    "ALBEDO");
 	targetDefGenerator(RenderingTarget::NORMAL,    "NORMAL");
 	targetDefGenerator(RenderingTarget::VIEW,      "VIEW");
-//	targetDefGenerator(RenderingTarget::ROUGHNESS, "ROUGHNESS");
 	targetDefGenerator(RenderingTarget::PICKER,    "PICKER");
 	targetDefGenerator(RenderingTarget::SCREEN,    "SCREEN");
 

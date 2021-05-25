@@ -24,6 +24,7 @@
 #include "GL/shaderprogram.h"
 #include "GL/Texture.h"
 #include "GL/FrameBuffer.h"
+#include "GL/ShadowBuffer.h"
 
 #include "Geometry/Primitive/cube.h"
 #include "Geometry/Primitive/rect.h"
@@ -36,6 +37,7 @@ private:
     Rect									 _screen;
     ShaderFactory							 _factory;
     FrameBuffer								 _FBO;
+    ShadowBuffer							 _SBO;
     glm::mat3								 _postProcesingKernel;
 
 private:
@@ -52,7 +54,7 @@ private:
     void lightPass(LightList lights);
 
 public:
-    inline static const Window     window = Window(4.6f, 1366u, 720u, "Visual Engine");
+    inline static const Window     window = Window(4.6f, 1920u, 1080u, "Visual Engine");
 
     static Engine&
     engine() noexcept;

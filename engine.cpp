@@ -2,15 +2,19 @@
 #include "GL/FrameBuffer.h"
 
 Engine::Engine() noexcept {
+	_FBO.bind();
+
+	_FBO.attachNewColorTex(RenderingTarget::PICKER, Object3D::getColorKeyFormat());
+	_FBO.attachNewColorTex(RenderingTarget::VIEW);
+	_FBO.attachNewColorTex(RenderingTarget::NORMAL);
 	_FBO.attachNewColorTex(RenderingTarget::SCREEN);
 	_FBO.attachNewColorTex(RenderingTarget::ALBEDO);
-	_FBO.attachNewColorTex(RenderingTarget::NORMAL);
-	_FBO.attachNewColorTex(RenderingTarget::VIEW);
-//	_FBO.attachNewColorTex(RenderingTarget::ROUGHNESS, GL_RED);
-	_FBO.attachNewColorTex(RenderingTarget::PICKER, Object3D::getColorKeyFormat());
 //	_FBO.enableDepthBuffer();
-	_FBO.useRenderBuffer();
+//	_FBO.enableStencilBuffer();
+//	_FBO.enableDepthStencilBuffer();
 
+
+	_FBO.useRenderBuffer();
 }
 
 Engine& Engine::engine() noexcept {
@@ -42,14 +46,19 @@ void Engine::run(const Window& window) noexcept {
 		ERROR("FRAMEBUFFER NOT READY")
 	}
 
+	if (!_SBO.readyToWork()) {
+		ERROR("FRAMEBUFFER NOT READY")
+	}
+
     while (!glfwWindowShouldClose(window))
     {
-        _FBO.bind();
-
-    	glEnable(GL_DEPTH_TEST);
-
     	for(EventListenerPtr listener : _eventListeners)
         	if(listener) listener -> onRender();
+
+    	_FBO.bind();
+        _FBO.bindTextures();
+
+    	glEnable(GL_DEPTH_TEST);
 
         auto c = _scene->getBackgroundColor();
         glClearColor(c.x, c.y, c.z, c.w);
@@ -97,7 +106,7 @@ void Engine::run(const Window& window) noexcept {
         _FBO.unbind();
 
         _FBO.bindTextures();
-        renderScreen();
+        	renderScreen();
         _FBO.unbindTextures();
 
         glfwSwapBuffers(window);
@@ -136,23 +145,23 @@ void Engine::renderSkyBox() {
 void Engine::renderScreen() {
 	Draw drawScreen;
 
-		drawScreen._shaderType = (int)ShaderType::SHADER_TEXTURE_RENDER;
-		drawScreen._materialType = (int)ShaderType::SHADER_TEXTURE_RENDER;
-		drawScreen._renderTargets = _FBO.TargetHash();
-		drawScreen._attribHash = _screen.getAttributeHash();
+	drawScreen._shaderType = (int)ShaderType::SHADER_TEXTURE_RENDER;
+	drawScreen._materialType = (int)ShaderType::SHADER_TEXTURE_RENDER;
+	drawScreen._renderTargets = _FBO.TargetHash();
+	drawScreen._attribHash = _screen.getAttributeHash();
 
-		ShaderProgram& prg = _factory.getShader(drawScreen);
-		prg.enable();
+	ShaderProgram& prg = _factory.getShader(drawScreen);
+	prg.enable();
 
-		prg.setUniform("uScreen", (int)RenderingTarget::SCREEN);
-		prg.setUniform("uKernel", _postProcesingKernel);
-		prg.setUniform("uOffset", 1.0f / 400);
+	prg.setUniform("uScreen", (int)RenderingTarget::SCREEN);
+	prg.setUniform("uKernel", _postProcesingKernel);
+	prg.setUniform("uOffset", 1.0f / 400);
 
-		_screen.bindBuffers();
+	_screen.bindBuffers();
 
-		glDrawArrays(_screen.getPoligonConnectMode(), 0, _screen.getNumVertexes());
+	glDrawArrays(_screen.getPoligonConnectMode(), 0, _screen.getNumVertexes());
 
-		_screen.unbindBuffers();
+	_screen.unbindBuffers();
 }
 
 void Engine::lightPass(LightList lights) {
@@ -170,7 +179,7 @@ void Engine::lightPass(LightList lights) {
 	prg.setUniform("uAlbedoMap", (int)RenderingTarget::ALBEDO);
 	prg.setUniform("uNormalMap", (int)RenderingTarget::NORMAL);
 	prg.setUniform("uViewMap", (int)RenderingTarget::VIEW);
-	prg.setUniform("uPickerMap", (int)RenderingTarget::PICKER);
+
     if (_scene -> useSkyBox()) {
     	_scene->getSkyBox()->bind(TextureUnit::SkyBox);
 		prg.setUniform("uSkyBox",      (int)TextureUnit::SkyBox);
@@ -189,9 +198,6 @@ void Engine::lightPass(LightList lights) {
 
 		++ind;
     }
-
-//	prg.setUniform("uKernel", _postProcesingKernel);
-//	prg.setUniform("uOffset", 1.0f / 400);
 
 	_screen.bindBuffers();
 
@@ -219,8 +225,12 @@ void Engine::render(Object3D &obj, LightList lights) noexcept {
 
     drawData._shaderType = (int)ShaderType::SHADER_GEOMETRY_PASS;
 
+
+
     ShaderProgram& prg = _factory.getShader(drawData);
     prg.enable();
+
+    _FBO.bindTextures();
 
     glm::mat4 modelMat = obj.getWorldMat();
     glm::mat4 viewMat = glm::inverse(cam->getWorldMat());

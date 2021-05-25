@@ -34,4 +34,5 @@ void main() {
     		fragmentColor += samples[ i * j ] * uKernel[i][j];
 
 	color = fragmentColor;
+//	color = vec4(1.0);
 }
