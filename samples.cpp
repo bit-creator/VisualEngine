@@ -179,26 +179,39 @@ void DemoSample() {
     auto planetSystem = Node::create();
     auto salarySystem = Node::create();
 
-    auto sunObj   = Object3D::createSharedThisPtr(sun);
-    auto earthObj = Object3D::createSharedThisPtr(earth);
-    auto moonObj  = Object3D::createSharedThisPtr(moon);
-    auto cubeObj  = Object3D::createSharedThisPtr(simple);
+
+
+    auto sunObj   = eng.objects.allocate(sun, sphereGeom);
+    auto earthObj = eng.objects.allocate(earth, sphereGeom);
+    auto moonObj  = eng.objects.allocate(moon, sphereGeom);
+    auto cubeObj  = eng.objects.allocate(simple, cube);
+
+//    auto sunObj   = Object3D::createSharedThisPtr(sun);
+//    auto earthObj = Object3D::createSharedThisPtr(earth);
+//    auto moonObj  = Object3D::createSharedThisPtr(moon);
+//    auto cubeObj  = Object3D::createSharedThisPtr(simple);
 
     sunObj->setClicable(true);
     moonObj->setClicable(true);
     earthObj->setClicable(true);
     cubeObj->setClicable(true);
 
-    std::vector<ObjPtr> electrons{10, ObjPtr()};
-    for(auto& el : electrons){
-    	el = Object3D::createSharedThisPtr(glossy);
+    std::vector<ObjPtr> electrons;
+//    for(auto el : electrons){
+//    	el = eng.objects.allocate(glossy, sphereGeom);
+//    }
+
+    for(int i = 0; i< 10; ++i) {
+    	auto el = eng.objects.allocate(glossy, sphereGeom);
+    	electrons.push_back(el);
     	el->setClicable(true);
+    	atom->addChild(el);
     }
 
-    sunObj->setGeometry(sphereGeom);
-    earthObj->setGeometry(sphereGeom);
-    moonObj->setGeometry(sphereGeom);
-    cubeObj->setGeometry(cube);
+//    sunObj->setGeometry(sphereGeom);
+//    earthObj->setGeometry(sphereGeom);
+//    moonObj->setGeometry(sphereGeom);
+//    cubeObj->setGeometry(cube);
 
     scene->setSkyBox(spaceSkyBox);
 
@@ -272,9 +285,9 @@ void DemoSample() {
 
     for(auto electron : electrons) {
     	auto currentAngle = index * angle;
-    	electron->setGeometry(sphereGeom);
+//    	electron->setGeometry(sphereGeom);
     	electron->setPosition(glm::vec3(radius* cos(currentAngle), 0, radius * sin(currentAngle)));
-    	atom->addChild(electron);
+//    	atom->addChild(electron);
     	++index;
     }
 

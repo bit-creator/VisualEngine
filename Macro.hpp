@@ -54,7 +54,7 @@
 #	endif // STRING
 #endif // IOSTREAM_INCLUDE
 #ifndef CONSOLE_MESSAGES
-#	define MESSAGE (msg) {  }
+#	define MESSAGE (msg) { #msg }
 #else
 #	define MESSAGE(msg) {	         \
 		std::cout << "|   INFO   | " \
@@ -71,7 +71,7 @@
 	}
 #endif // CONSOLE_MESSAGES
 #ifndef CONSOLE_ERRORS
-#	define ERROR (msg) { "msg"; }
+#	define ERROR (msg) { #msg }
 #else
 #	define ERROR(msg) {	             						\
 		std::cout << "|  ERRORS  | " 						\

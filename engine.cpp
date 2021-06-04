@@ -79,15 +79,23 @@ void Engine::run(const Window& window) noexcept {
         glStencilMask(0xFF);
 
         const auto& drawList = _scene->getDrawList();
+//
+//        float index = 0.0;
+//        for(auto obj : drawList) {
+//        	if(obj->isClicable()) {
+//        		obj->setID(Object3D::maxID - (++index));    // TEMPORARY, CHANGE ARGUMENT TO ++index;
+//        	} else obj->resetID();
+//
+//        	render(*obj, _scene->getLightList());
+//        }
+
 
         float index = 0.0;
-        for(auto obj : drawList) {
-        	if(obj->isClicable()) {
-        		obj->setID(Object3D::maxID - (++index));    // TEMPORARY, CHANGE ARGUMENT TO ++index;
-        	} else obj->resetID();
-
-        	render(*obj, _scene->getLightList());
+        for(auto& obj : objects) {
+        	if(obj.isEnabled())
+        	render(obj, _scene->getLightList());
         }
+
 
         glDisable(GL_DEPTH_TEST);
 

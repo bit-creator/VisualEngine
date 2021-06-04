@@ -114,6 +114,8 @@ bool Node::isEnabled() {
 }
 
 void Node::setEnabled(bool val) {
+	for(auto& child: _childs)
+		child->setEnabled(val);
 	_enabled = val;
 }
 

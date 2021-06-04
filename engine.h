@@ -29,6 +29,8 @@
 #include "Geometry/Primitive/cube.h"
 #include "Geometry/Primitive/rect.h"
 
+#include "NodePool.h"
+
 class Engine
 {
 private:
@@ -55,6 +57,7 @@ private:
 
 public:
     inline static const Window     window = Window(4.6f, 1920u, 1080u, "Visual Engine");
+    ObjectPool					   objects;
 
     static Engine&
     engine() noexcept;

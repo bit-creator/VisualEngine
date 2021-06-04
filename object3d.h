@@ -27,14 +27,13 @@
 #include "GL/vertexarray.h"
 #include "GL/shaderprogram.h"
 #include "Material/Material.h"
+#include "NodePool.h"
 
-class Object3D final :
-	public Node,
-	public MultiSharedCreator < Object3D, Node > {
+class Object3D final : public Node {
 public:
 	using ID_t = std::uint8_t;
 	static constexpr int maxID = std::numeric_limits<ID_t>::max();
-
+	friend ObjectPool;
 private:
 	GeometryPtr                                             _geom;
 	ID_t													_ID = 0;
@@ -47,7 +46,9 @@ public:
 	Object3D() noexcept;
     Object3D(const Object3D& oth) noexcept;
     Object3D(MaterialPtr material) noexcept;
+    Object3D(MaterialPtr material, GeometryPtr geometry) noexcept;
 
+public:
     virtual ~Object3D() noexcept;
 
     void setGeometry(GeometryPtr geometry) noexcept;
@@ -61,12 +62,12 @@ public:
 	Object3D* search(int id) override;
 
 	glm::vec4 getColorKey() const;
-	ID_t getID() const;
-	void setID(ID_t id);
+//	ID_t getID() const;
+//	void setID(ID_t id);
 
 	void setClicable(bool clicable);
 	bool isClicable() const;
-	void resetID();
+
 
 
 	inline constexpr static GLenum getColorKeyFormat() {
@@ -75,6 +76,9 @@ public:
 		if constexpr (sizeof(Object3D::ID_t) == 3) return GL_RGB;
 		if constexpr (sizeof(Object3D::ID_t) == 4) return GL_RGBA;
 	}
+
+private:
+	void resetID();
 };
 
 using ObjPtr = std::shared_ptr < Object3D >;
