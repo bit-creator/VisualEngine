@@ -144,7 +144,7 @@ void DemoSample() {
     auto [width, height] = eng.getWindowSize();
     float aspect = 1.0 * width / height;
 
-    auto headLighter = Light::createSharedThisPtr(LightDirectional());
+    auto headLighter = Light::create(LightType::LIGHT_DIRECTIONAL);
     auto cam = Camera::createSharedThisPtr(PerspectiveCamera(PI / 3, aspect, 0.1, 100));
 
     auto controler = CameraControl::create(cam);
@@ -179,17 +179,10 @@ void DemoSample() {
     auto planetSystem = Node::create();
     auto salarySystem = Node::create();
 
-
-
-    auto sunObj   = eng.objects.allocate(sun, sphereGeom);
-    auto earthObj = eng.objects.allocate(earth, sphereGeom);
-    auto moonObj  = eng.objects.allocate(moon, sphereGeom);
-    auto cubeObj  = eng.objects.allocate(simple, cube);
-
-//    auto sunObj   = Object3D::createSharedThisPtr(sun);
-//    auto earthObj = Object3D::createSharedThisPtr(earth);
-//    auto moonObj  = Object3D::createSharedThisPtr(moon);
-//    auto cubeObj  = Object3D::createSharedThisPtr(simple);
+    auto sunObj   = Object3D::create(sun, sphereGeom);
+    auto earthObj = Object3D::create(earth, sphereGeom);
+    auto moonObj  = Object3D::create(moon, sphereGeom);
+    auto cubeObj  = Object3D::create(simple, cube);
 
     sunObj->setClicable(true);
     moonObj->setClicable(true);
@@ -197,21 +190,13 @@ void DemoSample() {
     cubeObj->setClicable(true);
 
     std::vector<ObjPtr> electrons;
-//    for(auto el : electrons){
-//    	el = eng.objects.allocate(glossy, sphereGeom);
-//    }
 
     for(int i = 0; i< 10; ++i) {
-    	auto el = eng.objects.allocate(glossy, sphereGeom);
+    	auto el = Object3D::create(glossy, sphereGeom);
     	electrons.push_back(el);
     	el->setClicable(true);
     	atom->addChild(el);
     }
-
-//    sunObj->setGeometry(sphereGeom);
-//    earthObj->setGeometry(sphereGeom);
-//    moonObj->setGeometry(sphereGeom);
-//    cubeObj->setGeometry(cube);
 
     scene->setSkyBox(spaceSkyBox);
 

@@ -18,6 +18,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtx/quaternion.hpp>
 
+#include "AbstractNodePool.h"
 #include "node.h"
 #include "Geometry/geometry.h"
 #include "camera.h"
@@ -27,7 +28,6 @@
 #include "GL/vertexarray.h"
 #include "GL/shaderprogram.h"
 #include "Material/Material.h"
-#include "NodePool.h"
 
 class Object3D final : public Node {
 public:
@@ -50,6 +50,9 @@ public:
 
 public:
     virtual ~Object3D() noexcept;
+
+    static std::shared_ptr < Object3D >
+    create(MaterialPtr material =nullptr, GeometryPtr geometry =nullptr);
 
     void setGeometry(GeometryPtr geometry) noexcept;
     GeometryPtr getGeometry() const noexcept;

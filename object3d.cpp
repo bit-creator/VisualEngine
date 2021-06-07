@@ -118,3 +118,7 @@ Object3D* Object3D::search(int id) {
 	return nullptr;
 }
 
+std::shared_ptr < Object3D > Object3D::create(MaterialPtr material, GeometryPtr geometry) {
+	auto& pool = Engine::engine().objects;
+	return pool.allocate(material, geometry);
+}

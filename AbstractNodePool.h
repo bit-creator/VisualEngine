@@ -5,8 +5,8 @@
  *      Author: IAbernikhin
  */
 
-#ifndef NODEPOOL_H_
-#define NODEPOOL_H_
+#ifndef ABSTRACTNODEPOOL_H_
+#define ABSTRACTNODEPOOL_H_
 
 #include <memory>
 #include <vector>
@@ -18,8 +18,8 @@ class Node;
 class Object3D;
 class Light;
 
-template < typename NodeT >
-class NodePool {
+template < typename NodeT = Node >
+class AbstractNodePool {
 	friend NodeT;
 
 	std::vector < NodeT >								_pool;
@@ -28,14 +28,14 @@ class NodePool {
 	std::vector <size_t>								_freeId;
 
 public:
-	explicit NodePool(int reserv =30) {
+	explicit AbstractNodePool(int reserv =30) {
 		_pool.reserve(reserv);
 	}
 
-	NodePool(const NodePool& oth) =delete;
-	NodePool& operator =(const NodePool& oth) =delete;
+	AbstractNodePool(const AbstractNodePool& oth) =delete;
+	AbstractNodePool& operator =(const AbstractNodePool& oth) =delete;
 
-	~NodePool() {
+	~AbstractNodePool() {
 		_pool.clear();
 	}
 
@@ -82,8 +82,8 @@ public:
 
 };
 
-using ObjectPool = NodePool <Object3D>;
-using LightPool = NodePool <Light>;
+using ObjectPool = AbstractNodePool <Object3D>;
+using LightPool = AbstractNodePool <Light>;
+using NodePool  = AbstractNodePool <Node>;
 
-
-#endif /* NODEPOOL_H_ */
+#endif /* ABSTRACTNODEPOOL_H_ */

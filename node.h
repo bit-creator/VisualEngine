@@ -34,7 +34,8 @@ enum class NodeType
 
 class Node
 	: public std::enable_shared_from_this < Node >
-	, public SharedCreator < Node > {
+//	, public SharedCreator < Node >
+{
 protected:
 	std::list < std::shared_ptr < Node > >		     		_childs;
 	std::weak_ptr < Node >									_parent;
@@ -55,6 +56,8 @@ public:
     Node(const Node& oth) noexcept;
     Node(Node&&) noexcept = delete;
     virtual ~Node() noexcept;
+
+    static std::shared_ptr<Node> create(NodeType type =NodeType::NODE_NODE);
 
     NodeType getNodeType() const noexcept;
 

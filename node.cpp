@@ -1,5 +1,6 @@
 #include "node.h"
 #include "object3d.h"
+#include "engine.h"
 
 #include <glm/gtc/type_ptr.hpp>
 
@@ -155,6 +156,11 @@ Node::rayCast(Ray ray) {
 }
 
 Node::~Node() {
+}
+
+std::shared_ptr<Node> Node::create(NodeType type) {
+	auto& pool = Engine::engine().nodes;
+	return pool.allocate(type);
 }
 
 void Node::rayCastImpl(Ray& ray, std::list< Intersection >& list) {

@@ -6,6 +6,7 @@
  */
 
 #include "Light.h"
+#include "engine.h"
 
 Light::Light(LightType type)
 	: Node(NodeType::NODE_LIGHT)
@@ -29,4 +30,9 @@ std::string getLightsName(const int index) {
 	std::string patern = "uLights[%].";
 	std::replace(patern.begin(), patern.end(), '%', (char)(index + '0'));
 	return patern;
+}
+
+std::shared_ptr<Light> Light::create(LightType type) {
+	auto& pool = Engine::engine().lights;
+	return pool.allocate(type);
 }

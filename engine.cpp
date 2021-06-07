@@ -78,22 +78,10 @@ void Engine::run(const Window& window) noexcept {
     	glStencilFunc(GL_ALWAYS, 1, 0xFF);
         glStencilMask(0xFF);
 
-        const auto& drawList = _scene->getDrawList();
-//
-//        float index = 0.0;
-//        for(auto obj : drawList) {
-//        	if(obj->isClicable()) {
-//        		obj->setID(Object3D::maxID - (++index));    // TEMPORARY, CHANGE ARGUMENT TO ++index;
-//        	} else obj->resetID();
-//
-//        	render(*obj, _scene->getLightList());
-//        }
-
-
         float index = 0.0;
         for(auto& obj : objects) {
         	if(obj.isEnabled())
-        	render(obj, _scene->getLightList());
+        		geometryPass(obj);
         }
 
 
@@ -180,6 +168,7 @@ void Engine::lightPass(LightList lights) {
 	drawScreen._materialType = (int)ShaderType::SHADER_SCREEN;
 	drawScreen._renderTargets = _FBO.TargetHash();
 	drawScreen._attribHash = _screen.getAttributeHash();
+	drawScreen._numOfLight = lights.size();
 
 	ShaderProgram& prg = _factory.getShader(drawScreen);
 	prg.enable();
@@ -214,7 +203,7 @@ void Engine::lightPass(LightList lights) {
 	_screen.unbindBuffers();
 }
 
-void Engine::render(Object3D &obj, LightList lights) noexcept {
+void Engine::geometryPass(Object3D &obj) noexcept {
     auto material = obj.getMaterial();
     auto geom = obj.getGeometry();
     auto cam = _scene->getCamera();
@@ -224,7 +213,6 @@ void Engine::render(Object3D &obj, LightList lights) noexcept {
     drawData._attribHash = geom->getAttributeHash();
     drawData._renderTargets = _FBO.TargetHash();
     drawData._hasPerspectiveCamera = (int)cam->getType();
-    drawData._numOfLight = lights.size();
 
     if (geom->hasTexCoord()) {
     	material->setDrawData(drawData);
@@ -232,8 +220,6 @@ void Engine::render(Object3D &obj, LightList lights) noexcept {
     }
 
     drawData._shaderType = (int)ShaderType::SHADER_GEOMETRY_PASS;
-
-
 
     ShaderProgram& prg = _factory.getShader(drawData);
     prg.enable();
@@ -254,31 +240,15 @@ void Engine::render(Object3D &obj, LightList lights) noexcept {
 
     material->setUniforms(prg);
 
-//    prg.setUniform("uRoughness", 1 / material->getRoughness());
     prg.setUniform("uCamPos", cam->getPosition());
 
     prg.setUniform("uMVPMat", mVPMat);
     prg.setUniform("uNormalMat", nMat);
     prg.setUniform("uModelMat", modelMat);
 
-//    std::cout << obj.getColorKey() << std::endl;
-
     prg.setUniform("uObjectColorKey", obj.getColorKey());
 
     int ind = 0;
-
-    for(auto light : lights) {
-    	auto dirName = getLightsName(ind).append("lightDir");
-    	auto colName = getLightsName(ind).append("lightColor");
-
-    	auto dir = glm::mat3(light->getWorldMat()) * glm::normalize(glm::vec3(0., 0., 1.));
-    	Color color = light->getColor();
-
-    	prg.setUniform(dirName, dir);
-    	prg.setUniform(colName, color.getColorSource());
-
-		++ind;
-    }
 
     glPolygonMode(GL_FRONT_AND_BACK, material->getPolygonsFillMode());
 

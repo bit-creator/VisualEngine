@@ -15,6 +15,7 @@
 #include <memory>
 
 #include "abstracteventlistener.hpp"
+#include "AbstractNodePool.h"
 #include "camera.h"
 #include "ShaderFactory.h"
 #include "object3d.h"
@@ -29,10 +30,12 @@
 #include "Geometry/Primitive/cube.h"
 #include "Geometry/Primitive/rect.h"
 
-#include "NodePool.h"
 
-class Engine
-{
+class Engine {
+	friend Object3D;
+	friend Node;
+	friend Light;
+
 private:
 	ScenePtr                        		 _scene;
     Cube	   								 _skyBox;
@@ -54,11 +57,17 @@ private:
     void renderSkyBox();
     void renderScreen();
     void lightPass(LightList lights);
+    void geometryPass(Object3D& obj) noexcept;
 
 public:
     inline static const Window     window = Window(4.6f, 1920u, 1080u, "Visual Engine");
-    ObjectPool					   objects;
 
+private:
+    ObjectPool					   objects;
+    LightPool					   lights;
+    NodePool					   nodes;
+
+public:
     static Engine&
     engine() noexcept;
 
@@ -75,7 +84,6 @@ public:
 
     void run(const Window& window = window) noexcept;
 
-    void render(Object3D& obj, LightList lights) noexcept;
 
     float getPickerKey(const glm::vec2& mousePosition);
 

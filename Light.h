@@ -21,14 +21,17 @@ enum class LightType
 };
 
 class Light :
-	public Node,
-	public MultiSharedCreator<Light, Node> {
+	public Node
+//	public MultiSharedCreator<Light, Node>
+{
 private:
 	LightType							_type;
 	Color								_color;
 
 public:
 	Light(LightType type);
+
+	static std::shared_ptr<Light> create(LightType type);
 
 	LightType getType() noexcept;
 
@@ -39,11 +42,11 @@ public:
 };
 
 class LightDirectional : public Light {
-
 public:
 	LightDirectional() noexcept
 		: Light(LightType::LIGHT_DIRECTIONAL)
 	{  }
+
 
 };
 
