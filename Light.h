@@ -26,8 +26,8 @@ private:
 	Color								_color;
 
 public:
-	using reference = std::shared_ptr<Light>;
-//    using reference = Node::reference;
+//	using reference = std::shared_ptr<Light>;
+    using reference = Node::reference;
 
 	Light(LightType type);
 

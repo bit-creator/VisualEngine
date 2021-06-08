@@ -56,7 +56,7 @@ private:
 
     void renderSkyBox();
     void renderScreen();
-    void lightPass(LightList lights);
+    void lightPass();
     void geometryPass(Object3D& obj) noexcept;
 
 public:

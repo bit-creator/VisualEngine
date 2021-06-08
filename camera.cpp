@@ -29,9 +29,9 @@ Camera::Camera(const Camera &oth) noexcept
 
 Camera::reference Camera::create(const Camera &oth) {
 	Camera tmp = oth;
-	reference ref = reference( new  Camera(oth));
-	Engine::engine().getScene()->setCamera(ref);
-	return ref;
+//	reference ref = reference(Camera(oth));
+	Engine::engine().getScene()->setCamera(tmp);
+	return new CameraRef();
 }
 
 Camera& Camera::operator =(const Camera &oth) {

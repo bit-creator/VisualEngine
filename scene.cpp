@@ -3,17 +3,19 @@
 
 Scene::Scene() noexcept
 	: _background(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f))
-	, _camera(std::make_shared<Camera>(PerspectiveCamera(PI / 3, 1, 0.1, 100)))
-	, _root(std::make_shared<Node>(NodeType::NODE_NODE))
+//	, _camera(std::make_shared<Camera>(PerspectiveCamera(PI / 3, 1, 0.1, 100)))
+	, _camera(PerspectiveCamera(PI / 3, 1, 0.1, 100))
+//	, _root(std::make_shared<Node>(NodeType::NODE_NODE))
+	, _root(Node::create())
 {  }
 
-void Scene::setCamera(CameraPtr camera) noexcept {
-	_root->addChild(camera);
+void Scene::setCamera(Camera camera) noexcept {
+//	_root->addChild(camera);
 	_camera = camera;
 }
 
-CameraPtr Scene::getCamera() const noexcept {
-	return _camera;
+Camera* Scene::getCamera() noexcept {
+	return &_camera;
 }
 
 void Scene::setBackgroundColor(const glm::vec4 &color) noexcept {
@@ -28,21 +30,21 @@ NodePtr Scene::getRoot() const noexcept {
 	return _root;
 }
 
-DrawList Scene::getDrawList() const noexcept {
-	DrawList result;
-	getDrawListImpl(result, _root);
-	return result;
-}
+//DrawList Scene::getDrawList() const noexcept {
+//	DrawList result;
+//	getDrawListImpl(result, _root);
+//	return result;
+//}
 
-void Scene::getDrawListImpl(DrawList &list, const NodePtr& obj) const noexcept {
-	for(auto child : obj->getChilds()) {
-		if(child->isEnabled()) {
-			getDrawListImpl(list, child);
-			if(child->getNodeType() == NodeType::NODE_OBJECT)
-				list.push_back((Object3D*)child.get());
-		}
-	}
-}
+//void Scene::getDrawListImpl(DrawList &list, const NodePtr& obj) const noexcept {
+//	for(auto child : obj->getChilds()) {
+//		if(child->isEnabled()) {
+//			getDrawListImpl(list, child);
+//			if(child->getNodeType() == NodeType::NODE_OBJECT)
+//				list.push_back((Object3D*)child.get());
+//		}
+//	}
+//}
 
 void Scene::disableSkyBox() {
 	_skyBox = nullptr;
@@ -55,11 +57,11 @@ bool Scene::useSkyBox() const {
 void Scene::loadSkyboxImage(BoxSide side, TexPtr skyBox, std::string filename) {
 }
 
-LightList Scene::getLightList() const noexcept {
-	LightList result;
-	getLightListImpl(result, _root);
-	return result;
-}
+//LightList Scene::getLightList() const noexcept {
+//	LightList result;
+//	getLightListImpl(result, _root);
+//	return result;
+//}
 
 void Scene::setSkyBox(TexPtr skyBox) {
 	_skyBox = skyBox;
@@ -69,10 +71,10 @@ TexPtr Scene::getSkyBox() const {
 	return _skyBox;
 }
 
-void Scene::getLightListImpl(LightList &list, const NodePtr &obj) const noexcept {
-	for(auto child : obj->getChilds()) {
-		getLightListImpl(list, child);
-	if(child->getNodeType() == NodeType::NODE_LIGHT)
-		list.push_back((Light*)child.get());
-	}
-}
+//void Scene::getLightListImpl(LightList &list, const NodePtr &obj) const noexcept {
+//	for(auto child : obj->getChilds()) {
+//		getLightListImpl(list, child);
+//	if(child->getNodeType() == NodeType::NODE_LIGHT)
+//		list.push_back((Light*)child.get());
+//	}
+//}

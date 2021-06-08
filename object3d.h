@@ -48,8 +48,8 @@ public:
     Object3D(MaterialPtr material) noexcept;
     Object3D(MaterialPtr material, GeometryPtr geometry) noexcept;
 
-    using reference = std::shared_ptr < Object3D >;
-//    using reference = Node::reference;
+//    using reference = std::shared_ptr < Object3D >;
+    using reference = Node::reference;
 
 public:
     virtual ~Object3D() noexcept;

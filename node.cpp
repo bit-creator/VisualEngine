@@ -76,7 +76,8 @@ glm::mat4 Node::getWorldMat() noexcept {
 	if (!_dirtyWorldTransform && !_dirtyTransform) return _worldMat;
 	if (_parent.expired()) return getModelMat();
 
-	auto parentMat = _parent.lock()->getWorldMat();
+//	auto parentMat = _parent.lock()->getWorldMat();
+	auto parentMat = _parent->getWorldMat();
 	auto modelMat = getModelMat();
 
 	_worldMat = parentMat * modelMat;
@@ -87,7 +88,7 @@ glm::mat4 Node::getWorldMat() noexcept {
 }
 
 Node::Node(const Node &oth) noexcept
-	: _parent()
+	: _parent(new NullRef())
 	, _type(oth._type)
 	, _modelMat(oth._modelMat)
 	, _worldMat(oth._worldMat)
@@ -96,12 +97,13 @@ Node::Node(const Node &oth) noexcept
 	, _scale(oth._scale)
 	, _dirtyTransform(oth._dirtyTransform)
 	, _dirtyWorldTransform(oth._dirtyWorldTransform)
+	, _enabled(oth._enabled)
 {
-	for(auto node : oth._childs)
-	{
-		auto cp = std::make_shared<Node>(*node);
-		addChild(cp);
-	}
+//	for(auto node : oth._childs)
+//	{
+//		auto cp = std::make_shared<Node>(*node);
+//		addChild(cp);
+//	}
 }
 
 NodeType Node::getNodeType() const noexcept {
@@ -128,18 +130,23 @@ void Node::unvalidateWorldMat() noexcept {
 
 void Node::addChild(NodePtr child) {
 	if(!child->_parent.expired()){
-		child ->_parent.lock()->removeChild(child);
-		child -> _parent.reset();
+//		child ->_parent.lock()->removeChild(child);
+		child ->_parent->removeChild(child);
+//		child -> _parent.reset();
+		child -> _parent = NullRef();
 	}
 	_childs.push_back(child);
-	child -> _parent = weak_from_this();
+//	child -> _parent = weak_from_this();
+	child->_parent = _this;
+
 	child->_dirtyWorldTransform = true;
 	child->_dirtyTransform = true;
 }
 
 void Node::removeChild(NodePtr child) {
 	if(_childs.empty()) return;
-	_childs.remove_if([child = child](NodePtr ch){return ch.owner_before(child);});
+//	_childs.remove_if([child = child](NodePtr ch){return ch.owner_before(child);});
+	_childs.remove(child);
 }
 
 std::list < NodePtr >& Node::getChilds() {
@@ -158,7 +165,9 @@ Node::~Node() {
 
 NodePtr Node::create(NodeType type) {
 	auto& pool = Engine::engine().nodes;
-	return pool.allocate(type);
+	reference ref = new NodeRef(pool.allocate(type));
+	ref->_this = ref;
+	return ref;
 }
 
 void Node::rayCastImpl(Ray& ray, std::list< Intersection >& list) {

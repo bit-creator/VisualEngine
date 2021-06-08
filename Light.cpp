@@ -32,7 +32,7 @@ std::string getLightsName(const int index) {
 	return patern;
 }
 
-std::shared_ptr<Light> Light::create(LightType type) {
+LightPtr Light::create(LightType type) {
 	auto& pool = Engine::engine().lights;
-	return pool.allocate(type);
+	return new LightRef(pool.allocate(type));
 }

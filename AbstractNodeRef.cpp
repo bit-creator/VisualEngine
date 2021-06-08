@@ -49,12 +49,40 @@ Node* NodeRef::get() const {
 }
 
 CameraRef::CameraRef() :
-AbstractNodeRef(0) {
+		AbstractNodeRef(0) {
 }
 
 CameraRef::~CameraRef() {
 }
 
 Node* CameraRef::get() const {
-	return Engine::engine().getScene()->getCamera().get();
+	return Engine::engine().getScene()->getCamera();
+}
+
+bool AbstractNodeRef::operator ==(const AbstractNodeRef &rhs) {
+	return _offset == rhs._offset;
+}
+
+bool AbstractNodeRef::expired() const {
+	return _offset == npos;
+}
+
+NullRef::NullRef() :
+	AbstractNodeRef(npos) {
+}
+
+NullRef::~NullRef() {
+}
+
+Node* NullRef::get() const {
+	std::cout << "get NULL reference to node" << std::endl;
+	return nullptr;
+}
+
+AbstractNodeRef& AbstractNodeRef::operator =(const AbstractNodeRef &oth) {
+	if(&oth == this) return *this;
+
+	_offset = oth._offset;
+
+	return *this;
 }

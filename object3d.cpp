@@ -1,6 +1,7 @@
 #include "object3d.h"
 #include "engine.h"
 #include <GL/glew.h>
+#include "AbstractNodeRef.h"
 
 Object3D::Object3D() noexcept
     : Node(NodeType::NODE_OBJECT)
@@ -120,5 +121,6 @@ Object3D* Object3D::search(int id) {
 
 ObjPtr Object3D::create(MaterialPtr material, GeometryPtr geometry) {
 	auto& pool = Engine::engine().objects;
-	return pool.allocate(material, geometry);
+//	pool.allocate(material, geometry);
+	return new ObjectRef(pool.allocate(material, geometry));
 }

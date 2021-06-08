@@ -29,7 +29,7 @@ using LightList = std::vector < Light* >;
 class Scene : public SharedCreator < Scene > {
 private:
 	glm::vec4									 _background;
-    CameraPtr					                     _camera;
+    Camera					                     _camera;
     NodePtr			                             _root;
     TexPtr										 _skyBox;
 
@@ -40,8 +40,8 @@ public:
     ~Scene() noexcept =default;
 
 public:
-    void setCamera(CameraPtr camera) noexcept;
-    CameraPtr getCamera() const noexcept;
+    void setCamera(Camera camera) noexcept;
+    Camera* getCamera() noexcept;
 
     void setBackgroundColor(const glm::vec4& color) noexcept;
     const glm::vec4& getBackgroundColor() const noexcept;

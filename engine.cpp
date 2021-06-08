@@ -92,7 +92,9 @@ void Engine::run(const Window& window) noexcept {
         	glStencilFunc(GL_EQUAL, 1, 0xFF);
         	glStencilMask(0x00);
 
-        	lightPass(_scene->getLightList());
+//        	lightPass(_scene->getLightList());
+        	lightPass();
+
 
         	glStencilMask(0xFF);
         	glDisable(GL_STENCIL_TEST);
@@ -111,6 +113,8 @@ void Engine::run(const Window& window) noexcept {
 }
 
 void Engine::renderSkyBox() {
+    auto cam = _scene->getCamera();
+
 	Draw drawSkyBox;
 
 	drawSkyBox._shaderType = (int)ShaderType::SHADER_SKYBOX;
@@ -122,7 +126,7 @@ void Engine::renderSkyBox() {
 	prg.enable();
 
 	glm::mat4 viewMat = glm::inverse(_scene->getCamera()->getWorldMat());
-	glm::mat4 projMat = _scene->getCamera()->getProjectionMatrix();
+	glm::mat4 projMat = cam->getProjectionMatrix();
 
 	auto MVPmat = projMat * glm::mat4(glm::mat3(viewMat));
 
@@ -160,7 +164,7 @@ void Engine::renderScreen() {
 	_screen.unbindBuffers();
 }
 
-void Engine::lightPass(LightList lights) {
+void Engine::lightPass() {
 	Draw drawScreen;
 
 	if (_scene -> useSkyBox()) drawScreen._hasSkyBoxMap = true;
@@ -187,8 +191,8 @@ void Engine::lightPass(LightList lights) {
     	auto dirName = getLightsName(ind).append("lightDir");
     	auto colName = getLightsName(ind).append("lightColor");
 
-    	auto dir = glm::mat3(light->getWorldMat()) * glm::normalize(glm::vec3(0., 0., 1.));
-    	Color color = light->getColor();
+    	auto dir = glm::mat3(light.getWorldMat()) * glm::normalize(glm::vec3(0., 0., 1.));
+    	Color color = light.getColor();
 
     	prg.setUniform(dirName, dir);
     	prg.setUniform(colName, color.getColorSource());

@@ -35,23 +35,44 @@ enum class NodeType
 
 class Node : public std::enable_shared_from_this < Node > {
 public:
-//	class reference {
-//	private:
-//		AbstractNodeRef*			_ref;
-//
-//	public:
-//		reference(AbstractNodeRef* ref) : _ref(ref) {  }
-//
-//		Node* operator ->() {
-//			return _ref->get();
-//		}
-//	};
+	class reference {
+	private:
+		AbstractNodeRef*			_ref;
 
-	using reference = std::shared_ptr < Node >;
+	public:
+		reference() : _ref(new NullRef()) {  }
+
+		reference& operator =(const AbstractNodeRef& oth) {
+			*_ref = oth;
+			return *this;
+		}
+
+		reference(AbstractNodeRef* ref) : _ref(ref) {  }
+
+		bool operator ==(const reference& oth) {
+			return *_ref == *(oth._ref);
+		}
+
+		Node* get() {
+			return _ref->get();
+		}
+
+		bool expired() {
+			return _ref->expired();
+		}
+
+		Node* operator ->() {
+			return _ref->get();
+		}
+	};
+
+//	using reference = std::shared_ptr < Node >;
 
 protected:
 	std::list < reference >		     						_childs;
-	std::weak_ptr < Node >									_parent;
+//	std::weak_ptr < Node >									_parent;
+	reference									_parent;
+	reference									_this;
 
     const NodeType                                          _type;
     glm::mat4                                               _modelMat;

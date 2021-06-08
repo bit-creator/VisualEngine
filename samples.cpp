@@ -188,17 +188,17 @@ void DemoSample() {
     auto moonObj  = Object3D::create(moon, sphereGeom);
     auto cubeObj  = Object3D::create(simple, cube);
 
-    sunObj->setClicable(true);
-    moonObj->setClicable(true);
-    earthObj->setClicable(true);
-    cubeObj->setClicable(true);
+	dynamic_cast<Object3D*>(sunObj.get())->setClicable(true);
+	dynamic_cast<Object3D*>(moonObj.get())->setClicable(true);
+	dynamic_cast<Object3D*>(earthObj.get())->setClicable(true);
+	dynamic_cast<Object3D*>(cubeObj.get())->setClicable(true);
 
     std::vector<ObjPtr> electrons;
 
     for(int i = 0; i< 10; ++i) {
     	auto el = Object3D::create(glossy, sphereGeom);
     	electrons.push_back(el);
-    	el->setClicable(true);
+        dynamic_cast<Object3D*>(el.get())->setClicable(true);
     	atom->addChild(el);
     }
 
@@ -219,7 +219,7 @@ void DemoSample() {
     skyBox->loadImage("resource/skybox/negy.jpg", BoxSide::SIDE_BOTTOM);
 
 
-    headLighter->setColor(glm::vec4(1.0, 1.0, 1.0, 1.0));
+    dynamic_cast<Light*>(headLighter.get())->setColor(glm::vec4(1.0, 1.0, 1.0, 1.0));
 
 
     simple->setAmbientColor(glm::vec4(0., 0., 0., 1.0));

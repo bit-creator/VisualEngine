@@ -35,7 +35,9 @@ protected:
 	Camera(const glm::mat4& projMatr, CameraType type) noexcept;
 
 public:
-    using reference = std::shared_ptr<Camera>;
+//    using reference = std::shared_ptr<Camera>;
+	using reference = Node::reference;
+
 
 	Camera(const Camera& oth) noexcept;
 	Camera& operator =(const Camera& oth);

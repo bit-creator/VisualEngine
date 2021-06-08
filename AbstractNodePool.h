@@ -41,15 +41,15 @@ public:
 
 	template< typename... Args >
 //	std::shared_ptr < NodeT >
-	typename NodeT::reference
+	size_t
 	allocate(Args... args) {
 		auto tmp = NodeT(std::forward<Args>(args)...);
 		_pool.push_back(tmp);
-		auto ptr = std::shared_ptr<NodeT>(&_pool.back());
+//		auto ptr = std::shared_ptr<NodeT>(&_pool.back());
 
-		if(ptr == nullptr) ERROR("Node dont allocate");
+//		if(ptr == nullptr) ERROR("Node dont allocate");
 
-		return ptr;
+		return _pool.size() - 1;
 	}
 
 	void clear() {
