@@ -20,6 +20,8 @@
 #include "object3d.h"
 #include "Light.h"
 
+#include "constants.hpp"
+
 
 using DrawList = std::vector < Object3D* >;
 using LightList = std::vector < Light* >;
@@ -27,7 +29,7 @@ using LightList = std::vector < Light* >;
 class Scene : public SharedCreator < Scene > {
 private:
 	glm::vec4									 _background;
-    CameraPtr				                     _camera;
+    CameraPtr					                     _camera;
     NodePtr			                             _root;
     TexPtr										 _skyBox;
 

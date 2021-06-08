@@ -20,18 +20,18 @@ enum class LightType
 	LIGHT_SPOTS
 };
 
-class Light :
-	public Node
-//	public MultiSharedCreator<Light, Node>
-{
+class Light : public Node {
 private:
 	LightType							_type;
 	Color								_color;
 
 public:
+	using reference = std::shared_ptr<Light>;
+//    using reference = Node::reference;
+
 	Light(LightType type);
 
-	static std::shared_ptr<Light> create(LightType type);
+	static reference create(LightType type);
 
 	LightType getType() noexcept;
 
@@ -52,6 +52,6 @@ public:
 
 std::string getLightsName(const int index);
 
-using LightPtr = std::shared_ptr < Light >;
+using LightPtr = Light::reference;
 
 #endif /* LIGHT_H_ */

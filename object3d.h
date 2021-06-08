@@ -48,10 +48,13 @@ public:
     Object3D(MaterialPtr material) noexcept;
     Object3D(MaterialPtr material, GeometryPtr geometry) noexcept;
 
+    using reference = std::shared_ptr < Object3D >;
+//    using reference = Node::reference;
+
 public:
     virtual ~Object3D() noexcept;
 
-    static std::shared_ptr < Object3D >
+    static reference
     create(MaterialPtr material =nullptr, GeometryPtr geometry =nullptr);
 
     void setGeometry(GeometryPtr geometry) noexcept;
@@ -84,6 +87,6 @@ private:
 	void resetID();
 };
 
-using ObjPtr = std::shared_ptr < Object3D >;
+using ObjPtr = Object3D::reference;
 
 #endif // OBJECT3D_H

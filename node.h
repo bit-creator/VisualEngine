@@ -22,6 +22,7 @@
 
 #include "CreateAsPointer.hpp"
 #include "Ray.h"
+#include "AbstractNodeRef.h"
 
 
 enum class NodeType
@@ -32,12 +33,24 @@ enum class NodeType
 	NODE_NODE
 };
 
-class Node
-	: public std::enable_shared_from_this < Node >
-//	, public SharedCreator < Node >
-{
+class Node : public std::enable_shared_from_this < Node > {
+public:
+//	class reference {
+//	private:
+//		AbstractNodeRef*			_ref;
+//
+//	public:
+//		reference(AbstractNodeRef* ref) : _ref(ref) {  }
+//
+//		Node* operator ->() {
+//			return _ref->get();
+//		}
+//	};
+
+	using reference = std::shared_ptr < Node >;
+
 protected:
-	std::list < std::shared_ptr < Node > >		     		_childs;
+	std::list < reference >		     						_childs;
 	std::weak_ptr < Node >									_parent;
 
     const NodeType                                          _type;
@@ -57,7 +70,7 @@ public:
     Node(Node&&) noexcept = delete;
     virtual ~Node() noexcept;
 
-    static std::shared_ptr<Node> create(NodeType type =NodeType::NODE_NODE);
+    static reference create(NodeType type =NodeType::NODE_NODE);
 
     NodeType getNodeType() const noexcept;
 
@@ -79,10 +92,10 @@ public:
     bool isEnabled();
 
 public: 		// CHILD
-	void addChild(std::shared_ptr < Node > child);
-    void removeChild(std::shared_ptr < Node > child);
+	void addChild(reference child);
+    void removeChild(reference child);
 
-    std::list < std::shared_ptr < Node > >&
+    std::list < reference >&
     getChilds();
 
     std::list < Intersection >
@@ -96,6 +109,6 @@ protected:
 	virtual void rayCastImpl(Ray& ray, std::list < Intersection >& list);
 };
 
-using NodePtr = std::shared_ptr < Node >;
+using NodePtr = Node::reference;
 
 #endif // NODE_H

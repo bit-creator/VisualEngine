@@ -18,7 +18,7 @@ class Node;
 class Object3D;
 class Light;
 
-template < typename NodeT = Node >
+template < typename NodeT >
 class AbstractNodePool {
 	friend NodeT;
 
@@ -40,7 +40,8 @@ public:
 	}
 
 	template< typename... Args >
-	std::shared_ptr < NodeT >
+//	std::shared_ptr < NodeT >
+	typename NodeT::reference
 	allocate(Args... args) {
 		auto tmp = NodeT(std::forward<Args>(args)...);
 		_pool.push_back(tmp);
@@ -79,7 +80,9 @@ public:
 		return _maxId;
 	}
 
-
+	NodeT* undegroundArray() {
+		return &_pool[0];
+	}
 };
 
 using ObjectPool = AbstractNodePool <Object3D>;

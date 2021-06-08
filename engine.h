@@ -62,7 +62,7 @@ private:
 public:
     inline static const Window     window = Window(4.6f, 1920u, 1080u, "Visual Engine");
 
-private:
+public:
     ObjectPool					   objects;
     LightPool					   lights;
     NodePool					   nodes;
@@ -84,6 +84,13 @@ public:
 
     void run(const Window& window = window) noexcept;
 
+    template < typename NodeT >
+    static inline NodeT* getPool() {
+    	if constexpr (std::same_as<NodeT, Object3D>) return Engine::engine().objects.undegroundArray();
+    	if constexpr (std::same_as<NodeT, Light>)	 return Engine::engine().lights.undegroundArray();
+    	if constexpr (std::same_as<NodeT, Node>) 	 return Engine::engine().nodes.undegroundArray();
+    	return nullptr;
+    }
 
     float getPickerKey(const glm::vec2& mousePosition);
 

@@ -26,6 +26,8 @@
 #include "Geometry/Primitive/cone.h"
 #include "Geometry/Primitive/mobiusstrip.h"
 
+#include "AbstractNodeRef.h"
+
 class DemoSampleListener : public EventListener
 {
     Scene& scene;
@@ -124,6 +126,8 @@ void DemoSample() {
 
     auto scene = Scene::create();
 
+//    Reference* ref = &refe;
+
 //    glm::mat3 blurKernel = {
 //    	1.0, 2.0, 1.0,
 //    	2.0, 4.0, 2.0,
@@ -145,14 +149,14 @@ void DemoSample() {
     float aspect = 1.0 * width / height;
 
     auto headLighter = Light::create(LightType::LIGHT_DIRECTIONAL);
-    auto cam = Camera::createSharedThisPtr(PerspectiveCamera(PI / 3, aspect, 0.1, 100));
+    auto cam = Camera::create(PerspectiveCamera(PI / 3, aspect, 0.1, 100));
 
     auto controler = CameraControl::create(cam);
     eng.addEventListener(controler);
 
     cam->addChild(headLighter);
 
-    scene->setCamera(cam);
+//    scene->setCamera(cam);
 
     auto sphereGeom = Sphere::create(5);
     auto cube = Cube::create();

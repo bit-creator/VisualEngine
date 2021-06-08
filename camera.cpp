@@ -20,6 +20,29 @@ CameraType Camera::getType() const noexcept {
 	return _type;
 }
 
+Camera::Camera(const Camera &oth) noexcept
+	: Node(NodeType::NODE_CAMERA)
+	, _projectionMatr(oth._projectionMatr)
+	, _type(oth._type)
+{
+}
+
+Camera::reference Camera::create(const Camera &oth) {
+	Camera tmp = oth;
+	reference ref = reference( new  Camera(oth));
+	Engine::engine().getScene()->setCamera(ref);
+	return ref;
+}
+
+Camera& Camera::operator =(const Camera &oth) {
+	if(&oth == this) return *this;
+
+	_projectionMatr = oth._projectionMatr;
+	_type = oth._type;
+
+	return *this;
+}
+
 Ray Camera::getRay(glm::vec2 screenPos) {
 	Ray viewRay;
 
@@ -47,4 +70,8 @@ PerspectiveCamera::PerspectiveCamera(float fovy, float aspect, float near, float
                   0, 1, 0, 0,
                   0, 0, -1,0,
                   0, 0, 0, 1), CameraType::CAMERA_PERSPECTIVE)
+{  }
+
+CustomCamera::CustomCamera(const glm::mat4 &projMatr)
+	: Camera(projMatr, CameraType::CAMERA_CUSTOM)
 {  }

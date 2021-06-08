@@ -26,15 +26,21 @@ enum class CameraType
     CAMERA_CUSTOM = 2
 };
 
-class Camera : virtual
-	public Node,
-	public MultiSharedCreator<Camera, Node> {
+class Camera : public Node {
 private:
 	glm::mat4                       _projectionMatr;
-    const CameraType                _type;
+    CameraType		                _type;
+
+protected:
+	Camera(const glm::mat4& projMatr, CameraType type) noexcept;
 
 public:
-	Camera(const glm::mat4& projMatr, CameraType type) noexcept;
+    using reference = std::shared_ptr<Camera>;
+
+	Camera(const Camera& oth) noexcept;
+	Camera& operator =(const Camera& oth);
+
+	static reference create(const Camera& oth);
 
     void setProjection(const glm::mat4& projMatr) noexcept;
         
@@ -55,6 +61,12 @@ public:
 	PerspectiveCamera(float fovy, float aspect, float near, float far);
 };
 
-using CameraPtr = std::shared_ptr<Camera>;
+class CustomCamera : public Camera {
+public:
+	CustomCamera(const glm::mat4& projMatr);
+};
+
+
+using CameraPtr = Camera::reference;
 
 #endif // CAMERA_H

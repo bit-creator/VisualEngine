@@ -21,45 +21,43 @@ Node::Node(NodeType type) noexcept
 	, _enabled(true)
 {  }
 
-void Node::setScale(const glm::vec3& scale) noexcept
-{
+void Node::setScale(const glm::vec3& scale) noexcept {
 	_scale = scale;
 	_dirtyTransform = true;
 	unvalidateWorldMat();
 }
 
-glm::vec3 Node::getScale() const noexcept
-{ return _scale; }
+glm::vec3 Node::getScale() const noexcept {
+	return _scale;
+}
 
-void Node::setRotate(const glm::vec3& axis, const float angle) noexcept
-{
+void Node::setRotate(const glm::vec3& axis, const float angle) noexcept {
 	_rotate = glm::angleAxis(angle, glm::normalize(axis));
 	_dirtyTransform = true;
 	unvalidateWorldMat();
 }
 
-void Node::setRotate(const glm::vec3& angels) noexcept
-{
+void Node::setRotate(const glm::vec3& angels) noexcept {
 	_rotate = glm::quat(angels);
 	_dirtyTransform = true;
 	unvalidateWorldMat();
 }
 
-glm::quat Node::getRotate() const noexcept
-{ return _rotate; }
+glm::quat Node::getRotate() const noexcept {
+	return _rotate;
+}
 
-void Node::setPosition(const glm::vec3& position) noexcept
-{
+void Node::setPosition(const glm::vec3& position) noexcept {
 	_position = position;
 	_dirtyTransform = true;
 	unvalidateWorldMat();
 }
 
-glm::vec3 Node::getPosition() const noexcept
-{ return _position; }
+glm::vec3 Node::getPosition() const noexcept {
+	return _position;
+}
 
-glm::mat4 Node::getModelMat() noexcept
-{
+glm::mat4 Node::getModelMat() noexcept {
     if(!_dirtyTransform) return _modelMat;
 
     _modelMat = glm::mat4(1.0f);
@@ -144,7 +142,7 @@ void Node::removeChild(NodePtr child) {
 	_childs.remove_if([child = child](NodePtr ch){return ch.owner_before(child);});
 }
 
-std::list<std::shared_ptr<Node> >& Node::getChilds() {
+std::list < NodePtr >& Node::getChilds() {
 	return _childs;
 }
 
@@ -158,7 +156,7 @@ Node::rayCast(Ray ray) {
 Node::~Node() {
 }
 
-std::shared_ptr<Node> Node::create(NodeType type) {
+NodePtr Node::create(NodeType type) {
 	auto& pool = Engine::engine().nodes;
 	return pool.allocate(type);
 }
