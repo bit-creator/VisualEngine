@@ -59,10 +59,6 @@ Node* CameraRef::get() const {
 	return Engine::engine().getScene()->getCamera();
 }
 
-bool AbstractNodeRef::operator ==(const AbstractNodeRef &rhs) {
-	return _offset == rhs._offset;
-}
-
 bool AbstractNodeRef::expired() const {
 	return _offset == npos;
 }

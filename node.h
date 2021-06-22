@@ -37,21 +37,20 @@ class Node : public std::enable_shared_from_this < Node > {
 public:
 	class reference {
 	private:
-		AbstractNodeRef*			_ref;
+		AbstractNodeRef*					_ref;
 
 	public:
 		reference() : _ref(new NullRef()) {  }
 
 		reference& operator =(const AbstractNodeRef& oth) {
+			if (this->_ref == &oth) return *this;
 			*_ref = oth;
 			return *this;
 		}
 
 		reference(AbstractNodeRef* ref) : _ref(ref) {  }
 
-		bool operator ==(const reference& oth) {
-			return *_ref == *(oth._ref);
-		}
+		auto operator <=>(const reference&) const =default;
 
 		Node* get() {
 			return _ref->get();
@@ -71,8 +70,8 @@ public:
 protected:
 	std::list < reference >		     						_childs;
 //	std::weak_ptr < Node >									_parent;
-	reference									_parent;
-	reference									_this;
+	reference												_parent;
+	reference												_this;
 
     const NodeType                                          _type;
     glm::mat4                                               _modelMat;
@@ -115,6 +114,8 @@ public:
 public: 		// CHILD
 	void addChild(reference child);
     void removeChild(reference child);
+
+    reference referenceFromThis() const;
 
     std::list < reference >&
     getChilds();

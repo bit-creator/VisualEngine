@@ -15,10 +15,11 @@ using size_t = unsigned long long;
 class Object3D;
 class Light;
 class Node;
+enum class NodeType;
 
 class AbstractNodeRef {
 protected:
-	size_t			_offset ;
+	size_t			_offset;
 public:
 	static inline size_t npos = std::numeric_limits<size_t>::max();
 
@@ -26,7 +27,8 @@ public:
 	virtual ~AbstractNodeRef();
 
 	AbstractNodeRef& operator =(const AbstractNodeRef& oth);
-	bool operator ==(const AbstractNodeRef& rhs);
+
+	auto operator <=>(const AbstractNodeRef&) const =default;
 
 	bool expired() const;
 

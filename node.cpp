@@ -138,6 +138,7 @@ void Node::addChild(NodePtr child) {
 	_childs.push_back(child);
 //	child -> _parent = weak_from_this();
 	child->_parent = _this;
+//	child->_parent = referenceFromThis();    // Not Working Good
 
 	child->_dirtyWorldTransform = true;
 	child->_dirtyTransform = true;
@@ -168,6 +169,41 @@ NodePtr Node::create(NodeType type) {
 	reference ref = new NodeRef(pool.allocate(type));
 	ref->_this = ref;
 	return ref;
+}
+
+
+// Not Working Good
+Node::reference Node::referenceFromThis() const {
+	auto pool = Engine::getPool(_type);
+
+	switch(_type) {
+	case NodeType::NODE_LIGHT : {
+		auto concrPool = dynamic_cast<const Light*>(pool);
+		auto thisP = dynamic_cast<const Light*>(this);
+		return new LightRef((thisP - concrPool) / sizeof(concrPool));
+		break;
+	}
+
+	case NodeType::NODE_OBJECT : {
+		auto concrPool = dynamic_cast<const Object3D*>(pool);
+		auto thisP = dynamic_cast<const Object3D*>(this);
+		return new ObjectRef((thisP - concrPool) / sizeof(concrPool));
+		break;
+	}
+
+	case NodeType::NODE_CAMERA : {
+		return new CameraRef();
+		break;
+	}
+
+	case NodeType::NODE_NODE : {
+		return new NodeRef((this - pool) / sizeof(pool));
+		break;
+	}
+
+	default :
+		return new NullRef();
+	}
 }
 
 void Node::rayCastImpl(Ray& ray, std::list< Intersection >& list) {

@@ -92,6 +92,14 @@ public:
     	return nullptr;
     }
 
+//    template < typename NodeT >
+    static inline Node* getPool(const NodeType& type) {
+    	if (type == NodeType::NODE_OBJECT) return Engine::engine().objects.undegroundArray();
+    	if (type == NodeType::NODE_LIGHT)  return Engine::engine().lights.undegroundArray();
+    	if (type == NodeType::NODE_NODE)   return Engine::engine().nodes.undegroundArray();
+    	return nullptr;
+    }
+
     float getPickerKey(const glm::vec2& mousePosition);
 
 	const glm::mat3& getPostProcesingKernel() const;
