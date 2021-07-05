@@ -48,9 +48,6 @@ public:
     Object3D(MaterialPtr material) noexcept;
     Object3D(MaterialPtr material, GeometryPtr geometry) noexcept;
 
-//    using reference = std::shared_ptr < Object3D >;
-//    using reference = Node::reference;
-
 public:
     virtual ~Object3D() noexcept;
 
@@ -63,18 +60,12 @@ public:
     void setMaterial(MaterialPtr material) noexcept;
     MaterialPtr getMaterial() const noexcept;
 
-public:
-	void rayCastImpl(Ray& ray, std::list < Intersection >& list) override;
-	Object3D* search(int id) override;
+	size_t getID() const;
 
 	glm::vec4 getColorKey() const;
-//	ID_t getID() const;
-//	void setID(ID_t id);
 
 	void setClicable(bool clicable);
 	bool isClicable() const;
-
-
 
 	inline constexpr static GLenum getColorKeyFormat() {
 		if constexpr (sizeof(Object3D::ID_t) == 1) return GL_RED;
@@ -86,7 +77,5 @@ public:
 private:
 	void resetID();
 };
-
-//using ObjPtr = Object3D::reference;
 
 #endif // OBJECT3D_H

@@ -79,7 +79,7 @@ void Engine::run(const Window& window) noexcept {
         glStencilMask(0xFF);
 
         float index = 0.0;
-        for(auto& obj : objects) {
+        for(auto& obj : _scene->objects) {
         	if(obj.isEnabled())
         		geometryPass(obj);
         }
@@ -172,7 +172,7 @@ void Engine::lightPass() {
 	drawScreen._materialType = (int)ShaderType::SHADER_SCREEN;
 	drawScreen._renderTargets = _FBO.TargetHash();
 	drawScreen._attribHash = _screen.getAttributeHash();
-	drawScreen._numOfLight = lights.size();
+	drawScreen._numOfLight = _scene->lights.size();
 
 	ShaderProgram& prg = _factory.getShader(drawScreen);
 	prg.enable();
@@ -187,7 +187,7 @@ void Engine::lightPass() {
     }
 
     int ind = 0;
-    for(auto light : lights) {
+    for(auto light : _scene->lights) {
     	auto dirName = getLightsName(ind).append("lightDir");
     	auto colName = getLightsName(ind).append("lightColor");
 
@@ -276,4 +276,8 @@ void Engine::setPostProcesingKernel(const glm::mat3 &postProcesingKernel) {
 
 float Engine::getPickerKey(const glm::vec2& mousePosition) {
 	return _FBO.getPickerKey(mousePosition);
+}
+
+Node* Engine::getPool(NodeType type) {
+	return Engine::engine().getScene()->getPool(type);
 }

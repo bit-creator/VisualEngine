@@ -6,8 +6,12 @@ Scene::Scene() noexcept
 //	, _camera(std::make_shared<Camera>(PerspectiveCamera(PI / 3, 1, 0.1, 100)))
 	, _camera(PerspectiveCamera(PI / 3, 1, 0.1, 100))
 //	, _root(std::make_shared<Node>(NodeType::NODE_NODE))
-	, _root(Node::create())
-{  }
+
+	, _root(Node::reference())
+{
+	auto nod = Node::reference(nodes.allocate(), NodeType::NODE_NODE);
+	_root = nod;
+}
 
 void Scene::setCamera(Camera camera) noexcept {
 //	_root->addChild(camera);
@@ -71,6 +75,20 @@ TexPtr Scene::getSkyBox() const {
 	return _skyBox;
 }
 
+Node* Scene::getPool(NodeType type) {
+	switch(type) {
+	case NodeType::NODE_CAMERA: return getCamera();
+	case NodeType::NODE_OBJECT: return objects.undegroundArray();
+	case NodeType::NODE_LIGHT:  return lights.undegroundArray();
+	case NodeType::NODE_NODE:   return nodes.undegroundArray();
+	}; return nullptr;
+}
+
+Node::reference Scene::searchID(size_t ID) {
+	for(size_t ind = 0; ind < objects.size(); ++ind) {
+		if (ID == objects[ind].getID()) return Node::reference(ind, NodeType::NODE_OBJECT);
+	} return Node::reference();
+}
 //void Scene::getLightListImpl(LightList &list, const NodePtr &obj) const noexcept {
 //	for(auto child : obj->getChilds()) {
 //		getLightListImpl(list, child);

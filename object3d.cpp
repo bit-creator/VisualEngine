@@ -1,7 +1,6 @@
 #include "object3d.h"
 #include "engine.h"
 #include <GL/glew.h>
-#include "AbstractNodeRef.h"
 
 Object3D::Object3D() noexcept
     : Node(NodeType::NODE_OBJECT)
@@ -44,20 +43,20 @@ Object3D::Object3D(const Object3D &oth) noexcept
 	{
 }
 
-void Object3D::rayCastImpl(Ray &ray, std::list<Intersection> &list) {
-	Node::rayCastImpl(ray, list);
-
-	Ray localRay;
-	localRay.setOrigin(glm::inverse(getWorldMat()) * glm::vec4(ray.getOrigin(), 1.0));
-	localRay.setDirection(glm::inverse(getWorldMat()) * glm::vec4(ray.getDirection(), 0.0));
-
-	auto intersections = _geom->rayCast(localRay);
-
-	for (auto intersec : intersections) {
-		intersec._obj = this;
-		list.push_back(intersec);
-	}
-}
+//void Object3D::rayCastImpl(Ray &ray, std::list<Intersection> &list) {
+//	Node::rayCastImpl(ray, list);
+//
+//	Ray localRay;
+//	localRay.setOrigin(glm::inverse(getWorldMat()) * glm::vec4(ray.getOrigin(), 1.0));
+//	localRay.setDirection(glm::inverse(getWorldMat()) * glm::vec4(ray.getDirection(), 0.0));
+//
+//	auto intersections = _geom->rayCast(localRay);
+//
+//	for (auto intersec : intersections) {
+//		intersec._obj = this;
+//		list.push_back(intersec);
+//	}
+//}
 
 //Object3D::ID_t Object3D::getID() const {
 //	return _ID;
@@ -87,7 +86,7 @@ glm::vec4 Object3D::getColorKey() const {
 void Object3D::setClicable(bool clicable) {
 	if(_clicable == clicable) return;
 
-	auto& pool = Engine::engine().objects;
+	auto& pool = Engine::engine().getScene()->objects;
 
 	if(clicable) {
 		if (pool._freeId.empty()) {
@@ -114,13 +113,12 @@ void Object3D::resetID() {
 	_ID = 0;
 }
 
-Object3D* Object3D::search(int id) {
-	if (id == _ID) return this;
-	return nullptr;
-}
-
 Node::reference Object3D::create(MaterialPtr material, GeometryPtr geometry) {
-	auto& pool = Engine::engine().objects;
+	auto& pool = Engine::engine().getScene()->objects;
 //	pool.allocate(material, geometry);
 	return Node::reference(pool.allocate(material, geometry), NodeType::NODE_OBJECT);
+}
+
+size_t Object3D::getID() const {
+	return _ID;
 }

@@ -10,6 +10,7 @@
 
 #include "abstracteventlistener.hpp"
 #include "camera.h"
+#include "CreateAsPointer.hpp"
 
 class CameraControl : virtual
 	public EventListener,

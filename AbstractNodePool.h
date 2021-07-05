@@ -80,6 +80,10 @@ public:
 		return _maxId;
 	}
 
+	auto& operator [](size_t ind) const {
+		return _pool[ind];
+	}
+
 	NodeT* undegroundArray() {
 		return &_pool[0];
 	}

@@ -33,6 +33,6 @@ std::string getLightsName(const int index) {
 }
 
 Node::reference Light::create(LightType type) {
-	auto& pool = Engine::engine().lights;
+	auto& pool = Engine::engine().getScene()->lights;
 	return Node::reference(pool.allocate(type), NodeType::NODE_LIGHT);
 }

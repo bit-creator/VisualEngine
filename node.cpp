@@ -14,10 +14,6 @@ Node::reference::reference(size_t offset, NodeType type)
 	: _offset(offset), _type(type)
 {  }
 
-//Node* Node::reference::get() {
-//	return _ref->get();
-//}
-
 bool Node::reference::isRoot() {
 	return _offset == root;
 }
@@ -29,9 +25,9 @@ bool Node::reference::isDied() {
 Node* Node::reference::operator ->() {
 	switch(_type) {
 	case NodeType::NODE_CAMERA: return Engine::engine().getScene()->getCamera();
-	case NodeType::NODE_OBJECT: return ((dynamic_cast<Object3D*>(Engine::engine().getPool(_type))) + _offset);
-	case NodeType::NODE_LIGHT: return ((dynamic_cast<Light*>(Engine::engine().getPool(_type))) + _offset);
-	case NodeType::NODE_NODE: return ((dynamic_cast<Node*>(Engine::engine().getPool(_type))) + _offset);
+	case NodeType::NODE_OBJECT: return ((dynamic_cast<Object3D*>(Engine::getPool(_type))) + _offset);
+	case NodeType::NODE_LIGHT: return ((dynamic_cast<Light*>(Engine::getPool(_type))) + _offset);
+	case NodeType::NODE_NODE: return ((dynamic_cast<Node*>(Engine::getPool(_type))) + _offset);
 	};
 	return nullptr;
 }
@@ -111,7 +107,6 @@ glm::mat4 Node::getWorldMat() noexcept {
 	if (!_dirtyWorldTransform && !_dirtyTransform) return _worldMat;
 	if (_parent.isRoot()) return getModelMat();
 
-//	auto parentMat = _parent.lock()->getWorldMat();
 	auto parentMat = _parent->getWorldMat();
 	auto modelMat = getModelMat();
 
@@ -165,13 +160,9 @@ void Node::unvalidateWorldMat() noexcept {
 
 void Node::addChild(Node::reference child) {
 	if(!child->_parent.isRoot()){
-//		child ->_parent.lock()->removeChild(child);
 		child ->_parent->removeChild(child);
-//		child -> _parent.reset();
-//		child -> _parent = reference();
 	}
 	_childs.push_back(child);
-//	child -> _parent = weak_from_this();
 	child->_parent = _this;
 //	child->_parent = referenceFromThis();    // Not Working Good
 
@@ -181,7 +172,6 @@ void Node::addChild(Node::reference child) {
 
 void Node::removeChild(Node::reference child) {
 	if(_childs.empty()) return;
-//	_childs.remove_if([child = child](Node::reference ch){return ch.owner_before(child);});
 	_childs.remove(child);
 }
 
@@ -189,18 +179,11 @@ std::list < Node::reference >& Node::getChilds() {
 	return _childs;
 }
 
-std::list< Intersection >
-Node::rayCast(Ray ray) {
-	std::list< Intersection > result;
-	rayCastImpl(ray, result);
-	return result;
-}
-
 Node::~Node() {
 }
 
 Node::reference Node::create(NodeType type) {
-	auto& pool = Engine::engine().nodes;
+	auto& pool = Engine::engine().getScene()->nodes;
 	reference ref = reference(pool.allocate(type), NodeType::NODE_NODE);
 	ref->_this = ref;
 	return ref;
@@ -239,16 +222,4 @@ Node::reference Node::referenceFromThis() const {
 //	default :
 //		return new NullRef();
 //	}
-}
-
-void Node::rayCastImpl(Ray& ray, std::list< Intersection >& list) {
-	for(auto child : _childs) child->rayCastImpl(ray, list);
-}
-
-Object3D* Node::search(int id) {
-	Object3D* res = nullptr;
-	for(auto child : _childs) {
-		res = child->search(id);
-		if(res) return res;
-	} return res;
 }

@@ -20,10 +20,6 @@
 #include <glm/glm.hpp>
 #include <glm/gtx/quaternion.hpp>
 
-#include "CreateAsPointer.hpp"
-#include "Ray.h"
-//#include "AbstractNodeRef.h"
-
 enum class NodeType
 {
     NODE_CAMERA,
@@ -32,7 +28,8 @@ enum class NodeType
 	NODE_NODE
 };
 
-class Node : public std::enable_shared_from_this < Node > {
+class Node
+{
 public:
 	class reference {
 	private:
@@ -50,19 +47,15 @@ public:
 		auto operator <=>(const reference&) const =default;
 
 		template < typename NodeT >
-			NodeT* get();
+			NodeT* get();    // definition in "engine.h"
 
-//		Node* get();
 		bool isRoot();
 		bool isDied();
 		Node* operator ->();
 	};
 
-//	using reference = std::shared_ptr < Node >;
-
 protected:
 	std::list < reference >		     						_childs;
-//	std::weak_ptr < Node >									_parent;
 	reference												_parent;
 	reference												_this;
 
@@ -113,17 +106,7 @@ public: 		// CHILD
     std::list < reference >&
     getChilds();
 
-    std::list < Intersection >
-    rayCast(Ray ray);
-
-    virtual Object3D* search(int id);
-
 	void unvalidateWorldMat() noexcept;
-
-protected:
-	virtual void rayCastImpl(Ray& ray, std::list < Intersection >& list);
 };
-
-//using NodePtr = Node::reference;
 
 #endif // NODE_H

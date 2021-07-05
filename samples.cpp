@@ -26,9 +26,6 @@
 #include "Geometry/Primitive/cone.h"
 #include "Geometry/Primitive/mobiusstrip.h"
 
-//#include "AbstractNodeRef.h"
-#include "reference.hpp"
-
 class DemoSampleListener : public EventListener
 {
     Scene& scene;
@@ -105,7 +102,8 @@ public:
 
     	if(button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE) {
     		if (auto id = eng.getPickerKey(glm::vec2(0.0, 0.0)); id) {
-    			if (auto res = scene.getRoot()->search(id); res) {
+    			if (auto ref = scene.searchID(id); !ref.isDied()) {
+    				auto res = ref.get<Object3D>();
     				if(res->getMaterial() == _selected) {
     					res->setMaterial(_regular);
     				} else if (res->getMaterial() == _regular) {

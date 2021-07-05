@@ -32,10 +32,6 @@
 
 
 class Engine {
-	friend Object3D;
-	friend Node;
-	friend Light;
-
 private:
 	ScenePtr                        		 _scene;
     Cube	   								 _skyBox;
@@ -62,10 +58,10 @@ private:
 public:
     inline static const Window     window = Window(4.6f, 1920u, 1080u, "Visual Engine");
 
-public:
-    ObjectPool					   objects;
-    LightPool					   lights;
-    NodePool					   nodes;
+//public:
+//    ObjectPool					   objects;
+//    LightPool					   lights;
+//    NodePool					   nodes;
 
 public:
     static Engine&
@@ -85,24 +81,26 @@ public:
     void run(const Window& window = window) noexcept;
 
     template < typename NodeT >
-    static inline NodeT* getPool() {
-    	if constexpr (std::same_as<NodeT, Object3D>) return Engine::engine().objects.undegroundArray();
-    	if constexpr (std::same_as<NodeT, Light>)	 return Engine::engine().lights.undegroundArray();
-    	if constexpr (std::same_as<NodeT, Node>) 	 return Engine::engine().nodes.undegroundArray();
-    	return nullptr;
-    }
+    static inline NodeT* getPool();
 
-    static inline Node* getPool(const NodeType& type) {
-    	if (type == NodeType::NODE_OBJECT) return Engine::engine().objects.undegroundArray();
-    	if (type == NodeType::NODE_LIGHT)  return Engine::engine().lights.undegroundArray();
-    	if (type == NodeType::NODE_NODE)   return Engine::engine().nodes.undegroundArray();
-    	return nullptr;
-    }
+    static Node* getPool(NodeType type);
 
     float getPickerKey(const glm::vec2& mousePosition);
 
 	const glm::mat3& getPostProcesingKernel() const;
 	void setPostProcesingKernel(const glm::mat3 &postProcesingKernel);
 };
+
+
+//////// TEMPLATE FUNCTIONS /////////
+template<typename NodeT>
+inline NodeT* Engine::getPool() {
+	return Engine::engine().getScene()->getPool<NodeT>();
+}
+
+template<typename NodeT>
+inline NodeT* Node::reference::get() {
+	return Engine::engine().getPool<NodeT>() + _offset;
+}
 
 #endif // ENGINE_H
