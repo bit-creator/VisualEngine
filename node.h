@@ -76,7 +76,7 @@ public:
     Node(Node&&) noexcept = delete;
     virtual ~Node() noexcept;
 
-    static reference create(NodeType type =NodeType::NODE_NODE);
+    static reference create();
 
     NodeType getNodeType() const noexcept;
 

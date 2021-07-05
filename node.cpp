@@ -182,9 +182,9 @@ std::list < Node::reference >& Node::getChilds() {
 Node::~Node() {
 }
 
-Node::reference Node::create(NodeType type) {
+Node::reference Node::create() {
 	auto& pool = Engine::engine().getScene()->nodes;
-	reference ref = reference(pool.allocate(type), NodeType::NODE_NODE);
+	reference ref = reference(pool.allocate(NodeType::NODE_NODE), NodeType::NODE_NODE);
 	ref->_this = ref;
 	return ref;
 }
