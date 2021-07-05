@@ -3,7 +3,7 @@
 #include "cameracontrol.h"
 #include "constants.hpp"
 
-CameraControl::CameraControl(CameraPtr camera) noexcept
+CameraControl::CameraControl(Node::reference camera) noexcept
 	: _camera(camera)
 	, _direction(glm::vec3(0.0f, 0.0f, 0.0f))
 	, _eilerAngle(glm::vec3(0.0f, 0.0f, 0.0f))

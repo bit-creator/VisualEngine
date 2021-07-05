@@ -26,7 +26,8 @@
 #include "Geometry/Primitive/cone.h"
 #include "Geometry/Primitive/mobiusstrip.h"
 
-#include "AbstractNodeRef.h"
+//#include "AbstractNodeRef.h"
+#include "reference.hpp"
 
 class DemoSampleListener : public EventListener
 {
@@ -38,9 +39,9 @@ class DemoSampleListener : public EventListener
     float  dir = -1.0;
 
 public:
-    ObjPtr  _cube;
+    Node::reference  _cube;
     TexPtr  _skybox;
-    NodePtr _atom;
+    Node::reference _atom;
     MaterialPtr _selected;
     MaterialPtr _regular;
     BumpMatPtr  _bump;
@@ -66,15 +67,15 @@ public:
     		return;
     	}
 
-        NodePtr root = scene.getRoot();
+        Node::reference root = scene.getRoot();
 
-        NodePtr salSys = *((root->getChilds()).rbegin());
-        NodePtr sun = *((salSys->getChilds()).begin());
+        Node::reference salSys = *((root->getChilds()).rbegin());
+        Node::reference sun = *((salSys->getChilds()).begin());
 
-        NodePtr earthSys = *((salSys->getChilds()).rbegin());
+        Node::reference earthSys = *((salSys->getChilds()).rbegin());
 
-        NodePtr earth = *((earthSys->getChilds()).begin());
-        NodePtr moon = *((earthSys->getChilds()).rbegin());
+        Node::reference earth = *((earthSys->getChilds()).begin());
+        Node::reference moon = *((earthSys->getChilds()).rbegin());
 
         sun->setRotate(glm::vec3(0.0f, 1.0f, 0.0f), f4);
         earth->setRotate(glm::vec3(0.0f, 1.0f, 0.0f), f4);
@@ -188,17 +189,22 @@ void DemoSample() {
     auto moonObj  = Object3D::create(moon, sphereGeom);
     auto cubeObj  = Object3D::create(simple, cube);
 
-	dynamic_cast<Object3D*>(sunObj.get())->setClicable(true);
-	dynamic_cast<Object3D*>(moonObj.get())->setClicable(true);
-	dynamic_cast<Object3D*>(earthObj.get())->setClicable(true);
-	dynamic_cast<Object3D*>(cubeObj.get())->setClicable(true);
+//	dynamic_cast<Object3D*>(sunObj.get())->setClicable(true);
+//	dynamic_cast<Object3D*>(moonObj.get())->setClicable(true);
+//	dynamic_cast<Object3D*>(earthObj.get())->setClicable(true);
+//	dynamic_cast<Object3D*>(cubeObj.get())->setClicable(true);
 
-    std::vector<ObjPtr> electrons;
+	sunObj.get<Object3D>()->setClicable(true);
+	moonObj.get<Object3D>()->setClicable(true);
+	earthObj.get<Object3D>()->setClicable(true);
+	cubeObj.get<Object3D>()->setClicable(true);
+
+    std::vector<Node::reference> electrons;
 
     for(int i = 0; i< 10; ++i) {
     	auto el = Object3D::create(glossy, sphereGeom);
     	electrons.push_back(el);
-        dynamic_cast<Object3D*>(el.get())->setClicable(true);
+        el.get<Object3D>()->setClicable(true);
     	atom->addChild(el);
     }
 
@@ -219,7 +225,7 @@ void DemoSample() {
     skyBox->loadImage("resource/skybox/negy.jpg", BoxSide::SIDE_BOTTOM);
 
 
-    dynamic_cast<Light*>(headLighter.get())->setColor(glm::vec4(1.0, 1.0, 1.0, 1.0));
+    headLighter.get<Light>()->setColor(glm::vec4(1.0, 1.0, 1.0, 1.0));
 
 
     simple->setAmbientColor(glm::vec4(0., 0., 0., 1.0));

@@ -4,6 +4,41 @@
 
 #include <glm/gtc/type_ptr.hpp>
 
+////////// Node::reference ///////////
+
+Node::reference::reference()
+: _offset(root), _type(NodeType::NODE_NODE)
+{  }
+
+Node::reference::reference(size_t offset, NodeType type)
+	: _offset(offset), _type(type)
+{  }
+
+//Node* Node::reference::get() {
+//	return _ref->get();
+//}
+
+bool Node::reference::isRoot() {
+	return _offset == root;
+}
+
+bool Node::reference::isDied() {
+	return _offset == died;
+}
+
+Node* Node::reference::operator ->() {
+	switch(_type) {
+	case NodeType::NODE_CAMERA: return Engine::engine().getScene()->getCamera();
+	case NodeType::NODE_OBJECT: return ((dynamic_cast<Object3D*>(Engine::engine().getPool(_type))) + _offset);
+	case NodeType::NODE_LIGHT: return ((dynamic_cast<Light*>(Engine::engine().getPool(_type))) + _offset);
+	case NodeType::NODE_NODE: return ((dynamic_cast<Node*>(Engine::engine().getPool(_type))) + _offset);
+	};
+	return nullptr;
+}
+
+
+/////////////// NODE //////////////
+
 Node::Node() noexcept
 	: Node(NodeType::NODE_NODE) {
 }
@@ -74,7 +109,7 @@ glm::mat4 Node::getModelMat() noexcept {
 
 glm::mat4 Node::getWorldMat() noexcept {
 	if (!_dirtyWorldTransform && !_dirtyTransform) return _worldMat;
-	if (_parent.expired()) return getModelMat();
+	if (_parent.isRoot()) return getModelMat();
 
 //	auto parentMat = _parent.lock()->getWorldMat();
 	auto parentMat = _parent->getWorldMat();
@@ -88,7 +123,7 @@ glm::mat4 Node::getWorldMat() noexcept {
 }
 
 Node::Node(const Node &oth) noexcept
-	: _parent(new NullRef())
+	: _parent()
 	, _type(oth._type)
 	, _modelMat(oth._modelMat)
 	, _worldMat(oth._worldMat)
@@ -128,12 +163,12 @@ void Node::unvalidateWorldMat() noexcept {
 	_dirtyWorldTransform = true;
 }
 
-void Node::addChild(NodePtr child) {
-	if(!child->_parent.expired()){
+void Node::addChild(Node::reference child) {
+	if(!child->_parent.isRoot()){
 //		child ->_parent.lock()->removeChild(child);
 		child ->_parent->removeChild(child);
 //		child -> _parent.reset();
-		child -> _parent = NullRef();
+//		child -> _parent = reference();
 	}
 	_childs.push_back(child);
 //	child -> _parent = weak_from_this();
@@ -144,13 +179,13 @@ void Node::addChild(NodePtr child) {
 	child->_dirtyTransform = true;
 }
 
-void Node::removeChild(NodePtr child) {
+void Node::removeChild(Node::reference child) {
 	if(_childs.empty()) return;
-//	_childs.remove_if([child = child](NodePtr ch){return ch.owner_before(child);});
+//	_childs.remove_if([child = child](Node::reference ch){return ch.owner_before(child);});
 	_childs.remove(child);
 }
 
-std::list < NodePtr >& Node::getChilds() {
+std::list < Node::reference >& Node::getChilds() {
 	return _childs;
 }
 
@@ -164,9 +199,9 @@ Node::rayCast(Ray ray) {
 Node::~Node() {
 }
 
-NodePtr Node::create(NodeType type) {
+Node::reference Node::create(NodeType type) {
 	auto& pool = Engine::engine().nodes;
-	reference ref = new NodeRef(pool.allocate(type));
+	reference ref = reference(pool.allocate(type), NodeType::NODE_NODE);
 	ref->_this = ref;
 	return ref;
 }
@@ -174,36 +209,36 @@ NodePtr Node::create(NodeType type) {
 
 // Not Working Good
 Node::reference Node::referenceFromThis() const {
-	auto pool = Engine::getPool(_type);
-
-	switch(_type) {
-	case NodeType::NODE_LIGHT : {
-		auto concrPool = dynamic_cast<const Light*>(pool);
-		auto thisP = dynamic_cast<const Light*>(this);
-		return new LightRef((thisP - concrPool) / sizeof(concrPool));
-		break;
-	}
-
-	case NodeType::NODE_OBJECT : {
-		auto concrPool = dynamic_cast<const Object3D*>(pool);
-		auto thisP = dynamic_cast<const Object3D*>(this);
-		return new ObjectRef((thisP - concrPool) / sizeof(concrPool));
-		break;
-	}
-
-	case NodeType::NODE_CAMERA : {
-		return new CameraRef();
-		break;
-	}
-
-	case NodeType::NODE_NODE : {
-		return new NodeRef((this - pool) / sizeof(pool));
-		break;
-	}
-
-	default :
-		return new NullRef();
-	}
+//	auto pool = Engine::getPool(_type);
+//
+//	switch(_type) {
+//	case NodeType::NODE_LIGHT : {
+//		auto concrPool = dynamic_cast<const Light*>(pool);
+//		auto thisP = dynamic_cast<const Light*>(this);
+//		return new LightRef((thisP - concrPool) / sizeof(concrPool));
+//		break;
+//	}
+//
+//	case NodeType::NODE_OBJECT : {
+//		auto concrPool = dynamic_cast<const Object3D*>(pool);
+//		auto thisP = dynamic_cast<const Object3D*>(this);
+//		return new ObjectRef((thisP - concrPool) / sizeof(concrPool));
+//		break;
+//	}
+//
+//	case NodeType::NODE_CAMERA : {
+//		return new CameraRef();
+//		break;
+//	}
+//
+//	case NodeType::NODE_NODE : {
+//		return new NodeRef((this - pool) / sizeof(pool));
+//		break;
+//	}
+//
+//	default :
+//		return new NullRef();
+//	}
 }
 
 void Node::rayCastImpl(Ray& ray, std::list< Intersection >& list) {

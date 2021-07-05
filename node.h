@@ -22,8 +22,7 @@
 
 #include "CreateAsPointer.hpp"
 #include "Ray.h"
-#include "AbstractNodeRef.h"
-
+//#include "AbstractNodeRef.h"
 
 enum class NodeType
 {
@@ -37,32 +36,26 @@ class Node : public std::enable_shared_from_this < Node > {
 public:
 	class reference {
 	private:
-		AbstractNodeRef*					_ref;
+		static inline size_t died = std::numeric_limits<size_t>::max();
+		static inline size_t root = std::numeric_limits<size_t>::max() -1;
+
+	private:
+		size_t						_offset;
+		NodeType					_type;
 
 	public:
-		reference() : _ref(new NullRef()) {  }
-
-		reference& operator =(const AbstractNodeRef& oth) {
-			if (this->_ref == &oth) return *this;
-			*_ref = oth;
-			return *this;
-		}
-
-		reference(AbstractNodeRef* ref) : _ref(ref) {  }
+		reference();
+		reference(size_t offset, NodeType type);
 
 		auto operator <=>(const reference&) const =default;
 
-		Node* get() {
-			return _ref->get();
-		}
+		template < typename NodeT >
+			NodeT* get();
 
-		bool expired() {
-			return _ref->expired();
-		}
-
-		Node* operator ->() {
-			return _ref->get();
-		}
+//		Node* get();
+		bool isRoot();
+		bool isDied();
+		Node* operator ->();
 	};
 
 //	using reference = std::shared_ptr < Node >;
@@ -131,6 +124,6 @@ protected:
 	virtual void rayCastImpl(Ray& ray, std::list < Intersection >& list);
 };
 
-using NodePtr = Node::reference;
+//using NodePtr = Node::reference;
 
 #endif // NODE_H

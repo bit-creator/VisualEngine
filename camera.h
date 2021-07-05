@@ -36,7 +36,7 @@ protected:
 
 public:
 //    using reference = std::shared_ptr<Camera>;
-	using reference = Node::reference;
+//	using reference = Node::reference;
 
 
 	Camera(const Camera& oth) noexcept;
@@ -69,6 +69,6 @@ public:
 };
 
 
-using CameraPtr = Camera::reference;
+//using CameraPtr = Camera::reference;
 
 #endif // CAMERA_H

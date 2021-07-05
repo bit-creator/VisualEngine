@@ -32,7 +32,7 @@ std::string getLightsName(const int index) {
 	return patern;
 }
 
-LightPtr Light::create(LightType type) {
+Node::reference Light::create(LightType type) {
 	auto& pool = Engine::engine().lights;
-	return new LightRef(pool.allocate(type));
+	return Node::reference(pool.allocate(type), NodeType::NODE_LIGHT);
 }

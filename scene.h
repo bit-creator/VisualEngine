@@ -30,7 +30,7 @@ class Scene : public SharedCreator < Scene > {
 private:
 	glm::vec4									 _background;
     Camera					                     _camera;
-    NodePtr			                             _root;
+    Node::reference			                     _root;
     TexPtr										 _skyBox;
 
 public:
@@ -54,15 +54,15 @@ public:
     void setSkyBox(TexPtr skyBox);
     TexPtr getSkyBox() const;
 
-    NodePtr getRoot() const noexcept;
+    Node::reference getRoot() const noexcept;
 
-    DrawList getDrawList() const noexcept;
-    LightList getLightList() const noexcept;
+//    DrawList getDrawList() const noexcept;
+//    LightList getLightList() const noexcept;
 
 
 private:
-    void getDrawListImpl(DrawList& list, const NodePtr& obj) const noexcept;
-    void getLightListImpl(LightList& list, const NodePtr& obj) const noexcept;
+//    void getDrawListImpl(DrawList& list, const NodePtr& obj) const noexcept;
+//    void getLightListImpl(LightList& list, const NodePtr& obj) const noexcept;
 };
 
 using ScenePtr = std::shared_ptr < Scene >;

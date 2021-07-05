@@ -27,7 +27,7 @@ private:
 
 public:
 //	using reference = std::shared_ptr<Light>;
-    using reference = Node::reference;
+//    using reference = Node::reference;
 
 	Light(LightType type);
 
@@ -52,6 +52,6 @@ public:
 
 std::string getLightsName(const int index);
 
-using LightPtr = Light::reference;
+//using LightPtr = Light::reference;
 
 #endif /* LIGHT_H_ */

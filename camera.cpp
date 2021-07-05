@@ -31,7 +31,7 @@ Camera::reference Camera::create(const Camera &oth) {
 	Camera tmp = oth;
 //	reference ref = reference(Camera(oth));
 	Engine::engine().getScene()->setCamera(tmp);
-	return new CameraRef();
+	return Node::reference(0, NodeType::NODE_CAMERA);
 }
 
 Camera& Camera::operator =(const Camera &oth) {

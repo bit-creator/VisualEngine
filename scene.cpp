@@ -26,7 +26,7 @@ const glm::vec4& Scene::getBackgroundColor() const noexcept {
 	return _background;
 }
 
-NodePtr Scene::getRoot() const noexcept {
+Node::reference Scene::getRoot() const noexcept {
 	return _root;
 }
 

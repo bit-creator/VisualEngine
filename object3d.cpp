@@ -119,8 +119,8 @@ Object3D* Object3D::search(int id) {
 	return nullptr;
 }
 
-ObjPtr Object3D::create(MaterialPtr material, GeometryPtr geometry) {
+Node::reference Object3D::create(MaterialPtr material, GeometryPtr geometry) {
 	auto& pool = Engine::engine().objects;
 //	pool.allocate(material, geometry);
-	return new ObjectRef(pool.allocate(material, geometry));
+	return Node::reference(pool.allocate(material, geometry), NodeType::NODE_OBJECT);
 }
