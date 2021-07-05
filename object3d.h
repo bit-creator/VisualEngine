@@ -64,7 +64,7 @@ public:
     MaterialPtr getMaterial() const noexcept;
 
 public:
-	void rayCastImpl(Ray& ray, std::list < Intersection >& list) override;
+//	void rayCastImpl(Ray& ray, std::list < Intersection >& list) override;
 	Object3D* search(int id) override;
 
 	glm::vec4 getColorKey() const;

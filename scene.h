@@ -20,11 +20,10 @@
 #include "object3d.h"
 #include "Light.h"
 
+#include "AbstractNodePool.h"
+
 #include "constants.hpp"
 
-
-using DrawList = std::vector < Object3D* >;
-using LightList = std::vector < Light* >;
 
 class Scene : public SharedCreator < Scene > {
 private:
@@ -32,6 +31,11 @@ private:
     Camera					                     _camera;
     Node::reference			                     _root;
     TexPtr										 _skyBox;
+
+public:
+    ObjectPool					   objects;
+    LightPool					   lights;
+    NodePool					   nodes;
 
 public:
     Scene() noexcept;
@@ -56,15 +60,21 @@ public:
 
     Node::reference getRoot() const noexcept;
 
-//    DrawList getDrawList() const noexcept;
-//    LightList getLightList() const noexcept;
+    template < typename NodeT >
+    NodeT* getPool();
 
-
-private:
-//    void getDrawListImpl(DrawList& list, const NodePtr& obj) const noexcept;
-//    void getLightListImpl(LightList& list, const NodePtr& obj) const noexcept;
+    Node* getPool(NodeType type);
 };
 
 using ScenePtr = std::shared_ptr < Scene >;
+
+template<typename NodeT>
+inline NodeT* Scene::getPool() {
+	if constexpr (std::same_as<NodeT, Camera>)   return getCamera();
+ 	if constexpr (std::same_as<NodeT, Object3D>) return objects.undegroundArray();
+	if constexpr (std::same_as<NodeT, Light>)	 return lights.undegroundArray();
+	if constexpr (std::same_as<NodeT, Node>) 	 return nodes.undegroundArray();
+	return nullptr;
+}
 
 #endif // SCENE_H

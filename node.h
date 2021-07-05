@@ -32,7 +32,9 @@ enum class NodeType
 	NODE_NODE
 };
 
-class Node : public std::enable_shared_from_this < Node > {
+class Node
+//		: public std::enable_shared_from_this < Node >
+{
 public:
 	class reference {
 	private:
@@ -50,7 +52,7 @@ public:
 		auto operator <=>(const reference&) const =default;
 
 		template < typename NodeT >
-			NodeT* get();
+			NodeT* get();    // definition in "engine.h"
 
 //		Node* get();
 		bool isRoot();
@@ -113,15 +115,15 @@ public: 		// CHILD
     std::list < reference >&
     getChilds();
 
-    std::list < Intersection >
-    rayCast(Ray ray);
+//    std::list < Intersection >
+//    rayCast(Ray ray);
 
     virtual Object3D* search(int id);
 
 	void unvalidateWorldMat() noexcept;
 
-protected:
-	virtual void rayCastImpl(Ray& ray, std::list < Intersection >& list);
+//protected:
+//	virtual void rayCastImpl(Ray& ray, std::list < Intersection >& list);
 };
 
 //using NodePtr = Node::reference;

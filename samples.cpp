@@ -26,9 +26,6 @@
 #include "Geometry/Primitive/cone.h"
 #include "Geometry/Primitive/mobiusstrip.h"
 
-//#include "AbstractNodeRef.h"
-#include "reference.hpp"
-
 class DemoSampleListener : public EventListener
 {
     Scene& scene;

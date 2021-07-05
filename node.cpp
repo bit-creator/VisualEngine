@@ -29,9 +29,9 @@ bool Node::reference::isDied() {
 Node* Node::reference::operator ->() {
 	switch(_type) {
 	case NodeType::NODE_CAMERA: return Engine::engine().getScene()->getCamera();
-	case NodeType::NODE_OBJECT: return ((dynamic_cast<Object3D*>(Engine::engine().getPool(_type))) + _offset);
-	case NodeType::NODE_LIGHT: return ((dynamic_cast<Light*>(Engine::engine().getPool(_type))) + _offset);
-	case NodeType::NODE_NODE: return ((dynamic_cast<Node*>(Engine::engine().getPool(_type))) + _offset);
+	case NodeType::NODE_OBJECT: return ((dynamic_cast<Object3D*>(Engine::getPool(_type))) + _offset);
+	case NodeType::NODE_LIGHT: return ((dynamic_cast<Light*>(Engine::getPool(_type))) + _offset);
+	case NodeType::NODE_NODE: return ((dynamic_cast<Node*>(Engine::getPool(_type))) + _offset);
 	};
 	return nullptr;
 }
@@ -189,18 +189,18 @@ std::list < Node::reference >& Node::getChilds() {
 	return _childs;
 }
 
-std::list< Intersection >
-Node::rayCast(Ray ray) {
-	std::list< Intersection > result;
-	rayCastImpl(ray, result);
-	return result;
-}
+//std::list< Intersection >
+//Node::rayCast(Ray ray) {
+//	std::list< Intersection > result;
+//	rayCastImpl(ray, result);
+//	return result;
+//}
 
 Node::~Node() {
 }
 
 Node::reference Node::create(NodeType type) {
-	auto& pool = Engine::engine().nodes;
+	auto& pool = Engine::engine().getScene()->nodes;
 	reference ref = reference(pool.allocate(type), NodeType::NODE_NODE);
 	ref->_this = ref;
 	return ref;
@@ -241,9 +241,10 @@ Node::reference Node::referenceFromThis() const {
 //	}
 }
 
-void Node::rayCastImpl(Ray& ray, std::list< Intersection >& list) {
-	for(auto child : _childs) child->rayCastImpl(ray, list);
-}
+
+//void Node::rayCastImpl(Ray& ray, std::list< Intersection >& list) {
+//	for(auto child : _childs) child->rayCastImpl(ray, list);
+//}
 
 Object3D* Node::search(int id) {
 	Object3D* res = nullptr;
