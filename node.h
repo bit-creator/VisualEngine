@@ -28,8 +28,7 @@ enum class NodeType
 	NODE_NODE
 };
 
-class Node
-{
+class Node {
 public:
 	class reference {
 	private:
