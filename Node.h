@@ -11,24 +11,27 @@
 #include "entity.h"
 
 class Node : public Entity {
-public:
-// creation
+protected:
 	Node() noexcept;
-    void initialize();
-    static reference create();
+
+	Node(const Node& oth) noexcept =delete;
+	Node& operator=(Node&&) noexcept = delete;
 
 // copy
-//    Node(const Node& oth) noexcept;
-    Entity& operator =(const Node& oth) noexcept;
-    reference copy();
+	Node& operator =(const Node& oth) noexcept;
 
-// move
-    Node(Node&&) noexcept =default;
-    Node& operator=(Node&&) noexcept = delete;
+public:
+	Node(Node&&) noexcept =default;					// Need for pool construction "in place"
+    ~Node() noexcept =default;
 
-// destruction
-    virtual ~Node() noexcept;
-    void deinitialize();
+    static reference
+    create();
+
+    Entity::reference copy() override;
+
+	template < typename NodeT >
+	friend class AbstractNodePool;
+	friend class NodePool;
 };
 
 #endif /* NODE_H_ */

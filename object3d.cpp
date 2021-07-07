@@ -4,21 +4,6 @@
 
 Object3D::Object3D() noexcept
     : Entity(EntityType::OBJECT)
-	, _ID(0)
-{  }
-
-Object3D::Object3D(MaterialPtr material) noexcept
-    : Object3D()
-{ _material = material; }
-
-Object3D::Object3D(MaterialPtr material, GeometryPtr geometry) noexcept
-	: Object3D()
-{
-	_material = material;
-	_geom     = geometry;
-}
-
-Object3D::~Object3D() noexcept 
 {  }
 
 void Object3D::setMaterial(MaterialPtr material) noexcept
@@ -34,33 +19,6 @@ GeometryPtr Object3D::getGeometry() const noexcept
 {
 	return _geom;
 }
-
-//Object3D::Object3D(const Object3D &oth) noexcept
-//	: Entity(oth)
-//	, _geom(oth._geom)
-//	, _ID(oth._ID)
-//	, _material(oth._material)
-//	{
-//}
-
-//void Object3D::rayCastImpl(Ray &ray, std::list<Intersection> &list) {
-//	Node::rayCastImpl(ray, list);
-//
-//	Ray localRay;
-//	localRay.setOrigin(glm::inverse(getWorldMat()) * glm::vec4(ray.getOrigin(), 1.0));
-//	localRay.setDirection(glm::inverse(getWorldMat()) * glm::vec4(ray.getDirection(), 0.0));
-//
-//	auto intersections = _geom->rayCast(localRay);
-//
-//	for (auto intersec : intersections) {
-//		intersec._obj = this;
-//		list.push_back(intersec);
-//	}
-//}
-
-//Object3D::ID_t Object3D::getID() const {
-//	return _ID;
-//}
 
 glm::vec4 Object3D::getColorKey() const {
 	GLubyte id[sizeof(_ID)];
@@ -78,10 +36,6 @@ glm::vec4 Object3D::getColorKey() const {
 
 	return res / 255.0f;
 }
-
-//void Object3D::setID(Object3D::ID_t id) {
-//	_ID = id;
-//}
 
 void Object3D::setClicable(bool clicable) {
 	if(_clicable == clicable) return;
@@ -109,6 +63,9 @@ bool Object3D::isClicable() const {
 	return _clicable;
 }
 
+Object3D& Object3D::operator =(const Object3D &oth) noexcept {
+}
+
 void Object3D::resetID() {
 	_ID = 0;
 }
@@ -123,4 +80,7 @@ Entity::reference Object3D::create(MaterialPtr material, GeometryPtr geometry) {
 
 size_t Object3D::getID() const {
 	return _ID;
+}
+
+Entity::reference Object3D::copy() {
 }

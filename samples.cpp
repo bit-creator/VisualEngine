@@ -88,9 +88,9 @@ public:
 
     	if (glm::distance(scene.getCamera()->transform.getPosition(), glm::vec3(earth->getWorldMat() * glm::vec4(earth->transform.getPosition(), 1.0))) <= 0.75f) {
     		scene.setSkyBox(_skybox);
-    		_cube->setEnabled(true);
-    		_atom->setEnabled(true);
-    		salSys->setEnabled(false);
+    		_cube->enable();
+    		_atom->enable();
+    		salSys->disable();
     		Engine::engine().setPostProcesingKernel(indenityKernel);
     		onEarth = true;
     		std::cout << "on  earth" << std::endl;
@@ -147,7 +147,7 @@ void DemoSample() {
     auto [width, height] = eng.getWindowSize();
     float aspect = 1.0 * width / height;
 
-    auto headLighter = Light::create(LightType::LIGHT_DIRECTIONAL);
+    auto headLighter = Light::create();
     auto cam = Camera::create(PerspectiveCamera(PI / 3, aspect, 0.1, 100));
 
     auto controler = CameraControl::create(cam);
@@ -284,10 +284,10 @@ void DemoSample() {
     	++index;
     }
 
-    atom->setEnabled(false);
-    planetSystem->setEnabled(true);
-    cubeObj->setEnabled(false);
-    salarySystem->setEnabled(true);
+    atom->disable();
+    planetSystem->enable();
+    cubeObj->disable();
+    salarySystem->enable();
 
     cubeObj->transform.setPosition(glm::vec3(0.0, 0.0, 4.0));
 //    cubeObj->setScale(glm::vec3(1.0, 1.0, 50.0));

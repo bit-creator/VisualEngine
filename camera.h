@@ -51,6 +51,7 @@ public:
     CameraType getType() const noexcept;
 
   	Ray getRay(glm::vec2 screenPos);
+	virtual Entity::reference copy();
 };
 
 class OrthographicCamera : public Camera {

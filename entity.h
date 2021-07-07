@@ -13,12 +13,6 @@
 #define NODE_H
 
 #include <list>
-#include <vector>
-#include <memory>
-#include <algorithm>
-
-#include <glm/glm.hpp>
-#include <glm/gtx/quaternion.hpp>
 
 #include "Transformation.h"
 
@@ -64,32 +58,32 @@ protected:
 	reference												_this;
 
 	union {
-		reference												_parent;
-		reference												_next;
+		reference											_parent;
+		reference											_next;
 	};
 
 //
     bool 													_enabled;
-    const EntityType                                          _type;
+    const EntityType                                        _type;
 
 public:
     Transformation											transform;
 
 
-// creation
+protected:
     Entity(EntityType type) noexcept;
 
-// copy
-    Entity(const Entity& oth) noexcept =delete;
-    Entity& operator =(const Entity& oth) noexcept;
-    reference copy(); 								// make a deep copy of subtree
-
-// move
     Entity(Entity&&) noexcept =default;					// Need for pool construction "in place"
+    virtual ~Entity() noexcept =default;
+
+    Entity(const Entity& oth) noexcept =delete;
     Entity& operator=(Entity&&) noexcept = delete;
 
-// destruction
-    virtual ~Entity() noexcept =default;
+// copy
+    Entity& operator =(const Entity& oth) noexcept;
+
+public:
+    virtual reference copy() =0; 								// make a deep copy of subtree
 
 // tree
     void addChild(reference child);
@@ -102,9 +96,10 @@ public:
 	void update();
 
 //
-    EntityType getNodeType() const noexcept;
+    EntityType getEntityType() const noexcept;					// doesnt use now
 
-    void setEnabled(bool enabled);
+    void enable();
+    void disable();
     bool isEnabled();
 
 	bool isDied() const;

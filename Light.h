@@ -15,9 +15,9 @@
 
 enum class LightType
 {
-	LIGHT_DIRECTIONAL,
-	LIGHT_POINT,
-	LIGHT_SPOTS
+	DIRECTIONAL,
+	POINT,
+	SPOTS
 };
 
 class Light : public Entity {
@@ -25,32 +25,32 @@ private:
 	LightType							_type;
 	Color								_color;
 
-public:
+protected:
 	Light();
-	Light(LightType type);
+
+	Light(const Light& oth) noexcept =delete;
+	Light& operator=(Light&&) noexcept = delete;
+
+// copy
+	Light& operator =(const Light& oth) noexcept;
 
 public:
-	static reference create(LightType type);
+	Light(Light&&) noexcept =default;					// Need for pool construction "in place"
+    ~Light() noexcept =default;
+
+    static reference
+    create();
+
+    Entity::reference copy() override;
 
 	LightType getType() noexcept;
 
 	void setColor(const Color& color);
-
 	Color getColor() const;
 
+	template < typename NodeT >
+	friend class AbstractNodePool;
+	friend class LightPool;
 };
-
-class LightDirectional : public Light {
-public:
-	LightDirectional() noexcept
-		: Light(LightType::LIGHT_DIRECTIONAL)
-	{  }
-
-
-};
-
-std::string getLightsName(const int index);
-
-//using LightPtr = Light::reference;
 
 #endif /* LIGHT_H_ */

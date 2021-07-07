@@ -182,6 +182,18 @@ void Engine::renderScreen() {
 }
 
 void Engine::lightPass() {
+	auto lightDirName = [] (int ind)->std::string {
+		std::string patern = "uLights[%].lightDir";
+		std::replace(patern.begin(), patern.end(), '%', (char)(ind + '0'));
+		return patern;
+	};
+
+	auto lightColName = [] (int ind)->std::string {
+		std::string patern = "uLights[%].lightColor";
+		std::replace(patern.begin(), patern.end(), '%', (char)(ind + '0'));
+		return patern;
+	};
+
 	Draw drawScreen;
 
 	if (_scene -> useSkyBox()) drawScreen._hasSkyBoxMap = true;
@@ -204,9 +216,9 @@ void Engine::lightPass() {
     }
 
     int ind = 0;
-    for(auto& light : _scene->lights) {
-    	auto dirName = getLightsName(ind).append("lightDir");
-    	auto colName = getLightsName(ind).append("lightColor");
+    for(Light& light : _scene->lights) {
+    	auto dirName = lightDirName(ind);
+    	auto colName = lightColName(ind);
 
     	auto dir = glm::mat3(light.getWorldMat()) * glm::normalize(glm::vec3(0., 0., 1.));
     	Color color = light.getColor();

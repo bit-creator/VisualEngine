@@ -42,34 +42,9 @@ Entity::Entity(EntityType type) noexcept
 	_next.kill();
 }
 
-//void Entity::initialize() {
-//
-//}
-
-// copy
-//Entity::Entity(const Entity &oth) noexcept
-//	: _parent()
-//	, _enabled(oth._enabled)
-//	, _type(oth._type)
-//{  }
-
-
 Entity& Entity::operator =(const Entity& oth) noexcept{
 
 }
-
-
-Entity::reference Entity::copy() {
-	auto pool = Engine::engine().getScene()->getPool<Entity>();
-}
-
-// destruction
-//Entity::~Entity() {
-//}
-
-//void Entity::deinitialize() {
-//
-//}
 
 // tree
 void Entity::addChild(Entity::reference child) {
@@ -85,6 +60,7 @@ void Entity::addChild(Entity::reference child) {
 void Entity::removeChild(Entity::reference child) {
 	if(_childs.empty()) return;
 	_childs.remove(child);
+	// release from pool
 }
 
 std::list < Entity::reference >& Entity::getChilds() {
@@ -92,11 +68,10 @@ std::list < Entity::reference >& Entity::getChilds() {
 }
 
 void Entity::unvalidateWorldMat() noexcept {
+	if (transform._dirtyWorldTransform) return;
 	for (auto & node : _childs)
 		node->unvalidateWorldMat();
-
-	if (!transform._dirtyWorldTransform)
-		transform._dirtyWorldTransform = true;
+	transform._dirtyWorldTransform = true;
 }
 
 glm::mat4 Entity::getWorldMat() noexcept {
@@ -118,7 +93,7 @@ void Entity::update() {
 }
 
 //
-EntityType Entity::getNodeType() const noexcept {
+EntityType Entity::getEntityType() const noexcept {
 	return _type;
 }
 
@@ -126,12 +101,19 @@ bool Entity::isEnabled() {
 	return _enabled;
 }
 
-void Entity::setEnabled(bool val) {
+void Entity::enable() {
+	if(_enabled) return;
 	for(auto& child: _childs)
-		child->setEnabled(val);
-	_enabled = val;
+		child->enable();
+	_enabled = true;
 }
 
+void Entity::disable() {
+	if(!_enabled) return;
+	for(auto& child: _childs)
+		child->disable();
+	_enabled = false;
+}
 
 bool Entity::isDied() const {
 	return _this.expired();

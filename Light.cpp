@@ -9,14 +9,19 @@
 #include "engine.h"
 
 Light::Light()
-	: Light(LightType::LIGHT_DIRECTIONAL)
-{
+	: Entity(EntityType::LIGHT)
+	, _type(LightType::DIRECTIONAL)
+{  }
+
+Light& Light::operator =(const Light &oth) noexcept {
 }
 
-Light::Light(LightType type)
-	: Entity(EntityType::LIGHT)
-	, _type(type)
-{
+Entity::reference Light::create() {
+	auto ref = Engine::engine().getScene()->lights.capture();
+	return ref;
+}
+
+Entity::reference Light::copy() {
 }
 
 LightType Light::getType() noexcept {
@@ -27,17 +32,7 @@ void Light::setColor(const Color &color) {
 	_color = color;
 }
 
+
 Color Light::getColor() const {
 	return _color;
-}
-
-std::string getLightsName(const int index) {
-	std::string patern = "uLights[%].";
-	std::replace(patern.begin(), patern.end(), '%', (char)(index + '0'));
-	return patern;
-}
-
-Entity::reference Light::create(LightType type) {
-	auto ref = Engine::engine().getScene()->lights.capture();
-	return ref;
 }

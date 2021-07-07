@@ -24,7 +24,7 @@ class AbstractNodePool {
 	friend NodeT;
 
 protected:
-	std::vector < NodeT >								_pool;
+	std::vector < NodeT >									_pool;
 	Entity::reference										_nextAvailable;
 
 public:
@@ -104,38 +104,12 @@ private:
 	std::vector <size_t>								_freeId;
 
 public:
-	explicit ObjectPool(int reserv) : AbstractNodePool(reserv) {  }
+	explicit ObjectPool(int reserv);
 
-	Entity::reference capture(void) {
-		auto obj = _nextAvailable;
-		if(!obj->isDied()) {
-			MESSAGE("something very bad");
-		}
+	Entity::reference capture(void);
+	void release(Entity::reference ref);
 
-		_nextAvailable = obj->_next;
-		obj->_parent = Entity::reference();
-		obj->_this = obj;
-
-		return obj;
-	}
-
-	void release(Entity::reference ref) {
-		if(ref.expired()) {
-			MESSAGE("something very bad");
-		}
-
-		if(ref->isDied()) return;
-
-		// deinitialise
-
-
-		ref->_next = _nextAvailable;
-		_nextAvailable = ref;
-	}
-
-	size_t getMaxId() {
-		return _maxId;
-	}
+	size_t getMaxId();
 };
 
 class LightPool : public AbstractNodePool <Light> {
@@ -143,92 +117,20 @@ private:
 	size_t							_num;
 
 public:
-	explicit LightPool(int reserv)
-		: AbstractNodePool(reserv)
-		, _num(0)
-	{  }
+	explicit LightPool(int reserv);
 
-	Entity::reference capture(void) {
-		auto obj = _nextAvailable;
-		if(!obj->isDied()) {
-			MESSAGE("something very bad");
-		}
+	Entity::reference capture(void);
+	void release(Entity::reference ref);
 
-		_nextAvailable = obj->_next;
-		obj->_parent = Entity::reference();
-		obj->_this = obj;
-
-		++_num;
-
-		return obj;
-	}
-
-	void release(Entity::reference ref) {
-		if(ref.expired()) {
-			MESSAGE("something very bad");
-		}
-
-		if(ref->isDied()) return;
-
-		// deinitialise
-
-
-		--_num;
-
-		ref->_next = _nextAvailable;
-		_nextAvailable = ref;
-	}
-
-	size_t capacity() {
-		return _num;
-	}
+	size_t capacity();
 };
 
 class NodePool : public AbstractNodePool <Node> {
 public:
-	explicit NodePool(int reserv) : AbstractNodePool(reserv) {
-		_pool[0]._this = Entity::reference(0, EntityType::NODE);
-		_pool[0]._parent = Entity::reference();
+	explicit NodePool(int reserv);
 
-		_nextAvailable = Entity::reference(1, EntityType::NODE);
-	}
-
-	Entity::reference capture(void) {
-
-//		MESSAGE(_pool.size());
-
-		auto ref = _nextAvailable;
-
-		auto obj = ref.get<Node>();
-		if(!obj->isDied()) {
-			MESSAGE("something very bad");
-		}
-
-		_nextAvailable = obj->_next;
-		obj->_parent = Entity::reference();
-		obj->_this = ref;
-
-		return ref;
-	}
-
-	void release(Entity::reference ref) {
-		if(ref.expired()) {
-			MESSAGE("something very bad");
-		}
-
-		if(ref->isDied()) return;
-
-		// deinitialise
-
-
-		ref->_next = _nextAvailable;
-		_nextAvailable = ref;
-	}
+	Entity::reference capture(void);
+	void release(Entity::reference ref);
 };
-
-
-//using ObjectPool = AbstractNodePool <Object3D>;
-//using LightPool = AbstractNodePool <Light>;
-//using NodePool  = AbstractNodePool <Node>;
 
 #endif /* ABSTRACTNODEPOOL_H_ */

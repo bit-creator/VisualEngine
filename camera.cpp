@@ -74,4 +74,8 @@ PerspectiveCamera::PerspectiveCamera(float fovy, float aspect, float near, float
 
 CustomCamera::CustomCamera(const glm::mat4 &projMatr)
 	: Camera(projMatr, CameraType::CAMERA_CUSTOM)
-{  }
+ {
+}
+
+Entity::reference Camera::copy() {
+}

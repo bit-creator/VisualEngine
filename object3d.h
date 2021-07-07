@@ -12,46 +12,40 @@
 #ifndef OBJECT3D_H
 #define OBJECT3D_H
 
-#include <memory>
-#include <limits>
-
-#include <glm/glm.hpp>
-#include <glm/gtx/quaternion.hpp>
-
 #include "entity.h"
 #include "Geometry/geometry.h"
-#include "camera.h"
-#include "CreateAsPointer.hpp"
-
-#include "GL/buffer.h"
-#include "GL/vertexarray.h"
-#include "GL/shaderprogram.h"
 #include "Material/Material.h"
 
 class Object3D final : public Entity {
 public:
 	using ID_t = std::uint8_t;
 	static constexpr int maxID = std::numeric_limits<ID_t>::max();
-	friend class ObjectPool;
+
+
 private:
 	GeometryPtr                                             _geom;
+	MaterialPtr                                             _material;
+
 	ID_t													_ID = 0;
 	bool													_clicable =false;
 
-protected:          //  Material
-	MaterialPtr                                             _material;
-
-public:
+protected:
 	Object3D() noexcept;
-    Object3D(Object3D&& oth) noexcept =default;
-    Object3D(MaterialPtr material) noexcept;
-    Object3D(MaterialPtr material, GeometryPtr geometry) noexcept;
+
+    Object3D(const Object3D& oth) noexcept =delete;
+    Object3D& operator=(Object3D&&) noexcept = delete;
+
+// copy
+    Object3D& operator =(const Object3D& oth) noexcept;
 
 public:
-    virtual ~Object3D() noexcept;
+	Object3D(Object3D&&) noexcept =default;					// Need for pool construction "in place"
+    ~Object3D() noexcept =default;
 
     static reference
     create(MaterialPtr material =nullptr, GeometryPtr geometry =nullptr);
+
+    Entity::reference copy() override;
 
     void setGeometry(GeometryPtr geometry) noexcept;
     GeometryPtr getGeometry() const noexcept;
@@ -75,6 +69,10 @@ public:
 
 private:
 	void resetID();
+
+	template < typename NodeT >
+	friend class AbstractNodePool;
+	friend class ObjectPool;
 };
 
 #endif // OBJECT3D_H
