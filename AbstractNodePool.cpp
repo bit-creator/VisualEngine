@@ -5,4 +5,4 @@
  *      Author: IAbernikhin
  */
 
-#include "AbstractNodePool.h"
+#include "AbstractEntityPool.h"

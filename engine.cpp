@@ -55,6 +55,23 @@ void Engine::run(const Window& window) noexcept {
     	for(EventListenerPtr listener : _eventListeners)
         	if(listener) listener -> onRender();
 
+        for(Object3D& obj : _scene->objects) {
+        	if(!obj.isDied() && obj.isEnabled())
+        		obj.update();
+        }
+
+        for(Node& obj : _scene->nodes) {
+        	if(!obj.isDied() && obj.isEnabled())
+        		obj.update();
+        }
+
+        for(Light& obj : _scene->lights) {
+        	if(!obj.isDied() && obj.isEnabled())
+        		obj.update();
+        }
+
+        _scene->getCamera()->update();
+
     	_FBO.bind();
         _FBO.bindTextures();
 
@@ -78,7 +95,7 @@ void Engine::run(const Window& window) noexcept {
     	glStencilFunc(GL_ALWAYS, 1, 0xFF);
         glStencilMask(0xFF);
 
-        for(auto& obj : _scene->objects) {
+        for(Object3D& obj : _scene->objects) {
 //        	if(!obj.isDied())
         	if(!obj.isDied() && obj.isEnabled())
         		geometryPass(obj);
@@ -244,7 +261,7 @@ void Engine::geometryPass(Object3D &obj) noexcept {
 
     material->setUniforms(prg);
 
-    prg.setUniform("uCamPos", cam->getPosition());
+    prg.setUniform("uCamPos", cam->transform.getPosition());
 
     prg.setUniform("uMVPMat", mVPMat);
     prg.setUniform("uNormalMat", nMat);
@@ -276,6 +293,6 @@ float Engine::getPickerKey(const glm::vec2& mousePosition) {
 	return _FBO.getPickerKey(mousePosition);
 }
 
-Node* Engine::getPool(NodeType type) {
+Entity* Engine::getPool(EntityType type) {
 	return Engine::engine().getScene()->getPool(type);
 }

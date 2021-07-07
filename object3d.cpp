@@ -3,7 +3,7 @@
 #include <GL/glew.h>
 
 Object3D::Object3D() noexcept
-    : Node(NodeType::NODE_OBJECT)
+    : Entity(EntityType::OBJECT)
 	, _ID(0)
 {  }
 
@@ -35,13 +35,13 @@ GeometryPtr Object3D::getGeometry() const noexcept
 	return _geom;
 }
 
-Object3D::Object3D(const Object3D &oth) noexcept
-	: Node(oth)
-	, _geom(oth._geom)
-	, _ID(oth._ID)
-	, _material(oth._material)
-	{
-}
+//Object3D::Object3D(const Object3D &oth) noexcept
+//	: Entity(oth)
+//	, _geom(oth._geom)
+//	, _ID(oth._ID)
+//	, _material(oth._material)
+//	{
+//}
 
 //void Object3D::rayCastImpl(Ray &ray, std::list<Intersection> &list) {
 //	Node::rayCastImpl(ray, list);
@@ -113,7 +113,7 @@ void Object3D::resetID() {
 	_ID = 0;
 }
 
-Node::reference Object3D::create(MaterialPtr material, GeometryPtr geometry) {
+Entity::reference Object3D::create(MaterialPtr material, GeometryPtr geometry) {
 	auto ref = Engine::engine().getScene()->objects.capture();
 
 	ref.get<Object3D>()->setMaterial(material);

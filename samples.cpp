@@ -36,9 +36,9 @@ class DemoSampleListener : public EventListener
     float  dir = -1.0;
 
 public:
-    Node::reference  _cube;
+    Entity::reference  _cube;
     TexPtr  _skybox;
-    Node::reference _atom;
+    Entity::reference _atom;
     MaterialPtr _selected;
     MaterialPtr _regular;
     BumpMatPtr  _bump;
@@ -64,21 +64,21 @@ public:
     		return;
     	}
 
-        Node::reference root = scene.getRoot();
+        Entity::reference root = scene.getRoot();
 
-        Node::reference salSys = *((root->getChilds()).rbegin());
-        Node::reference sun = *((salSys->getChilds()).begin());
+        Entity::reference salSys = *((root->getChilds()).rbegin());
+        Entity::reference sun = *((salSys->getChilds()).begin());
 
-        Node::reference earthSys = *((salSys->getChilds()).rbegin());
+        Entity::reference earthSys = *((salSys->getChilds()).rbegin());
 
-        Node::reference earth = *((earthSys->getChilds()).begin());
-        Node::reference moon = *((earthSys->getChilds()).rbegin());
+        Entity::reference earth = *((earthSys->getChilds()).begin());
+        Entity::reference moon = *((earthSys->getChilds()).rbegin());
 
-        sun->setRotate(glm::vec3(0.0f, 1.0f, 0.0f), f4);
-        earth->setRotate(glm::vec3(0.0f, 1.0f, 0.0f), f4);
-        moon->setRotate(glm::vec3(0.0f, 1.0f, 0.0f), f5);
-        salSys->setRotate(glm::vec3(0.0f, 1.0f, 0.0f), f4);
-        earthSys->setRotate(glm::vec3(0.0f, 1.0f, 0.0f), f5);
+        sun->transform.setRotate(glm::vec3(0.0f, 1.0f, 0.0f), f4);
+        earth->transform.setRotate(glm::vec3(0.0f, 1.0f, 0.0f), f4);
+        moon->transform.setRotate(glm::vec3(0.0f, 1.0f, 0.0f), f5);
+        salSys->transform.setRotate(glm::vec3(0.0f, 1.0f, 0.0f), f4);
+        earthSys->transform.setRotate(glm::vec3(0.0f, 1.0f, 0.0f), f5);
 
         glm::mat3 indenityKernel = {
         	0, 0, 0,
@@ -86,7 +86,7 @@ public:
 			0, 0, 0
         };
 
-    	if (glm::distance(scene.getCamera()->getPosition(), glm::vec3(earth->getWorldMat() * glm::vec4(earth->getPosition(), 1.0))) <= 0.75f) {
+    	if (glm::distance(scene.getCamera()->transform.getPosition(), glm::vec3(earth->getWorldMat() * glm::vec4(earth->transform.getPosition(), 1.0))) <= 0.75f) {
     		scene.setSkyBox(_skybox);
     		_cube->setEnabled(true);
     		_atom->setEnabled(true);
@@ -197,7 +197,7 @@ void DemoSample() {
 	earthObj.get<Object3D>()->setClicable(true);
 	cubeObj.get<Object3D>()->setClicable(true);
 
-    std::vector<Node::reference> electrons;
+    std::vector<Entity::reference> electrons;
 
     for(int i = 0; i< 10; ++i) {
     	auto el = Object3D::create(glossy, sphereGeom);
@@ -279,7 +279,7 @@ void DemoSample() {
     for(auto electron : electrons) {
     	auto currentAngle = index * angle;
 //    	electron->setGeometry(sphereGeom);
-    	electron->setPosition(glm::vec3(radius* cos(currentAngle), 0, radius * sin(currentAngle)));
+    	electron->transform.setPosition(glm::vec3(radius* cos(currentAngle), 0, radius * sin(currentAngle)));
 //    	atom->addChild(electron);
     	++index;
     }
@@ -289,17 +289,17 @@ void DemoSample() {
     cubeObj->setEnabled(false);
     salarySystem->setEnabled(true);
 
-    cubeObj->setPosition(glm::vec3(0.0, 0.0, 4.0));
+    cubeObj->transform.setPosition(glm::vec3(0.0, 0.0, 4.0));
 //    cubeObj->setScale(glm::vec3(1.0, 1.0, 50.0));
-    atom->setPosition(cubeObj->getPosition());
-    moonObj->setPosition(glm::vec3(1.0f, 0.0f, 0.0f));
-    planetSystem->setPosition(glm::vec3(3.0f, 0.0f, 0.0f));
-    salarySystem->setPosition(glm::vec3(0.0f, 0.0f, 3.0f));
-    cam->setPosition(glm::vec3(0.0, 0.0, 1.0));
+    atom->transform.setPosition(cubeObj->transform.getPosition());
+    moonObj->transform.setPosition(glm::vec3(1.0f, 0.0f, 0.0f));
+    planetSystem->transform.setPosition(glm::vec3(3.0f, 0.0f, 0.0f));
+    salarySystem->transform.setPosition(glm::vec3(0.0f, 0.0f, 3.0f));
+    cam->transform.setPosition(glm::vec3(0.0, 0.0, 1.0));
 
-    atom->setScale(glm::vec3(0.7));
-    earthObj->setScale(glm::vec3(0.5f, 0.5f, 0.5f));
-    moonObj->setScale(glm::vec3(0.25f, 0.25f, 0.25f));
+    atom->transform.setScale(glm::vec3(0.7));
+    earthObj->transform.setScale(glm::vec3(0.5f, 0.5f, 0.5f));
+    moonObj->transform.setScale(glm::vec3(0.25f, 0.25f, 0.25f));
 
     planetSystem->addChild(earthObj);
     planetSystem->addChild(moonObj);

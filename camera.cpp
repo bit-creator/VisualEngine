@@ -3,7 +3,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 Camera::Camera(const glm::mat4& projMatr, CameraType type = CameraType::CAMERA_CUSTOM) noexcept
-    : Node(NodeType::NODE_CAMERA)
+    : Entity(EntityType::CAMERA)
     , _projectionMatr(projMatr)
     , _type(type)
 {  }
@@ -21,7 +21,7 @@ CameraType Camera::getType() const noexcept {
 }
 
 Camera::Camera(const Camera &oth) noexcept
-	: Node(NodeType::NODE_CAMERA)
+	: Entity(EntityType::CAMERA)
 	, _projectionMatr(oth._projectionMatr)
 	, _type(oth._type)
 {
@@ -31,7 +31,7 @@ Camera::reference Camera::create(const Camera &oth) {
 	Camera tmp = oth;
 //	reference ref = reference(Camera(oth));
 	Engine::engine().getScene()->setCamera(tmp);
-	return Node::reference(0, NodeType::NODE_CAMERA);
+	return Entity::reference(0, EntityType::CAMERA);
 }
 
 Camera& Camera::operator =(const Camera &oth) {
@@ -48,9 +48,9 @@ Ray Camera::getRay(glm::vec2 screenPos) {
 
 	auto vec = glm::inverse(_projectionMatr) * glm::vec4(screenPos, -1, 1);
 	vec /= vec.w;
-	glm::vec3 dir = glm::vec3(getWorldMat() * vec) - _position;
+	glm::vec3 dir = glm::vec3(getWorldMat() * vec) - transform.getPosition();
 
-	viewRay.setOrigin(_position);
+	viewRay.setOrigin(transform.getPosition());
 	viewRay.setDirection(dir);
 
 	return viewRay;

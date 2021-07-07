@@ -4,7 +4,7 @@
 Scene::Scene() noexcept
 	: _background(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f))
 	, _camera(PerspectiveCamera(PI / 3, 1, 0.1, 100))
-	, _root(Node::reference(0, NodeType::NODE_NODE))
+	, _root(Entity::reference(0, EntityType::NODE))
 	, objects(30)
 	, lights(30)
 	, nodes(30)
@@ -30,7 +30,7 @@ const glm::vec4& Scene::getBackgroundColor() const noexcept {
 	return _background;
 }
 
-Node::reference Scene::getRoot() noexcept {
+Entity::reference Scene::getRoot() noexcept {
 	return _root;
 }
 
@@ -53,17 +53,21 @@ TexPtr Scene::getSkyBox() const {
 	return _skyBox;
 }
 
-Node* Scene::getPool(NodeType type) {
+Entity* Scene::getPool(EntityType type) {
 	switch(type) {
-	case NodeType::NODE_CAMERA: return getCamera();
-	case NodeType::NODE_OBJECT: return objects.undegroundArray();
-	case NodeType::NODE_LIGHT:  return lights.undegroundArray();
-	case NodeType::NODE_NODE:   return nodes.undegroundArray();
+	case EntityType::CAMERA: return getCamera();
+	case EntityType::OBJECT: return objects.undegroundArray();
+	case EntityType::LIGHT:  return lights.undegroundArray();
+	case EntityType::NODE:   return nodes.undegroundArray();
 	}; return nullptr;
 }
 
-Node::reference Scene::findObject(size_t ID) {
+Entity::reference Scene::findObject(size_t ID) {
 	for(size_t ind = 0; ind < objects.size(); ++ind) {
-		if (ID == objects[ind].getID()) return Node::reference(ind, NodeType::NODE_OBJECT);
-	} return Node::reference();
+		if(!objects[ind].isDied()) {
+			if (ID == objects[ind].getID()) {
+				return Entity::reference(ind, EntityType::OBJECT);
+			}
+		}
+	} return Entity::reference();
 }

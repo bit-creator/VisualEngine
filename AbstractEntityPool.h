@@ -14,7 +14,8 @@
 #define DEBUG
 #include "Macro.hpp"
 
-#include "node.h"
+#include "entity.h"
+#include "Node.h"
 #include "object3d.h"
 #include "Light.h"
 
@@ -24,11 +25,11 @@ class AbstractNodePool {
 
 protected:
 	std::vector < NodeT >								_pool;
-	Node::reference										_nextAvailable;
+	Entity::reference										_nextAvailable;
 
 public:
-	virtual Node::reference capture(void) =0;
-	virtual void release(Node::reference) =0;
+	virtual Entity::reference capture(void) =0;
+	virtual void release(Entity::reference) =0;
 
 	explicit AbstractNodePool(int reserv =30) {
 		_nextAvailable.kill();
@@ -49,14 +50,14 @@ public:
 			_pool.emplace_back(std::move(NodeT()));
 			if(ind == 0) {
 				if(startSize == 0) {
-					_nextAvailable = Node::reference(0, getType());
+					_nextAvailable = Entity::reference(0, getType());
 				} else {
 					auto ref = _nextAvailable;
 					while(!ref->_next.expired()) ref = ref->_next;
-					ref->_next = Node::reference(startSize, getType());
+					ref->_next = Entity::reference(startSize, getType());
 				}
 			} else {
-				_pool[startSize + ind - 1]._next = Node::reference(ind + startSize, getType());
+				_pool[startSize + ind - 1]._next = Entity::reference(ind + startSize, getType());
 			}
 		}
 		_pool[startSize + reserv - 1]._next.kill();
@@ -88,11 +89,11 @@ public:
 	}
 
 private:
-	inline constexpr NodeType getType() {
-		if constexpr (std::same_as<NodeT, Object3D>) return NodeType::NODE_OBJECT;
-		if constexpr (std::same_as<NodeT, Light>) 	 return NodeType::NODE_LIGHT;
-		if constexpr (std::same_as<NodeT, Node>) 	 return NodeType::NODE_NODE;
-		return NodeType::NODE_NODE;
+	inline constexpr EntityType getType() {
+		if constexpr (std::same_as<NodeT, Object3D>) return EntityType::OBJECT;
+		if constexpr (std::same_as<NodeT, Light>) 	 return EntityType::LIGHT;
+		if constexpr (std::same_as<NodeT, Node>) 	 return EntityType::NODE;
+		return EntityType::NODE;
 	}
 };
 
@@ -105,20 +106,20 @@ private:
 public:
 	explicit ObjectPool(int reserv) : AbstractNodePool(reserv) {  }
 
-	Node::reference capture(void) {
+	Entity::reference capture(void) {
 		auto obj = _nextAvailable;
 		if(!obj->isDied()) {
 			MESSAGE("something very bad");
 		}
 
 		_nextAvailable = obj->_next;
-		obj->_parent = Node::reference();
+		obj->_parent = Entity::reference();
 		obj->_this = obj;
 
 		return obj;
 	}
 
-	void release(Node::reference ref) {
+	void release(Entity::reference ref) {
 		if(ref.expired()) {
 			MESSAGE("something very bad");
 		}
@@ -147,14 +148,14 @@ public:
 		, _num(0)
 	{  }
 
-	Node::reference capture(void) {
+	Entity::reference capture(void) {
 		auto obj = _nextAvailable;
 		if(!obj->isDied()) {
 			MESSAGE("something very bad");
 		}
 
 		_nextAvailable = obj->_next;
-		obj->_parent = Node::reference();
+		obj->_parent = Entity::reference();
 		obj->_this = obj;
 
 		++_num;
@@ -162,7 +163,7 @@ public:
 		return obj;
 	}
 
-	void release(Node::reference ref) {
+	void release(Entity::reference ref) {
 		if(ref.expired()) {
 			MESSAGE("something very bad");
 		}
@@ -186,13 +187,13 @@ public:
 class NodePool : public AbstractNodePool <Node> {
 public:
 	explicit NodePool(int reserv) : AbstractNodePool(reserv) {
-		_pool[0]._this = Node::reference(0, NodeType::NODE_NODE);
-		_pool[0]._parent = Node::reference();
+		_pool[0]._this = Entity::reference(0, EntityType::NODE);
+		_pool[0]._parent = Entity::reference();
 
-		_nextAvailable = Node::reference(1, NodeType::NODE_NODE);
+		_nextAvailable = Entity::reference(1, EntityType::NODE);
 	}
 
-	Node::reference capture(void) {
+	Entity::reference capture(void) {
 
 //		MESSAGE(_pool.size());
 
@@ -204,13 +205,13 @@ public:
 		}
 
 		_nextAvailable = obj->_next;
-		obj->_parent = Node::reference();
+		obj->_parent = Entity::reference();
 		obj->_this = ref;
 
 		return ref;
 	}
 
-	void release(Node::reference ref) {
+	void release(Entity::reference ref) {
 		if(ref.expired()) {
 			MESSAGE("something very bad");
 		}

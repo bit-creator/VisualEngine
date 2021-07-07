@@ -18,7 +18,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtx/quaternion.hpp>
 
-#include "node.h"
+#include "entity.h"
 #include "Geometry/geometry.h"
 #include "camera.h"
 #include "CreateAsPointer.hpp"
@@ -28,7 +28,7 @@
 #include "GL/shaderprogram.h"
 #include "Material/Material.h"
 
-class Object3D final : public Node {
+class Object3D final : public Entity {
 public:
 	using ID_t = std::uint8_t;
 	static constexpr int maxID = std::numeric_limits<ID_t>::max();
@@ -43,7 +43,7 @@ protected:          //  Material
 
 public:
 	Object3D() noexcept;
-    Object3D(const Object3D& oth) noexcept;
+    Object3D(Object3D&& oth) noexcept =default;
     Object3D(MaterialPtr material) noexcept;
     Object3D(MaterialPtr material, GeometryPtr geometry) noexcept;
 

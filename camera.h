@@ -16,7 +16,7 @@
 
 #include <glm/gtx/string_cast.hpp>
 
-#include "node.h"
+#include "entity.h"
 #include "Ray.h"
 
 enum class CameraType
@@ -26,7 +26,7 @@ enum class CameraType
     CAMERA_CUSTOM = 2
 };
 
-class Camera : public Node {
+class Camera : public Entity {
 private:
 	glm::mat4                       _projectionMatr;
     CameraType		                _type;

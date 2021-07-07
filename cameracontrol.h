@@ -16,7 +16,7 @@ class CameraControl : virtual
 	public EventListener,
 	public SharedCreator < CameraControl > {
 private:
-	Node::reference							_camera;
+	Entity::reference							_camera;
 
 private:		// move param
 	glm::vec3 							_direction;
@@ -24,7 +24,7 @@ private:		// move param
     float 								_velocity;
 
 public:
-	CameraControl(Node::reference camera) noexcept;
+	CameraControl(Entity::reference camera) noexcept;
     virtual ~CameraControl() noexcept override;
 
     void setVelocity(float velocity) noexcept;

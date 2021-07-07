@@ -10,7 +10,7 @@
 
 #include <algorithm>
 
-#include "node.h"
+#include "entity.h"
 #include "Color.h"
 
 enum class LightType
@@ -20,7 +20,7 @@ enum class LightType
 	LIGHT_SPOTS
 };
 
-class Light : public Node {
+class Light : public Entity {
 private:
 	LightType							_type;
 	Color								_color;

@@ -14,7 +14,7 @@ Light::Light()
 }
 
 Light::Light(LightType type)
-	: Node(NodeType::NODE_LIGHT)
+	: Entity(EntityType::LIGHT)
 	, _type(type)
 {
 }
@@ -37,7 +37,7 @@ std::string getLightsName(const int index) {
 	return patern;
 }
 
-Node::reference Light::create(LightType type) {
+Entity::reference Light::create(LightType type) {
 	auto ref = Engine::engine().getScene()->lights.capture();
 	return ref;
 }

@@ -15,7 +15,7 @@
 #include <memory>
 
 #include "abstracteventlistener.hpp"
-#include "AbstractNodePool.h"
+#include "AbstractEntityPool.h"
 #include "camera.h"
 #include "ShaderFactory.h"
 #include "object3d.h"
@@ -83,7 +83,7 @@ public:
     template < typename NodeT >
     static inline NodeT* getPool();
 
-    static Node* getPool(NodeType type);
+    static Entity* getPool(EntityType type);
 
     float getPickerKey(const glm::vec2& mousePosition);
 
@@ -99,7 +99,7 @@ inline NodeT* Engine::getPool() {
 }
 
 template<typename NodeT>
-inline NodeT* Node::reference::get() {
+inline NodeT* Entity::reference::get() {
 	return Engine::engine().getPool<NodeT>() + _offset;
 }
 

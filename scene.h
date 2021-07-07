@@ -20,7 +20,7 @@
 #include "object3d.h"
 #include "Light.h"
 
-#include "AbstractNodePool.h"
+#include "AbstractEntityPool.h"
 
 #include "constants.hpp"
 
@@ -29,7 +29,7 @@ class Scene : public SharedCreator < Scene > {
 private:
 	glm::vec4									 _background;
     Camera					                     _camera;
-    Node::reference			                     _root;
+    Entity::reference			                 _root;
     TexPtr										 _skyBox;
 
 public:
@@ -58,14 +58,14 @@ public:
     void setSkyBox(TexPtr skyBox);
     TexPtr getSkyBox() const;
 
-    Node::reference getRoot() noexcept;
+    Entity::reference getRoot() noexcept;
 
-    Node::reference findObject(size_t ID);
+    Entity::reference findObject(size_t ID);
 
     template < typename NodeT >
     NodeT* getPool();
 
-    Node* getPool(NodeType type);
+    Entity* getPool(EntityType type);
 };
 
 using ScenePtr = std::shared_ptr < Scene >;
