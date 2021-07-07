@@ -58,9 +58,9 @@ public:
     void setSkyBox(TexPtr skyBox);
     TexPtr getSkyBox() const;
 
-    Node::reference getRoot() const noexcept;
+    Node::reference getRoot() noexcept;
 
-    Node::reference searchID(size_t ID);
+    Node::reference findObject(size_t ID);
 
     template < typename NodeT >
     NodeT* getPool();

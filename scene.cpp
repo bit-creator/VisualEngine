@@ -4,10 +4,13 @@
 Scene::Scene() noexcept
 	: _background(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f))
 	, _camera(PerspectiveCamera(PI / 3, 1, 0.1, 100))
-	, _root(Node::reference())
+	, _root(Node::reference(0, NodeType::NODE_NODE))
+	, objects(30)
+	, lights(30)
+	, nodes(30)
 {
-	auto nod = Node::reference(nodes.allocate(), NodeType::NODE_NODE);
-	_root = nod;
+//	auto nod = nodes.capture();
+//	_root = nodes[0];
 }
 
 void Scene::setCamera(Camera camera) noexcept {
@@ -27,7 +30,7 @@ const glm::vec4& Scene::getBackgroundColor() const noexcept {
 	return _background;
 }
 
-Node::reference Scene::getRoot() const noexcept {
+Node::reference Scene::getRoot() noexcept {
 	return _root;
 }
 
@@ -59,7 +62,7 @@ Node* Scene::getPool(NodeType type) {
 	}; return nullptr;
 }
 
-Node::reference Scene::searchID(size_t ID) {
+Node::reference Scene::findObject(size_t ID) {
 	for(size_t ind = 0; ind < objects.size(); ++ind) {
 		if (ID == objects[ind].getID()) return Node::reference(ind, NodeType::NODE_OBJECT);
 	} return Node::reference();

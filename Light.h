@@ -26,8 +26,10 @@ private:
 	Color								_color;
 
 public:
+	Light();
 	Light(LightType type);
 
+public:
 	static reference create(LightType type);
 
 	LightType getType() noexcept;

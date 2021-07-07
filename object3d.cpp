@@ -114,9 +114,11 @@ void Object3D::resetID() {
 }
 
 Node::reference Object3D::create(MaterialPtr material, GeometryPtr geometry) {
-	auto& pool = Engine::engine().getScene()->objects;
-//	pool.allocate(material, geometry);
-	return Node::reference(pool.allocate(material, geometry), NodeType::NODE_OBJECT);
+	auto ref = Engine::engine().getScene()->objects.capture();
+
+	ref.get<Object3D>()->setMaterial(material);
+	ref.get<Object3D>()->setGeometry(geometry);
+	return ref;
 }
 
 size_t Object3D::getID() const {

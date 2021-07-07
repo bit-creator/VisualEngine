@@ -18,7 +18,6 @@
 #include <glm/glm.hpp>
 #include <glm/gtx/quaternion.hpp>
 
-#include "AbstractNodePool.h"
 #include "node.h"
 #include "Geometry/geometry.h"
 #include "camera.h"
@@ -33,7 +32,7 @@ class Object3D final : public Node {
 public:
 	using ID_t = std::uint8_t;
 	static constexpr int maxID = std::numeric_limits<ID_t>::max();
-	friend ObjectPool;
+	friend class ObjectPool;
 private:
 	GeometryPtr                                             _geom;
 	ID_t													_ID = 0;

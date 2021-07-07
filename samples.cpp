@@ -102,7 +102,7 @@ public:
 
     	if(button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE) {
     		if (auto id = eng.getPickerKey(glm::vec2(0.0, 0.0)); id) {
-    			if (auto ref = scene.searchID(id); !ref.isDied()) {
+    			if (auto ref = scene.findObject(id); !ref.expired()) {
     				auto res = ref.get<Object3D>();
     				if(res->getMaterial() == _selected) {
     					res->setMaterial(_regular);

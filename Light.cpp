@@ -8,6 +8,11 @@
 #include "Light.h"
 #include "engine.h"
 
+Light::Light()
+	: Light(LightType::LIGHT_DIRECTIONAL)
+{
+}
+
 Light::Light(LightType type)
 	: Node(NodeType::NODE_LIGHT)
 	, _type(type)
@@ -33,6 +38,6 @@ std::string getLightsName(const int index) {
 }
 
 Node::reference Light::create(LightType type) {
-	auto& pool = Engine::engine().getScene()->lights;
-	return Node::reference(pool.allocate(type), NodeType::NODE_LIGHT);
+	auto ref = Engine::engine().getScene()->lights.capture();
+	return ref;
 }

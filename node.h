@@ -30,10 +30,13 @@ enum class NodeType
 
 class Node {
 public:
+	/**
+	 * proxy class for referencing to origin object placement in pool
+	 * use offset in pools for geting address to object
+	 */
 	class reference {
 	private:
-		static inline size_t died = std::numeric_limits<size_t>::max();
-		static inline size_t root = std::numeric_limits<size_t>::max() -1;
+		static constexpr inline size_t npos = std::numeric_limits<size_t>::max();
 
 	private:
 		size_t						_offset;
@@ -48,17 +51,22 @@ public:
 		template < typename NodeT >
 			NodeT* get();    // definition in "engine.h"
 
-		bool isRoot();
-		bool isDied();
+		void kill();
+		bool expired() const;
 		Node* operator ->();
 	};
 
 protected:
+// tree
 	std::list < reference >		     						_childs;
-	reference												_parent;
 	reference												_this;
 
-    const NodeType                                          _type;
+	union {
+		reference												_parent;
+		reference												_next;
+	};
+
+// transformation
     glm::mat4                                               _modelMat;
     glm::mat4												_worldMat;
     glm::quat                                               _rotate;
@@ -66,22 +74,42 @@ protected:
     glm::vec3                                               _scale;
     bool                                                    _dirtyTransform;
     bool 													_dirtyWorldTransform;
+
+//
     bool 													_enabled;
+    const NodeType                                          _type;
 
 public:
-	Node() noexcept;
+// creation
+	Node() noexcept;								// default constructor, need for pool
     Node(NodeType type) noexcept;
-    Node(const Node& oth) noexcept;
-    Node(Node&&) noexcept = delete;
+    void initialize();								// move to interface make pure virtual
+    static reference create();						// capture object from pool and initialize his
+
+// copy
+    Node(const Node& oth) noexcept; 				// this use?
+    Node& operator =(const Node& oth) noexcept;
+    reference copy(); 								// make a deep copy of subtree
+
+// move
+    Node(Node&&) noexcept =default;					// Need for pool construction "in place"
+    Node& operator=(Node&&) noexcept = delete;
+
+// destruction
     virtual ~Node() noexcept;
+    void deinitialize();							// move to interface make pure virtual
 
-    static reference create();
+// tree
+    void addChild(reference child);
+    void removeChild(reference child);
 
-    NodeType getNodeType() const noexcept;
+    std::list < reference >& getChilds();
 
+	void unvalidateWorldMat() noexcept;
+
+// transformation
     void setRotate(const glm::vec3& axis, const float angle) noexcept;
     void setRotate(const glm::vec3& angles) noexcept;
-
     glm::quat getRotate() const noexcept;
 
     void setScale(const glm::vec3& scale) noexcept;
@@ -93,19 +121,21 @@ public:
     glm::mat4 getModelMat() noexcept;
     glm::mat4 getWorldMat() noexcept;
 
+//
+    NodeType getNodeType() const noexcept;
+
     void setEnabled(bool enabled);
     bool isEnabled();
 
-public: 		// CHILD
-	void addChild(reference child);
-    void removeChild(reference child);
+	bool isDied() const;
 
-    reference referenceFromThis() const;
 
-    std::list < reference >&
-    getChilds();
-
-	void unvalidateWorldMat() noexcept;
+	template < typename NodeT >
+	friend class AbstractNodePool;
+	friend class ObjectPool;
+	friend class LightPool;
+	friend class NodePool;
 };
+
 
 #endif // NODE_H

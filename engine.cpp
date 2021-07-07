@@ -78,9 +78,9 @@ void Engine::run(const Window& window) noexcept {
     	glStencilFunc(GL_ALWAYS, 1, 0xFF);
         glStencilMask(0xFF);
 
-        float index = 0.0;
         for(auto& obj : _scene->objects) {
-        	if(obj.isEnabled())
+//        	if(!obj.isDied())
+        	if(!obj.isDied() && obj.isEnabled())
         		geometryPass(obj);
         }
 
@@ -172,7 +172,7 @@ void Engine::lightPass() {
 	drawScreen._materialType = (int)ShaderType::SHADER_SCREEN;
 	drawScreen._renderTargets = _FBO.TargetHash();
 	drawScreen._attribHash = _screen.getAttributeHash();
-	drawScreen._numOfLight = _scene->lights.size();
+	drawScreen._numOfLight = _scene->lights.capacity();
 
 	ShaderProgram& prg = _factory.getShader(drawScreen);
 	prg.enable();
@@ -187,7 +187,7 @@ void Engine::lightPass() {
     }
 
     int ind = 0;
-    for(auto light : _scene->lights) {
+    for(auto& light : _scene->lights) {
     	auto dirName = getLightsName(ind).append("lightDir");
     	auto colName = getLightsName(ind).append("lightColor");
 
@@ -251,8 +251,6 @@ void Engine::geometryPass(Object3D &obj) noexcept {
     prg.setUniform("uModelMat", modelMat);
 
     prg.setUniform("uObjectColorKey", obj.getColorKey());
-
-    int ind = 0;
 
     glPolygonMode(GL_FRONT_AND_BACK, material->getPolygonsFillMode());
 
