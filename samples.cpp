@@ -64,7 +64,7 @@ public:
     		return;
     	}
 
-        Entity::reference root = scene.getRoot();
+        Entity::reference root = scene.root();
 
         Entity::reference salSys = *((root->getChilds()).rbegin());
         Entity::reference sun = *((salSys->getChilds()).begin());
@@ -307,9 +307,9 @@ void DemoSample() {
     salarySystem->addChild(sunObj);
     salarySystem->addChild(planetSystem);
 
-    scene->getRoot()->addChild(cubeObj);
-    scene->getRoot()->addChild(atom);
-    scene->getRoot()->addChild(salarySystem);
+    scene->root()->addChild(cubeObj);
+    scene->root()->addChild(atom);
+    scene->root()->addChild(salarySystem);
 
     DemoSampleListener listener(*scene);
 

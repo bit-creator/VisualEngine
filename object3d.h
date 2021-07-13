@@ -33,7 +33,7 @@ protected:
 	Object3D() noexcept;
 
     Object3D(const Object3D& oth) noexcept =delete;
-    Object3D& operator=(Object3D&&) noexcept = delete;
+    Object3D& operator=(Object3D&&) noexcept =delete;
 
 // copy
     Object3D& operator =(const Object3D& oth) noexcept;
@@ -43,9 +43,11 @@ public:
     ~Object3D() noexcept =default;
 
     static reference
-    create(MaterialPtr material =nullptr, GeometryPtr geometry =nullptr);
+    create(MaterialPtr material =nullptr, GeometryPtr geometry =nullptr, bool clicable = false);
 
     Entity::reference copy() override;
+	void destroy() override;
+
 
     void setGeometry(GeometryPtr geometry) noexcept;
     GeometryPtr getGeometry() const noexcept;

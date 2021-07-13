@@ -58,7 +58,7 @@ public:
     void setSkyBox(TexPtr skyBox);
     TexPtr getSkyBox() const;
 
-    Entity::reference getRoot() noexcept;
+    Entity::reference root() noexcept;
 
     Entity::reference findObject(size_t ID);
 

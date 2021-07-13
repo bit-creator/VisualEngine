@@ -22,3 +22,5 @@ Node& Node::operator =(const Node &oth) noexcept {
 Node::reference Node::copy() {
 }
 
+void Node::destroy() {
+}

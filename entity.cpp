@@ -69,7 +69,7 @@ std::list < Entity::reference >& Entity::getChilds() {
 
 void Entity::unvalidateWorldMat() noexcept {
 	if (transform._dirtyWorldTransform) return;
-	for (auto & node : _childs)
+	for (auto node : _childs)
 		node->unvalidateWorldMat();
 	transform._dirtyWorldTransform = true;
 }

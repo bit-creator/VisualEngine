@@ -79,3 +79,6 @@ CustomCamera::CustomCamera(const glm::mat4 &projMatr)
 
 Entity::reference Camera::copy() {
 }
+
+void Camera::destroy() {
+}

@@ -45,13 +45,14 @@ public:
 	static reference create(const Camera& oth);
 
     void setProjection(const glm::mat4& projMatr) noexcept;
-        
     glm::mat4 getProjectionMatrix() const noexcept;
 
     CameraType getType() const noexcept;
 
   	Ray getRay(glm::vec2 screenPos);
-	virtual Entity::reference copy();
+
+	Entity::reference copy() override;
+	void destroy() override;
 };
 
 class OrthographicCamera : public Camera {

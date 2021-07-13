@@ -28,6 +28,7 @@ public:
     create();
 
     Entity::reference copy() override;
+	void destroy() override;
 
 	template < typename NodeT >
 	friend class AbstractNodePool;

@@ -42,6 +42,7 @@ public:
     create();
 
     Entity::reference copy() override;
+	void destroy() override;
 
 	LightType getType() noexcept;
 

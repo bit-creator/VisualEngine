@@ -36,3 +36,6 @@ void Light::setColor(const Color &color) {
 Color Light::getColor() const {
 	return _color;
 }
+
+void Light::destroy() {
+}

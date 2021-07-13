@@ -56,7 +56,7 @@ void Engine::run(const Window& window) noexcept {
         	if(listener) listener -> onRender();
 
         for(Object3D& obj : _scene->objects) {
-        	if(!obj.isDied() && obj.isEnabled())
+        	if((!obj.isDied()) && obj.isEnabled())
         		obj.update();
         }
 
@@ -307,4 +307,8 @@ float Engine::getPickerKey(const glm::vec2& mousePosition) {
 
 Entity* Engine::getPool(EntityType type) {
 	return Engine::engine().getScene()->getPool(type);
+}
+
+ScenePtr Engine::scene() {
+	return engine().getScene();
 }

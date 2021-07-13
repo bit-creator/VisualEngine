@@ -30,7 +30,7 @@ const glm::vec4& Scene::getBackgroundColor() const noexcept {
 	return _background;
 }
 
-Entity::reference Scene::getRoot() noexcept {
+Entity::reference Scene::root() noexcept {
 	return _root;
 }
 
@@ -63,7 +63,7 @@ Entity* Scene::getPool(EntityType type) {
 }
 
 Entity::reference Scene::findObject(size_t ID) {
-	for(size_t ind = 0; ind < objects.size(); ++ind) {
+	for(size_t ind = 0; ind < objects.maxSize(); ++ind) {
 		if(!objects[ind].isDied()) {
 			if (ID == objects[ind].getID()) {
 				return Entity::reference(ind, EntityType::OBJECT);

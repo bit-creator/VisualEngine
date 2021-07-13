@@ -67,6 +67,8 @@ public:
     static Engine&
     engine() noexcept;
 
+    static ScenePtr scene();
+
     void addEventListener(EventListenerPtr eventListener);
 
     std::vector < EventListenerPtr >&

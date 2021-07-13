@@ -26,12 +26,19 @@ class AbstractNodePool {
 protected:
 	std::vector < NodeT >									_pool;
 	Entity::reference										_nextAvailable;
+	float 													_maxLoadFactor;
+	size_t													_alive;
+	size_t													_pastTheLast;
 
 public:
 	virtual Entity::reference capture(void) =0;
 	virtual void release(Entity::reference) =0;
 
-	explicit AbstractNodePool(int reserv =30) {
+	explicit AbstractNodePool(int reserv =30)
+		: _maxLoadFactor(0.7f)
+		, _alive(0)
+		,_pastTheLast(0)
+	{
 		_nextAvailable.kill();
 		expand(reserv);
 	}
@@ -41,6 +48,15 @@ public:
 
 	virtual ~AbstractNodePool() {
 		clear();
+	}
+
+	float loadFactor() {
+		return _alive / maxSize();
+	}
+
+	float fragmentationFactor() {
+		return (float)_pastTheLast / _alive - 1;
+		//(float)-^
 	}
 
 	void expand(int reserv) {
@@ -69,14 +85,23 @@ public:
 	}
 
 	auto begin()   { return _pool.begin();   }
-	auto end()     { return _pool.end();     }
 	auto cbegin()  { return _pool.cbegin();  }
-	auto cend()    { return _pool.cend();    }
 	auto rbegin()  { return _pool.rbegin();  }
-	auto rend()    { return _pool.rend();    }
 	auto crbegin() { return _pool.crbegin(); }
-	auto crend()   { return _pool.crend();   }
-	auto size()    { return _pool.size();    }
+
+//	auto end()     { return _pool.end(); }
+//	auto cend()    { return _pool.cend(); }
+//	auto rend()    { return _pool.rend(); }
+//	auto crend()   { return _pool.crend(); }
+
+	auto end()     { return begin() + _pastTheLast; }
+	auto cend()    { return cbegin() + _pastTheLast; }
+	auto rend()    { return rbegin() + _pastTheLast; }
+	auto crend()   { return crbegin() + _pastTheLast; }
+
+	auto maxSize() { return _pool.size(); }
+	auto alive()   { return _alive; }
+
 
 	void clear() {_pool.clear(); }
 
@@ -86,6 +111,56 @@ public:
 
 	NodeT* undegroundArray() {
 		return &_pool[0];
+	}
+
+protected:
+	Entity::reference captureImpl(Entity::reference parent) {
+		Entity::reference ref = _nextAvailable;
+
+		if(ref.expired()) {
+			MESSAGE("doesnt allocate pull is full");
+			return ref;
+		}
+
+		if(!ref->isDied()) {
+			MESSAGE("captured object now alive");
+			return ref;
+		}
+
+		if((size_t)ref == _pastTheLast) ++_pastTheLast;
+
+		_nextAvailable = ref->_next;
+		ref->_parent = Entity::reference();
+		ref->_this = ref;
+
+//		parent->addChild(ref);
+
+		++_alive;
+
+		return ref;
+	}
+
+	void releaseImpl(Entity::reference ref) {
+		if(ref.expired()) {
+			MESSAGE("expired reference not deleted");
+			return;
+		}
+
+		if(ref->isDied()) {
+			MESSAGE("reference alredy released");
+			return;
+		}
+
+//		ref->_parent->removeChild(ref);
+
+		ref->_this.kill();
+
+		if((size_t)ref == _pastTheLast - 1) --_pastTheLast;
+
+		ref->_next = _nextAvailable;
+		_nextAvailable = ref;
+
+		--_alive;
 	}
 
 private:

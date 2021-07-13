@@ -8,30 +8,38 @@
 #include "AbstractEntityPool.h"
 #include "engine.h"
 
-ObjectPool::ObjectPool(int reserv) : AbstractNodePool(reserv) {  }
+ObjectPool::ObjectPool(int reserv)
+	: AbstractNodePool(reserv)
+{  }
 
 Entity::reference ObjectPool::capture(void) {
-	auto obj = _nextAvailable;
-	if(!obj->isDied()) {
-		MESSAGE("something very bad");
-	}
+//	auto obj = _nextAvailable;
+//	if(!obj->isDied()) {
+//		MESSAGE("something very bad");
+//	}
+//
+//	_nextAvailable = obj->_next;
+//	obj->_parent = Entity::reference();
+//	obj->_this = obj;
 
-	_nextAvailable = obj->_next;
-	obj->_parent = Entity::reference();
-	obj->_this = obj;
+	return captureImpl(Entity::reference(0, EntityType::NODE));
 
-	return obj;
+//	return obj;
 }
 
 void ObjectPool::release(Entity::reference ref) {
-	if(ref.expired()) {
-		MESSAGE("something very bad");
-	}
+//	if(ref.expired()) {
+//		MESSAGE("something very bad");
+//	}
+//
+//	if(ref->isDied()) return;
+//
+//	ref->_this.kill();
+//
+//	ref->_next = _nextAvailable;
+//	_nextAvailable = ref;
 
-	if(ref->isDied()) return;
-
-	ref->_next = _nextAvailable;
-	_nextAvailable = ref;
+	releaseImpl(ref);
 }
 
 size_t ObjectPool::getMaxId() {
@@ -44,31 +52,35 @@ LightPool::LightPool(int reserv)
 {  }
 
 Entity::reference LightPool::capture(void) {
-	auto obj = _nextAvailable;
-	if(!obj->isDied()) {
-		MESSAGE("something very bad");
-	}
-
-	_nextAvailable = obj->_next;
-	obj->_parent = Entity::reference();
-	obj->_this = obj;
+//	auto obj = _nextAvailable;
+//	if(!obj->isDied()) {
+//		MESSAGE("something very bad");
+//	}
+//
+//	_nextAvailable = obj->_next;
+//	obj->_parent = Entity::reference();
+//	obj->_this = obj;
 
 	++_num;
 
-	return obj;
+//	return obj;
+	return captureImpl(Entity::reference(0, EntityType::NODE));
 }
 
 void LightPool::release(Entity::reference ref) {
-	if(ref.expired()) {
-		MESSAGE("something very bad");
-	}
-
-	if(ref->isDied()) return;
+//	if(ref.expired()) {
+//		MESSAGE("something very bad");
+//	}
+//
+//	if(ref->isDied()) return;
 
 	--_num;
 
-	ref->_next = _nextAvailable;
-	_nextAvailable = ref;
+	releaseImpl(ref);
+//	ref->_this.kill();
+//
+//	ref->_next = _nextAvailable;
+//	_nextAvailable = ref;
 }
 
 size_t LightPool::capacity() {
@@ -80,30 +92,42 @@ NodePool::NodePool(int reserv) : AbstractNodePool(reserv) {
 	_pool[0]._parent = Entity::reference();
 
 	_nextAvailable = Entity::reference(1, EntityType::NODE);
+
+	_pastTheLast = 1;
 }
 
 Entity::reference NodePool::capture(void) {
-	auto ref = _nextAvailable;
+//	auto ref = _nextAvailable;
+//
+//	auto obj = ref.get<Node>();
+//	if(!obj->isDied()) {
+//		MESSAGE("something very bad");
+//	}
+//
+//	_nextAvailable = obj->_next;
+//	obj->_parent = Entity::reference();
+//	obj->_this = ref;
 
-	auto obj = ref.get<Node>();
-	if(!obj->isDied()) {
-		MESSAGE("something very bad");
-	}
+//	return ref;
 
-	_nextAvailable = obj->_next;
-	obj->_parent = Entity::reference();
-	obj->_this = ref;
-
-	return ref;
+	return captureImpl(Entity::reference(0, EntityType::NODE));
 }
 
 void NodePool::release(Entity::reference ref) {
-	if(ref.expired()) {
-		MESSAGE("something very bad");
+//	if(ref.expired()) {
+//		MESSAGE("something very bad");
+//	}
+//
+//	if(ref->isDied()) return;
+//
+//	ref->_this.kill();
+
+	if(ref == Engine::scene()->root()) {
+		MESSAGE("root no deleted");
+		return;
 	}
 
-	if(ref->isDied()) return;
+	releaseImpl(ref);
+//	ref->_next = _nextAva
 
-	ref->_next = _nextAvailable;
-	_nextAvailable = ref;
 }

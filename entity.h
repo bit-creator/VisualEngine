@@ -42,6 +42,10 @@ public:
 		reference();
 		reference(size_t offset, EntityType type);
 
+		explicit operator size_t() {
+			return _offset;
+		}
+
 		auto operator <=>(const reference&) const =default;
 
 		template < typename NodeT >
@@ -84,6 +88,7 @@ protected:
 
 public:
     virtual reference copy() =0; 								// make a deep copy of subtree
+    virtual void destroy()   =0;								// deinitialized object, remove from tree, release from pool
 
 // tree
     void addChild(reference child);
