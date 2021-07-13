@@ -31,7 +31,7 @@ protected:
 	size_t													_pastTheLast;
 
 public:
-	virtual Entity::reference capture(void) =0;
+	virtual Entity::reference capture(Entity::reference) =0;
 	virtual void release(Entity::reference) =0;
 
 	explicit AbstractNodePool(int reserv =30)
@@ -133,7 +133,7 @@ protected:
 		ref->_parent = Entity::reference();
 		ref->_this = ref;
 
-//		parent->addChild(ref);
+		parent->addChild(ref);
 
 		++_alive;
 
@@ -181,7 +181,7 @@ private:
 public:
 	explicit ObjectPool(int reserv);
 
-	Entity::reference capture(void);
+	Entity::reference capture(Entity::reference parent);
 	void release(Entity::reference ref);
 
 	size_t getMaxId();
@@ -194,7 +194,7 @@ private:
 public:
 	explicit LightPool(int reserv);
 
-	Entity::reference capture(void);
+	Entity::reference capture(Entity::reference parent);
 	void release(Entity::reference ref);
 
 	size_t capacity();
@@ -204,7 +204,7 @@ class NodePool : public AbstractNodePool <Node> {
 public:
 	explicit NodePool(int reserv);
 
-	Entity::reference capture(void);
+	Entity::reference capture(Entity::reference parent);
 	void release(Entity::reference ref);
 };
 

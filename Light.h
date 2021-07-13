@@ -39,7 +39,7 @@ public:
     ~Light() noexcept =default;
 
     static reference
-    create();
+    create(reference parent = reference::root());
 
     Entity::reference copy() override;
 	void destroy() override;

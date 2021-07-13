@@ -215,12 +215,14 @@ void Engine::lightPass() {
 		prg.setUniform("uSkyBox",      (int)TextureUnit::SkyBox);
     }
 
+
     int ind = 0;
     for(Light& light : _scene->lights) {
     	auto dirName = lightDirName(ind);
     	auto colName = lightColName(ind);
 
     	auto dir = glm::mat3(light.getWorldMat()) * glm::normalize(glm::vec3(0., 0., 1.));
+//    	auto dir = glm::mat3(light.getWorldMat()) * glm::normalize(glm::vec3(0., 0., 1.));
     	Color color = light.getColor();
 
     	prg.setUniform(dirName, dir);

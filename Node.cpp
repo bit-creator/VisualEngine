@@ -12,8 +12,8 @@ Node::Node() noexcept
 	: Entity(EntityType::NODE)
 {  }
 
-Node::reference Node::create() {
-	return Engine::engine().getScene()->nodes.capture();
+Node::reference Node::create(Entity::reference parent) {
+	return Engine::engine().getScene()->nodes.capture(parent);
 }
 
 Node& Node::operator =(const Node &oth) noexcept {

@@ -12,7 +12,7 @@ ObjectPool::ObjectPool(int reserv)
 	: AbstractNodePool(reserv)
 {  }
 
-Entity::reference ObjectPool::capture(void) {
+Entity::reference ObjectPool::capture(Entity::reference parent) {
 //	auto obj = _nextAvailable;
 //	if(!obj->isDied()) {
 //		MESSAGE("something very bad");
@@ -22,7 +22,7 @@ Entity::reference ObjectPool::capture(void) {
 //	obj->_parent = Entity::reference();
 //	obj->_this = obj;
 
-	return captureImpl(Entity::reference(0, EntityType::NODE));
+	return captureImpl(parent);
 
 //	return obj;
 }
@@ -51,7 +51,7 @@ LightPool::LightPool(int reserv)
 	, _num(0)
 {  }
 
-Entity::reference LightPool::capture(void) {
+Entity::reference LightPool::capture(Entity::reference parent) {
 //	auto obj = _nextAvailable;
 //	if(!obj->isDied()) {
 //		MESSAGE("something very bad");
@@ -64,7 +64,7 @@ Entity::reference LightPool::capture(void) {
 	++_num;
 
 //	return obj;
-	return captureImpl(Entity::reference(0, EntityType::NODE));
+	return captureImpl(parent);
 }
 
 void LightPool::release(Entity::reference ref) {
@@ -96,7 +96,7 @@ NodePool::NodePool(int reserv) : AbstractNodePool(reserv) {
 	_pastTheLast = 1;
 }
 
-Entity::reference NodePool::capture(void) {
+Entity::reference NodePool::capture(Entity::reference parent) {
 //	auto ref = _nextAvailable;
 //
 //	auto obj = ref.get<Node>();
@@ -110,7 +110,7 @@ Entity::reference NodePool::capture(void) {
 
 //	return ref;
 
-	return captureImpl(Entity::reference(0, EntityType::NODE));
+	return captureImpl(parent);
 }
 
 void NodePool::release(Entity::reference ref) {

@@ -70,13 +70,25 @@ void Object3D::resetID() {
 	_ID = 0;
 }
 
-Entity::reference Object3D::create(MaterialPtr material, GeometryPtr geometry, bool clicable) {
-	auto ref = Engine::scene()->objects.capture();
+//Entity::reference Object3D::create(MaterialPtr material, GeometryPtr geometry, bool clicable) {
+//	auto ref = Engine::scene()->objects.capture();
+//
+//	ref.get<Object3D>()->setMaterial(material);
+//	ref.get<Object3D>()->setGeometry(geometry);
+//	ref.get<Object3D>()->setClicable(clicable);
+//	return ref;
+//}
 
-	ref.get<Object3D>()->setMaterial(material);
-	ref.get<Object3D>()->setGeometry(geometry);
-	ref.get<Object3D>()->setClicable(clicable);
+
+Entity::reference Object3D::create(reference parent) {
+	auto ref = Engine::scene()->objects.capture(parent);
 	return ref;
+}
+
+void Object3D::initialize(MaterialPtr material, GeometryPtr geometry, bool clicable) {
+	_material = material;
+	_geom = geometry;
+	_clicable = clicable;
 }
 
 size_t Object3D::getID() const {

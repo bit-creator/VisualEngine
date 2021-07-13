@@ -42,6 +42,11 @@ public:
     MaterialPtr _selected;
     MaterialPtr _regular;
     BumpMatPtr  _bump;
+    Entity::reference  _sun;
+    Entity::reference  _earth;
+    Entity::reference  _moon;
+    Entity::reference  _salSys;
+    Entity::reference  _earthSys;
 
     DemoSampleListener(Scene& sc)
         : scene(sc)
@@ -66,19 +71,19 @@ public:
 
         Entity::reference root = scene.root();
 
-        Entity::reference salSys = *((root->getChilds()).rbegin());
-        Entity::reference sun = *((salSys->getChilds()).begin());
+//        Entity::reference salSys = *((root->getChilds()).rbegin());
+//        Entity::reference sun = *((salSys->getChilds()).begin());
+//
+//        Entity::reference earthSys = *((salSys->getChilds()).rbegin());
+//
+//        Entity::reference earth = *((earthSys->getChilds()).begin());
+//        Entity::reference moon = *((earthSys->getChilds()).rbegin());
 
-        Entity::reference earthSys = *((salSys->getChilds()).rbegin());
-
-        Entity::reference earth = *((earthSys->getChilds()).begin());
-        Entity::reference moon = *((earthSys->getChilds()).rbegin());
-
-        sun->transform.setRotate(glm::vec3(0.0f, 1.0f, 0.0f), f4);
-        earth->transform.setRotate(glm::vec3(0.0f, 1.0f, 0.0f), f4);
-        moon->transform.setRotate(glm::vec3(0.0f, 1.0f, 0.0f), f5);
-        salSys->transform.setRotate(glm::vec3(0.0f, 1.0f, 0.0f), f4);
-        earthSys->transform.setRotate(glm::vec3(0.0f, 1.0f, 0.0f), f5);
+        _sun->transform.setRotate(glm::vec3(0.0f, 1.0f, 0.0f), f4);
+        _earth->transform.setRotate(glm::vec3(0.0f, 1.0f, 0.0f), f4);
+        _moon->transform.setRotate(glm::vec3(0.0f, 1.0f, 0.0f), f5);
+        _salSys->transform.setRotate(glm::vec3(0.0f, 1.0f, 0.0f), f4);
+        _earthSys->transform.setRotate(glm::vec3(0.0f, 1.0f, 0.0f), f5);
 
         glm::mat3 indenityKernel = {
         	0, 0, 0,
@@ -86,11 +91,11 @@ public:
 			0, 0, 0
         };
 
-    	if (glm::distance(scene.getCamera()->transform.getPosition(), glm::vec3(earth->getWorldMat() * glm::vec4(earth->transform.getPosition(), 1.0))) <= 0.75f) {
+    	if (glm::distance(scene.getCamera()->transform.getPosition(), glm::vec3(_earth->getWorldMat() * glm::vec4(_earth->transform.getPosition(), 1.0))) <= 0.75f) {
     		scene.setSkyBox(_skybox);
     		_cube->enable();
     		_atom->enable();
-    		salSys->disable();
+    		_salSys->disable();
     		Engine::engine().setPostProcesingKernel(indenityKernel);
     		onEarth = true;
     		std::cout << "on  earth" << std::endl;
@@ -147,13 +152,17 @@ void DemoSample() {
     auto [width, height] = eng.getWindowSize();
     float aspect = 1.0 * width / height;
 
-    auto headLighter = Light::create();
     auto cam = Camera::create(PerspectiveCamera(PI / 3, aspect, 0.1, 100));
+    auto headLighter = Light::create(cam);
+
+//    std::cout << scene->getCamera()->getChilds().size() << std::endl;
 
     auto controler = CameraControl::create(cam);
     eng.addEventListener(controler);
 
-    cam->addChild(headLighter);
+//    cam->addChild(headLighter);
+//
+//    scene->root()->addChild(cam);
 
 //    scene->setCamera(cam);
 
@@ -178,14 +187,24 @@ void DemoSample() {
     auto earth    = PhongMaterial::create();
     auto moon     = PhongMaterial::create();
 
-    auto atom 		  = Node::create();
-    auto planetSystem = Node::create();
+    auto cubeObj  = Object3D::create();
     auto salarySystem = Node::create();
+    auto planetSystem = Node::create(salarySystem);
+    auto atom 		  = Node::create();
 
-    auto sunObj   = Object3D::create(sun, sphereGeom);
-    auto earthObj = Object3D::create(earth, sphereGeom);
-    auto moonObj  = Object3D::create(moon, sphereGeom);
-    auto cubeObj  = Object3D::create(simple, cube);
+//    auto sunObj   = Object3D::create(sun, sphereGeom);
+//    auto earthObj = Object3D::create(earth, sphereGeom);
+//    auto moonObj  = Object3D::create(moon, sphereGeom);
+//    auto cubeObj  = Object3D::create(simple, cube);
+
+    auto sunObj   = Object3D::create(salarySystem);
+    auto earthObj = Object3D::create(planetSystem);
+    auto moonObj  = Object3D::create(planetSystem);
+
+	sunObj.get<Object3D>()->initialize(sun, sphereGeom);
+    earthObj.get<Object3D>()->initialize(earth, sphereGeom);
+    moonObj.get<Object3D>()->initialize(moon, sphereGeom);
+    cubeObj.get<Object3D>()->initialize(simple, cube);
 
 //	dynamic_cast<Object3D*>(sunObj.get())->setClicable(true);
 //	dynamic_cast<Object3D*>(moonObj.get())->setClicable(true);
@@ -200,9 +219,11 @@ void DemoSample() {
     std::vector<Entity::reference> electrons;
 
     for(int i = 0; i< 10; ++i) {
-    	auto el = Object3D::create(glossy, sphereGeom);
+    	auto el = Object3D::create(atom);
+    	el.get<Object3D>()->initialize(glossy, sphereGeom);
+
     	electrons.push_back(el);
-        el.get<Object3D>()->setClicable(true);
+    	el.get<Object3D>()->setClicable(true);
     	atom->addChild(el);
     }
 
@@ -301,19 +322,26 @@ void DemoSample() {
     earthObj->transform.setScale(glm::vec3(0.5f, 0.5f, 0.5f));
     moonObj->transform.setScale(glm::vec3(0.25f, 0.25f, 0.25f));
 
-    planetSystem->addChild(earthObj);
-    planetSystem->addChild(moonObj);
-
-    salarySystem->addChild(sunObj);
-    salarySystem->addChild(planetSystem);
-
-    scene->root()->addChild(cubeObj);
-    scene->root()->addChild(atom);
-    scene->root()->addChild(salarySystem);
+//    planetSystem->addChild(earthObj);
+//    planetSystem->addChild(moonObj);
+//
+//    salarySystem->addChild(sunObj);
+//    salarySystem->addChild(planetSystem);
+//
+//    scene->root()->addChild(cubeObj);
+//    scene->root()->addChild(atom);
+//    scene->root()->addChild(salarySystem);
 
     DemoSampleListener listener(*scene);
 
     listener._cube = cubeObj;
+    listener._sun  = sunObj;
+    listener._moon = moonObj;
+    listener._earth = earthObj;
+    listener._salSys = salarySystem;
+    listener._earthSys = planetSystem;
+
+
     listener._skybox = skyBox;
     listener._atom = atom;
     listener._selected = selected;

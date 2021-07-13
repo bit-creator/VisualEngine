@@ -42,8 +42,12 @@ public:
 	Object3D(Object3D&&) noexcept =default;					// Need for pool construction "in place"
     ~Object3D() noexcept =default;
 
-    static reference
-    create(MaterialPtr material =nullptr, GeometryPtr geometry =nullptr, bool clicable = false);
+//    static reference
+//    create(MaterialPtr material =nullptr, GeometryPtr geometry =nullptr, bool clicable = false);
+
+    static reference create(reference parent = reference::root());
+
+    void initialize(MaterialPtr material =nullptr, GeometryPtr geometry =nullptr, bool clicable = false);
 
     Entity::reference copy() override;
 	void destroy() override;

@@ -42,9 +42,9 @@ public:
 		reference();
 		reference(size_t offset, EntityType type);
 
-		explicit operator size_t() {
-			return _offset;
-		}
+		explicit operator size_t();
+
+		static reference root();
 
 		auto operator <=>(const reference&) const =default;
 

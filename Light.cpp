@@ -16,8 +16,8 @@ Light::Light()
 Light& Light::operator =(const Light &oth) noexcept {
 }
 
-Entity::reference Light::create() {
-	auto ref = Engine::engine().getScene()->lights.capture();
+Entity::reference Light::create(Entity::reference parent) {
+	auto ref = Engine::engine().getScene()->lights.capture(parent);
 	return ref;
 }
 

@@ -14,7 +14,7 @@ Scene::Scene() noexcept
 }
 
 void Scene::setCamera(Camera camera) noexcept {
-//	_root->addChild(camera);
+	_root->addChild(Entity::reference(0, EntityType::CAMERA));
 	_camera = camera;
 }
 

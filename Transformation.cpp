@@ -63,3 +63,7 @@ glm::mat4 Transformation::getModelMat() noexcept {
 
     return _modelMat;
 }
+
+bool Transformation::isValid() {
+	return !_dirtyTransform && !_dirtyWorldTransform;
+}

@@ -22,6 +22,14 @@ void Entity::reference::kill() {
 	_offset = npos;
 }
 
+Entity::reference Entity::reference::root() {
+	return reference(0, EntityType::NODE);
+}
+
+Entity::reference::operator size_t() {
+	return _offset;
+}
+
 Entity* Entity::reference::operator ->() {
 	switch(_type) {
 	case EntityType::CAMERA: return Engine::engine().getScene()->getCamera();
@@ -75,7 +83,7 @@ void Entity::unvalidateWorldMat() noexcept {
 }
 
 glm::mat4 Entity::getWorldMat() noexcept {
-	if (!transform._dirtyWorldTransform && !transform._dirtyTransform) return transform._worldMat;
+	if (transform.isValid()) return transform._worldMat;
 	if (_parent.expired()) return transform.getModelMat();
 
 	auto parentMat = _parent->getWorldMat();
