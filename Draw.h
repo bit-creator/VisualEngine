@@ -15,11 +15,14 @@
 static constexpr int NUM_OF_BINARY_PARAM = 8;
 
 struct Draw {
-	int						 	_shaderType 	=0;
-	int							_materialType   =0;
-	int							_attribHash 	=0;
-	int 						_renderTargets 	=0;
-	int							_numOfLight 	=1;
+	int						 	_shaderType 		=0;
+	int							_materialType   	=0;
+	int							_attribHash 		=0;
+	int 						_renderTargets 		=0;
+	int							_numOfDirLight 		=1;
+	int							_numOfPointLight 	=1;
+	int							_numOfSpotLight 	=1;
+
 
 	bool						_hasAmbientMap  =false;
 	bool						_hasDiffuseMap  =false;
@@ -33,7 +36,8 @@ struct Draw {
 
 	std::string genDefines() const;
 
-	friend bool operator ==(const Draw& lhs, const Draw& rhs) noexcept;
+//	friend bool operator ==(const Draw& lhs, const Draw& rhs) noexcept;
+	auto operator <=> (const Draw&) const =default;
 };
 
 template <  >
@@ -49,7 +53,9 @@ struct std::hash<Draw> {
 		hasher(seed, draw._shaderType);
 		hasher(seed, draw._attribHash);
 		hasher(seed, draw._renderTargets);
-		hasher(seed, draw._numOfLight);
+		hasher(seed, draw._numOfDirLight);
+		hasher(seed, draw._numOfPointLight);
+		hasher(seed, draw._numOfSpotLight);
 
 		std::bitset<NUM_OF_BINARY_PARAM> param;
 

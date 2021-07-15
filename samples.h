@@ -9,6 +9,7 @@
 #define SAMPLES_H_
 
 void DemoSample();
+void sphereSample();
 
 
 

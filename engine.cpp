@@ -1,5 +1,6 @@
 #include "engine.h"
 #include "GL/FrameBuffer.h"
+#include <chrono>
 
 Engine::Engine() noexcept {
 	_FBO.bind();
@@ -52,6 +53,8 @@ void Engine::run(const Window& window) noexcept {
 
     while (!glfwWindowShouldClose(window))
     {
+    	auto frame_begin = std::chrono::high_resolution_clock::now();
+
     	for(EventListenerPtr listener : _eventListeners)
         	if(listener) listener -> onRender();
 
@@ -126,6 +129,10 @@ void Engine::run(const Window& window) noexcept {
 
         glfwSwapBuffers(window);
         glfwPollEvents();
+
+        auto frame_end = std::chrono::high_resolution_clock::now();
+
+        std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(frame_end - frame_begin).count() << std::endl;
     }
 }
 
@@ -183,13 +190,13 @@ void Engine::renderScreen() {
 
 void Engine::lightPass() {
 	auto lightDirName = [] (int ind)->std::string {
-		std::string patern = "uLights[%].lightDir";
+		std::string patern = "uDirLights[%].direction";
 		std::replace(patern.begin(), patern.end(), '%', (char)(ind + '0'));
 		return patern;
 	};
 
 	auto lightColName = [] (int ind)->std::string {
-		std::string patern = "uLights[%].lightColor";
+		std::string patern = "uDirLights[%].color";
 		std::replace(patern.begin(), patern.end(), '%', (char)(ind + '0'));
 		return patern;
 	};
@@ -201,7 +208,7 @@ void Engine::lightPass() {
 	drawScreen._materialType = (int)ShaderType::SHADER_SCREEN;
 	drawScreen._renderTargets = _FBO.TargetHash();
 	drawScreen._attribHash = _screen.getAttributeHash();
-	drawScreen._numOfLight = _scene->lights.capacity();
+	drawScreen._numOfDirLight = _scene->lights.capacity();
 
 	ShaderProgram& prg = _factory.getShader(drawScreen);
 	prg.enable();

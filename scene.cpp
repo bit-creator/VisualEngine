@@ -5,8 +5,8 @@ Scene::Scene() noexcept
 	: _background(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f))
 	, _camera(PerspectiveCamera(PI / 3, 1, 0.1, 100))
 	, _root(Entity::reference(0, EntityType::NODE))
-	, objects(30)
-	, lights(30)
+	, objects(500)
+	, lights(100)
 	, nodes(30)
 {
 //	auto nod = nodes.capture();

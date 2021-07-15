@@ -11,6 +11,7 @@
 #include "ShaderFactory.h"
 #include "engine.h"
 #include "constants.hpp"
+#include <random>
 
 #include "GL/Texture.h"
 
@@ -25,6 +26,8 @@
 #include "Geometry/Primitive/cube.h"
 #include "Geometry/Primitive/cone.h"
 #include "Geometry/Primitive/mobiusstrip.h"
+
+#include <ranges>
 
 class DemoSampleListener : public EventListener
 {
@@ -351,3 +354,87 @@ void DemoSample() {
     eng.addEventListener(std::make_shared<DemoSampleListener>(listener));
 }
 
+
+glm::vec3 random(int a, int b) {
+    std::random_device rd{};
+    std::mt19937 gen{rd()};
+
+	std::normal_distribution<> normal_dist(a, b);
+
+	return { normal_dist(gen), normal_dist(gen), normal_dist(gen) };
+}
+
+
+using std::ranges::views::iota;
+
+void sphereSample() {
+    auto& eng = Engine::engine();
+
+    auto scene = Scene::create();
+
+    eng.setScene(scene);
+
+    glm::mat3 indenityKernel = {
+    	0, 0, 0,
+		0, 1, 0,
+		0, 0, 0
+    };
+
+    eng.setPostProcesingKernel(indenityKernel);
+
+    auto [width, height] = eng.getWindowSize();
+    float aspect = 1.0 * width / height;
+
+    auto lighter = Light::create();
+    lighter.get<Light>()->transform.setPosition(glm::vec3(0.0f, 0.0f, 0.0f));
+
+    auto cam = Camera::create(PerspectiveCamera(PI / 3, aspect, 0.1, 100));
+
+    cam.get<Camera>()->transform.setPosition(glm::vec3(0.0, 0.0, 0.0));
+
+    auto controler = CameraControl::create(cam);
+    eng.addEventListener(controler);
+
+//    scene->setCamera(cam);
+
+    auto geom = Cube::create();
+
+    auto tex = Texture2D::create("resource/nicholas-andy-wood2.jpg");
+
+    auto mat = PhongMaterial::create();
+
+    auto spaceSkyBox = TextureCubeMap::create();
+    auto headLighter = Light::create();
+
+    headLighter.get<Light>()->setColor(glm::vec4(1.0, 1.0, 1.0, 1.0));
+
+    spaceSkyBox->loadImage("resource/skybox/corona_rt.png", BoxSide::SIDE_FRONT);
+    spaceSkyBox->loadImage("resource/skybox/corona_lf.png", BoxSide::SIDE_BACK);
+    spaceSkyBox->loadImage("resource/skybox/corona_bk.png", BoxSide::SIDE_LEFT);
+    spaceSkyBox->loadImage("resource/skybox/corona_ft.png", BoxSide::SIDE_RIGHT);
+    spaceSkyBox->loadImage("resource/skybox/corona_up.png", BoxSide::SIDE_TOP);
+    spaceSkyBox->loadImage("resource/skybox/corona_dn.png", BoxSide::SIDE_BOTTOM);
+
+    scene->setSkyBox(spaceSkyBox);
+
+    mat->setDiffuseTexture(tex);
+
+    mat->setAmbientColor(glm::vec4(0.1, 0.1, 0.1, 1.0));
+    mat->setDiffuseColor(glm::vec4(0.5, 0.5, 0.5, 1.0));
+    mat->setSpecularColor(glm::vec4(1., 1.0, 1., 1.0));
+    mat->setRoughness(0.01f);
+
+    for(int i = 0; i < 100; i ++) {
+    auto obj = Object3D::create();
+    obj->transform.setPosition(random(0, 10));
+    obj.get<Object3D>()->initialize(mat, geom, true);
+    obj->enable();
+    }
+
+    for(int i = 0; i < 50; i ++) {
+    auto light = Light::create();
+    light->transform.setPosition(random(0, 10));
+    light.get<Light>()->setColor(random(0.5, 1));
+    light->enable();
+    }
+}

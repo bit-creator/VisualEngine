@@ -34,7 +34,7 @@ public:
 	virtual Entity::reference capture(Entity::reference) =0;
 	virtual void release(Entity::reference) =0;
 
-	explicit AbstractNodePool(int reserv =30)
+	explicit AbstractNodePool(int reserv =100)
 		: _maxLoadFactor(0.7f)
 		, _alive(0)
 		,_pastTheLast(0)

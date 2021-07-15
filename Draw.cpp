@@ -11,21 +11,23 @@
 
 #include "GL/vertexarray.h"
 
-bool operator ==(const Draw& lhs, const Draw& rhs) noexcept {
-	return lhs._shaderType			 == rhs._shaderType
-		&& lhs._materialType         == rhs._materialType
-		&& lhs._attribHash           == rhs._attribHash
-		&& lhs._renderTargets        == rhs._renderTargets
-		&& lhs._numOfLight           == rhs._numOfLight
-		&& lhs._hasAmbientMap        == rhs._hasAmbientMap
-		&& lhs._hasDiffuseMap        == rhs._hasDiffuseMap
-		&& lhs._hasSpecularMap       == rhs._hasSpecularMap
-		&& lhs._hasRougnessMap       == rhs._hasRougnessMap
-		&& lhs._hasNormalMap         == rhs._hasNormalMap
-		&& lhs._hasHeightMap         == rhs._hasHeightMap
-		&& lhs._hasSkyBoxMap         == rhs._hasSkyBoxMap
-		&& lhs._hasPerspectiveCamera == rhs._hasPerspectiveCamera;
-}
+//bool operator ==(const Draw& lhs, const Draw& rhs) noexcept {
+//	return lhs._shaderType			 == rhs._shaderType
+//		&& lhs._materialType         == rhs._materialType
+//		&& lhs._attribHash           == rhs._attribHash
+//		&& lhs._renderTargets        == rhs._renderTargets
+//		&& lhs._numOfDirLight        == rhs._numOfDirLight
+//		&& lhs._numOfPointLight      == rhs._numOfPointLight
+//		&& lhs._numOfSpotLight       == rhs._numOfSpotLight
+//		&& lhs._hasAmbientMap        == rhs._hasAmbientMap
+//		&& lhs._hasDiffuseMap        == rhs._hasDiffuseMap
+//		&& lhs._hasSpecularMap       == rhs._hasSpecularMap
+//		&& lhs._hasRougnessMap       == rhs._hasRougnessMap
+//		&& lhs._hasNormalMap         == rhs._hasNormalMap
+//		&& lhs._hasHeightMap         == rhs._hasHeightMap
+//		&& lhs._hasSkyBoxMap         == rhs._hasSkyBoxMap
+//		&& lhs._hasPerspectiveCamera == rhs._hasPerspectiveCamera;
+//}
 
 std::string Draw::genDefines() const {
 	std::bitset<NUM_ATTRIBUTES> 		hash(_attribHash);
@@ -104,7 +106,7 @@ std::string Draw::genDefines() const {
 	defines += "#define ATTRIBUTE(LOCATION) layout(location = LOCATION) in\n";
 	defines += "#define TARGET(LOCATION) layout(location = LOCATION) out\n";
 
-	defines += "#define NUM_OF_LIGHT " + std::to_string(_numOfLight) + "\n";
+	defines += "#define NUM_OF_DIRECTIONAL_LIGHT " + std::to_string(_numOfDirLight) + "\n";
 
 	return defines;
 
