@@ -19,7 +19,7 @@ struct Draw {
 	int							_materialType   	=0;
 	int							_attribHash 		=0;
 	int 						_renderTargets 		=0;
-	int							_numOfDirLight 		=1;
+	int							_numOfDirLight 		=0;
 	int							_numOfPointLight 	=0;
 	int							_numOfSpotLight 	=0;
 
