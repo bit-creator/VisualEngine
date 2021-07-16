@@ -132,7 +132,7 @@ void Engine::run(const Window& window) noexcept {
 
         auto frame_end = std::chrono::high_resolution_clock::now();
 
-        std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(frame_end - frame_begin).count() << std::endl;
+//        std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(frame_end - frame_begin).count() << std::endl;
     }
 }
 
@@ -190,13 +190,13 @@ void Engine::renderScreen() {
 
 void Engine::lightPass() {
 	auto lightDirName = [] (int ind)->std::string {
-		std::string patern = "uDirLights[%].direction";
+		std::string patern = "Lights[%].direction";
 		std::replace(patern.begin(), patern.end(), '%', (char)(ind + '0'));
 		return patern;
 	};
 
 	auto lightColName = [] (int ind)->std::string {
-		std::string patern = "uDirLights[%].color";
+		std::string patern = "Lights[%].color";
 		std::replace(patern.begin(), patern.end(), '%', (char)(ind + '0'));
 		return patern;
 	};
@@ -208,7 +208,9 @@ void Engine::lightPass() {
 	drawScreen._materialType = (int)ShaderType::SHADER_SCREEN;
 	drawScreen._renderTargets = _FBO.TargetHash();
 	drawScreen._attribHash = _screen.getAttributeHash();
-	drawScreen._numOfDirLight = _scene->lights.capacity();
+	drawScreen._numOfDirLight = _scene->lights.getDirectionLightCapacity();
+	drawScreen._numOfPointLight = _scene->lights.getPointLightCapacity();
+	drawScreen._numOfSpotLight = _scene->lights.getSpotLightCapacity();
 
 	ShaderProgram& prg = _factory.getShader(drawScreen);
 	prg.enable();
@@ -219,14 +221,34 @@ void Engine::lightPass() {
 
     if (_scene -> useSkyBox()) {
     	_scene->getSkyBox()->bind(TextureUnit::SkyBox);
-		prg.setUniform("uSkyBox",      (int)TextureUnit::SkyBox);
+		prg.setUniform("uSkyBox", (int)TextureUnit::SkyBox);
     }
 
+    int direct = -1;
+    int point = -1;
+    int spot = -1;
 
-    int ind = 0;
     for(Light& light : _scene->lights) {
-    	auto dirName = lightDirName(ind);
-    	auto colName = lightColName(ind);
+    	std::string dirName = "";
+    	std::string colName = "";
+
+    	switch (light.getType()) {
+    	case LightType::DIRECTIONAL: {
+    		dirName = "uDir" + lightDirName(++direct);
+			colName = "uDir" + lightColName(direct);
+			break;
+    	}
+    	case LightType::POINT: {
+    		dirName = "uPoint" + lightDirName(++point);
+			colName = "uPoint" + lightColName(point);
+			break;
+    	}
+    	case LightType::SPOT: {
+    		dirName = "uSpot" + lightDirName(++spot);
+			colName = "uSpot" + lightColName(spot);
+			break;
+    	}
+    	}
 
     	auto dir = glm::mat3(light.getWorldMat()) * glm::normalize(glm::vec3(0., 0., 1.));
 //    	auto dir = glm::mat3(light.getWorldMat()) * glm::normalize(glm::vec3(0., 0., 1.));
@@ -235,7 +257,7 @@ void Engine::lightPass() {
     	prg.setUniform(dirName, dir);
     	prg.setUniform(colName, color.getColorSource());
 
-		++ind;
+
     }
 
 	_screen.bindBuffers();

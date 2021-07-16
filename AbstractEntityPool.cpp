@@ -48,7 +48,10 @@ size_t ObjectPool::getMaxId() {
 
 LightPool::LightPool(int reserv)
 	: AbstractNodePool(reserv)
-	, _num(0)
+	, _numDir(0)
+	, _numPoint(0)
+	, _numSpot(0)
+
 {  }
 
 Entity::reference LightPool::capture(Entity::reference parent) {
@@ -61,10 +64,14 @@ Entity::reference LightPool::capture(Entity::reference parent) {
 //	obj->_parent = Entity::reference();
 //	obj->_this = obj;
 
-	++_num;
+	auto res = captureImpl(parent);
+
+	res.get<Light>()->setupDir(glm::vec4(1.0, 0.0, 0.0, 1.0));
+
+	++_numDir;
 
 //	return obj;
-	return captureImpl(parent);
+	return res;
 }
 
 void LightPool::release(Entity::reference ref) {
@@ -74,17 +81,11 @@ void LightPool::release(Entity::reference ref) {
 //
 //	if(ref->isDied()) return;
 
-	--_num;
-
 	releaseImpl(ref);
 //	ref->_this.kill();
 //
 //	ref->_next = _nextAvailable;
 //	_nextAvailable = ref;
-}
-
-size_t LightPool::capacity() {
-	return _num;
 }
 
 NodePool::NodePool(int reserv) : AbstractNodePool(reserv) {
@@ -130,4 +131,16 @@ void NodePool::release(Entity::reference ref) {
 	releaseImpl(ref);
 //	ref->_next = _nextAva
 
+}
+
+size_t LightPool::getDirectionLightCapacity() {
+	return _numDir;
+}
+
+size_t LightPool::getPointLightCapacity() {
+	return _numPoint;
+}
+
+size_t LightPool::getSpotLightCapacity() {
+	return _numSpot;
 }

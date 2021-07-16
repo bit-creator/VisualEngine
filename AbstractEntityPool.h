@@ -188,8 +188,11 @@ public:
 };
 
 class LightPool : public AbstractNodePool <Light> {
+	friend Light;
 private:
-	size_t							_num;
+	size_t							_numDir;
+	size_t							_numPoint;
+	size_t							_numSpot;
 
 public:
 	explicit LightPool(int reserv);
@@ -197,7 +200,9 @@ public:
 	Entity::reference capture(Entity::reference parent);
 	void release(Entity::reference ref);
 
-	size_t capacity();
+	size_t getDirectionLightCapacity();
+	size_t getPointLightCapacity();
+	size_t getSpotLightCapacity();
 };
 
 class NodePool : public AbstractNodePool <Node> {

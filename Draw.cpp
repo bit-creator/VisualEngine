@@ -107,6 +107,8 @@ std::string Draw::genDefines() const {
 	defines += "#define TARGET(LOCATION) layout(location = LOCATION) out\n";
 
 	defines += "#define NUM_OF_DIRECTIONAL_LIGHT " + std::to_string(_numOfDirLight) + "\n";
+	defines += "#define NUM_OF_POINT_LIGHT " + std::to_string(_numOfPointLight) + "\n";
+	defines += "#define NUM_OF_SPOT_LIGHT " + std::to_string(_numOfSpotLight) + "\n";
 
 	return defines;
 

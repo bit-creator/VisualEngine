@@ -20,8 +20,8 @@ struct Draw {
 	int							_attribHash 		=0;
 	int 						_renderTargets 		=0;
 	int							_numOfDirLight 		=1;
-	int							_numOfPointLight 	=1;
-	int							_numOfSpotLight 	=1;
+	int							_numOfPointLight 	=0;
+	int							_numOfSpotLight 	=0;
 
 
 	bool						_hasAmbientMap  =false;

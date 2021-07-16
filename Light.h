@@ -13,17 +13,22 @@
 #include "entity.h"
 #include "Color.h"
 
-enum class LightType
-{
+#include "GL/shaderprogram.h"
+
+enum class LightType {
 	DIRECTIONAL,
 	POINT,
-	SPOTS
+	SPOT
 };
 
 class Light : public Entity {
 private:
-	LightType							_type;
-	Color								_color;
+	static constexpr inline size_t npos = std::numeric_limits<size_t>::max();
+private:
+	LightType						_type;
+	size_t 							_intensity;
+	float 							_angle;
+	Color							_color;
 
 protected:
 	Light();
@@ -38,6 +43,18 @@ public:
 	Light(Light&&) noexcept =default;					// Need for pool construction "in place"
     ~Light() noexcept =default;
 
+private:
+    void initialize(size_t intensity, float angle, Color color);
+    void incrementNumOfLights();
+    void decrementNumOfLights();
+
+public:
+    void setupPoint(size_t intensity, Color color);
+    void setupDir(Color color);
+    void setupSpot(size_t intensity, float angle, Color color);
+
+    void initializeUniforms(ShaderProgram& prog, size_t index);
+
     static reference
     create(reference parent = reference::root());
 
@@ -48,6 +65,13 @@ public:
 
 	void setColor(const Color& color);
 	Color getColor() const;
+
+	void setAngle(float angle);
+	float getAngle() const;
+
+	void setIntensity(size_t intensity);
+	size_t getIntensity() const;
+
 
 	template < typename NodeT >
 	friend class AbstractNodePool;

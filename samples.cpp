@@ -385,8 +385,8 @@ void sphereSample() {
     auto [width, height] = eng.getWindowSize();
     float aspect = 1.0 * width / height;
 
-    auto lighter = Light::create();
-    lighter.get<Light>()->transform.setPosition(glm::vec3(0.0f, 0.0f, 0.0f));
+//    auto lighter = Light::create();
+//    lighter.get<Light>()->transform.setPosition(glm::vec3(0.0f, 0.0f, 0.0f));
 
     auto cam = Camera::create(PerspectiveCamera(PI / 3, aspect, 0.1, 100));
 
@@ -405,8 +405,12 @@ void sphereSample() {
 
     auto spaceSkyBox = TextureCubeMap::create();
     auto headLighter = Light::create();
+    auto pointLighter = Light::create();
+    auto spotLighter = Light::create();
 
-    headLighter.get<Light>()->setColor(glm::vec4(1.0, 1.0, 1.0, 1.0));
+    headLighter.get<Light>()->setupDir(glm::vec4(1.0, 0.0, 0.0, 1.0));
+    pointLighter.get<Light>()->setupPoint(100, glm::vec4(0.0, 1.0, 0.0, 1.0));
+    spotLighter.get<Light>()->setupSpot(100, 0.5, glm::vec4(0.0, 0.0, 1.0, 1.0));
 
     spaceSkyBox->loadImage("resource/skybox/corona_rt.png", BoxSide::SIDE_FRONT);
     spaceSkyBox->loadImage("resource/skybox/corona_lf.png", BoxSide::SIDE_BACK);
@@ -431,10 +435,10 @@ void sphereSample() {
     obj->enable();
     }
 
-    for(int i = 0; i < 50; i ++) {
-    auto light = Light::create();
-    light->transform.setPosition(random(0, 10));
-    light.get<Light>()->setColor(random(0.5, 1));
-    light->enable();
-    }
+//    for(int i = 0; i < 50; i ++) {
+//    auto light = Light::create();
+//    light->transform.setPosition(random(0, 10));
+//    light.get<Light>()->setColor(random(0.5, 1));
+//    light->enable();
+//    }
 }

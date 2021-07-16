@@ -5,11 +5,25 @@
 #endif // SCREEN_TARGET_LOCATION
 
 struct DirLight {
-	vec3 direction;
-	vec4 color;
+	vec3 	 direction;
+	vec4 	 color;
 };
 
-uniform DirLight uDirLights[NUM_OF_DIRECTIONAL_LIGHT];
+struct PointLight {
+	vec3 	 position;
+	vec4 	 color;
+};
+
+struct SpotLight {
+	float	 angle;
+	vec3 	 position;
+	vec3 	 direction;
+	vec4	 color;
+};
+
+uniform DirLight   uDirLights  	[NUM_OF_DIRECTIONAL_LIGHT];
+uniform DirLight uPointLights	[NUM_OF_POINT_LIGHT];
+uniform DirLight  uSpotLights 	[NUM_OF_SPOT_LIGHT];
 
 in vec2 vTexCoord;
 
@@ -38,14 +52,21 @@ void main() {
     vec4 diffuseColor = vec4(albdPix.xyz, 1.0);
     float SpecularIntensity = albdPix.a;
 
-    if(materialID == 0.0)
+    if(materialID == 0.0) {
     	for (uint i = 0; i < NUM_OF_DIRECTIONAL_LIGHT; ++i) {
     		fragmentColor += calculateDirLighting(0.3 * diffuseColor, diffuseColor, SpecularIntensity * vec4(1.0),
     				(uDirLights[i].direction), normal, view, 1 / roughness) * uDirLights[i].color;
-    		fragmentColor += calculatePointLighting(0.3 * diffuseColor, diffuseColor, SpecularIntensity * vec4(1.0),
-    		    	(uDirLights[i].direction), normal, view, 1 / roughness) * uDirLights[i].color;
-    		fragmentColor += calculateSpotLighting(0.3 * diffuseColor, diffuseColor, SpecularIntensity * vec4(1.0),
-    		    	(uDirLights[i].direction), normal, view, 1 / roughness) * uDirLights[i].color;
+    	}
+
+    	for (uint i = 0; i < NUM_OF_POINT_LIGHT; ++i) {
+    		fragmentColor += calculateDirLighting(0.3 * diffuseColor, diffuseColor, SpecularIntensity * vec4(1.0),
+    		    	(uPointLights[i].direction), normal, view, 1 / roughness) * uPointLights[i].color;
+    	}
+
+    	for (uint i = 0; i < NUM_OF_SPOT_LIGHT; ++i) {
+    		fragmentColor += calculateDirLighting(0.3 * diffuseColor, diffuseColor, SpecularIntensity * vec4(1.0),
+    		    	(uSpotLights[i].direction), normal, view, 1 / roughness) * uSpotLights[i].color;
+    	}
   	}
 
 #	ifdef HAS_SKYBOX_MAP
