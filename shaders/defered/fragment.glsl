@@ -31,6 +31,8 @@ TARGET(VIEW_TARGET_LOCATION)	  vec4  tView;
 	uniform float uRoughness;
 #endif // HAS_ROUGNESS_MAP
 
+	in vec4 vPos;
+
 uniform vec4 uAmbientColor;
 uniform vec4 uDiffuseColor;
 //uniform vec4 uSpecularColor;
@@ -54,6 +56,8 @@ in GEOMETRY_PASS {
 
 	vec3 gNormal;
 	vec3 gView;
+
+	float distance;
 
 	vec2 gTexCoords;
 } g_in;
@@ -131,11 +135,15 @@ void main() {
   	result_normal.a   = roughness;
 
   	result_view.xyz   = view;
-  	result_view.a   = materialID;
+  	result_view.a     = g_in.distance;
 
   	tNormal = result_normal;
   	tView   = result_view;
   	tAlbedo = result_albedo;
+//  	tAlbedo = vec4(g_in.distance);
+
+//  	tAlbedo = vec4(length(g_in.gView));
+//  	tAlbedo = (vPos + 50) / 100;
 
 #	ifdef HAS_PICKER_TARGET
   		objectColorKey = uObjectColorKey PICKER_SWIZZLE;

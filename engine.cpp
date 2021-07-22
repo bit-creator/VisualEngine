@@ -260,6 +260,9 @@ void Engine::lightPass() {
 
     }
 
+    auto cam = _scene->getCamera();
+    prg.setUniform("uCamPos", cam->transform.getPosition());
+
 	_screen.bindBuffers();
 
 	glDrawArrays(_screen.getPoligonConnectMode(), 0, _screen.getNumVertexes());

@@ -26,8 +26,12 @@ out GEOMETRY_PASS {
 	vec3 gNormal;
 	vec3 gView;
 
+	float distance;
+
 	vec2 gTexCoords;
 } g_out;
+
+out vec4 vPos;
 
 void main() {
     gl_Position = uMVPMat * vec4(aCoord, 1.0);
@@ -45,9 +49,14 @@ void main() {
 
 #	ifdef USE_PERSPECTIVE_CAMERA
     	g_out.gView = (uModelMat * vec4(aCoord, 1.0)).xyz - uCamPos;
+    	float len = length(g_out.gView);
+    	g_out.distance = (len - 1) / len;
+
 #	else
     	g_out.gView = vec3(0.0, 0.0, 1.0);
 #	endif
+
+    vPos = uModelMat * vec4(aCoord, 1.0);
 }
 
 //#endif // DEFERED

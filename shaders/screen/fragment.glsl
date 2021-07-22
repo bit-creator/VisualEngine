@@ -41,6 +41,8 @@ in vec2 vTexCoord;
 uniform sampler2D uAlbedoMap;
 uniform sampler2D uNormalMap;
 uniform sampler2D uViewMap;
+
+uniform vec3 uCamPos;
 //uniform sampler2D uRoughnessMap;
 
 void main() {
@@ -54,12 +56,13 @@ void main() {
 //    float roughness = 125;
 
     vec3 view = normalize(viewPix.xyz * 2 - 1);
-    float materialID = viewPix.a;
+//    float materialID = viewPix.a;
+    float viewLen = 1 / (1 - viewPix.a);
 
     vec4 diffuseColor = vec4(albdPix.xyz, 1.0);
     float SpecularIntensity = albdPix.a;
 
-    if(materialID == 0.0) {
+//    if(materialID == 0.0) {
 #ifdef HAS_DIRECTIONAL_LIGHT
     	for (uint i = 0; i < NUM_OF_DIRECTIONAL_LIGHT; ++i) {
     		fragmentColor += calculateDirLighting(0.3 * diffuseColor, diffuseColor, SpecularIntensity * vec4(1.0),
@@ -70,7 +73,7 @@ void main() {
 #ifdef HAS_POINT_LIGHT
     	for (uint i = 0; i < NUM_OF_POINT_LIGHT; ++i) {
     		fragmentColor += calculatePointLighting(0.3 * diffuseColor, diffuseColor, SpecularIntensity * vec4(1.0),
-    		    	(uPointLights[i].position), normal, view, 1 / roughness) * uPointLights[i].color;
+    		    	(uPointLights[i].position), normal, uCamPos, view, viewLen, 1 / roughness) * uPointLights[i].color;
     	}
 #endif // HAS_POINT_LIGHT
 
@@ -81,22 +84,23 @@ void main() {
     	}
 #endif // HAS_SPOT_LIGHT
 
-  	}
+//  	}
 
-#	ifdef HAS_SKYBOX_MAP
-  	if(materialID == 1.0) {
-  		float BrusterAngle = sqrt(1 - (
-  					(1.0) /
-  					(1.33 * 1.33)));
-
-  			vec3 I = view;
-  			vec3 R = refract(I, normal, 1.0 / 1.33);
-  			vec3 R_1 = reflect(I, normal);
-
-  		fragmentColor = diffuseColor * mix(texture(uSkyBox, R), texture(uSkyBox, R_1), dot(normal, I) > BrusterAngle ? 1 : 0);
-  	}
-#	endif // HAS_SKYBOX_MAP
+//#	ifdef HAS_SKYBOX_MAP
+//  	if(materialID == 1.0) {
+//  		float BrusterAngle = sqrt(1 - (
+//  					(1.0) /
+//  					(1.33 * 1.33)));
+//
+//  			vec3 I = view;
+//  			vec3 R = refract(I, normal, 1.0 / 1.33);
+//  			vec3 R_1 = reflect(I, normal);
+//
+//  		fragmentColor = diffuseColor * mix(texture(uSkyBox, R), texture(uSkyBox, R_1), dot(normal, I) > BrusterAngle ? 1 : 0);
+//  	}
+//#	endif // HAS_SKYBOX_MAP
 
 	color = fragmentColor;
+//  	color = albdPix;
 //	color = vec4(1.0);
 }

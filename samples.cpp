@@ -398,8 +398,15 @@ void sphereSample() {
 //    scene->setCamera(cam);
 
     auto geom = Cube::create();
+    auto sphereg = Sphere::create(5);
 
     auto tex = Texture2D::create("resource/nicholas-andy-wood2.jpg");
+
+    auto bubleMat = PhongMaterial::create();
+
+//    bubleMat->setAmbientColor(glm::vec4(0.1, 0.1, 0.1, 1.0));
+    bubleMat->setSpecularColor(glm::vec4(0., 0.0, 0., 1.0));
+    bubleMat->setRoughness(0.0f);
 
     auto mat = PhongMaterial::create();
 
@@ -410,6 +417,15 @@ void sphereSample() {
 
     headLighter.get<Light>()->setupDir(glm::vec4(1.0, 0.0, 0.0, 1.0));
     pointLighter.get<Light>()->setupPoint(100, glm::vec4(0.0, 1.0, 0.0, 1.0));
+
+    bubleMat->setDiffuseColor(pointLighter.get<Light>()->getColor());
+
+    auto pointBubl = Object3D::create(pointLighter);
+    pointBubl->transform.setPosition(pointLighter.get<Light>()->transform.getPosition());
+    pointBubl->transform.setScale(glm::vec3(0.1, 0.1, 0.1));
+    pointBubl.get<Object3D>()->initialize(bubleMat, sphereg, false);
+    pointBubl->enable();
+
     spotLighter.get<Light>()->setupSpot(100, 0.5, glm::vec4(0.0, 0.0, 1.0, 1.0));
 
     spaceSkyBox->loadImage("resource/skybox/corona_rt.png", BoxSide::SIDE_FRONT);
@@ -428,7 +444,7 @@ void sphereSample() {
     mat->setSpecularColor(glm::vec4(1., 1.0, 1., 1.0));
     mat->setRoughness(0.01f);
 
-    for(int i = 0; i < 100; i ++) {
+    for(int i = 0; i < 99; i ++) {
     auto obj = Object3D::create();
     obj->transform.setPosition(random(0, 10));
     obj.get<Object3D>()->initialize(mat, geom, true);
