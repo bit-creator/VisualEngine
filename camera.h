@@ -16,7 +16,7 @@
 
 #include <glm/gtx/string_cast.hpp>
 
-#include "node.h"
+#include "entity.h"
 #include "Ray.h"
 
 enum class CameraType
@@ -26,23 +26,33 @@ enum class CameraType
     CAMERA_CUSTOM = 2
 };
 
-class Camera : virtual
-	public Node,
-	public MultiSharedCreator<Camera, Node> {
+class Camera : public Entity {
 private:
 	glm::mat4                       _projectionMatr;
-    const CameraType                _type;
+    CameraType		                _type;
 
-public:
+protected:
 	Camera(const glm::mat4& projMatr, CameraType type) noexcept;
 
+public:
+//    using reference = std::shared_ptr<Camera>;
+//	using reference = Node::reference;
+
+
+	Camera(const Camera& oth) noexcept;
+	Camera& operator =(const Camera& oth);
+
+	static reference create(const Camera& oth);
+
     void setProjection(const glm::mat4& projMatr) noexcept;
-        
     glm::mat4 getProjectionMatrix() const noexcept;
 
     CameraType getType() const noexcept;
 
   	Ray getRay(glm::vec2 screenPos);
+
+	Entity::reference copy() override;
+	void destroy() override;
 };
 
 class OrthographicCamera : public Camera {
@@ -55,6 +65,12 @@ public:
 	PerspectiveCamera(float fovy, float aspect, float near, float far);
 };
 
-using CameraPtr = std::shared_ptr<Camera>;
+class CustomCamera : public Camera {
+public:
+	CustomCamera(const glm::mat4& projMatr);
+};
+
+
+//using CameraPtr = Camera::reference;
 
 #endif // CAMERA_H

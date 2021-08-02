@@ -20,16 +20,22 @@
 #include "object3d.h"
 #include "Light.h"
 
+#include "AbstractEntityPool.h"
 
-using DrawList = std::vector < Object3D* >;
-using LightList = std::vector < Light* >;
+#include "constants.hpp"
+
 
 class Scene : public SharedCreator < Scene > {
 private:
 	glm::vec4									 _background;
-    CameraPtr				                     _camera;
-    NodePtr			                             _root;
+    Camera					                     _camera;
+    Entity::reference			                 _root;
     TexPtr										 _skyBox;
+
+public:
+    ObjectPool					   objects;
+    LightPool					   lights;
+    NodePool					   nodes;
 
 public:
     Scene() noexcept;
@@ -38,8 +44,8 @@ public:
     ~Scene() noexcept =default;
 
 public:
-    void setCamera(CameraPtr camera) noexcept;
-    CameraPtr getCamera() const noexcept;
+    void setCamera(Camera camera) noexcept;
+    Camera* getCamera() noexcept;
 
     void setBackgroundColor(const glm::vec4& color) noexcept;
     const glm::vec4& getBackgroundColor() const noexcept;
@@ -52,17 +58,25 @@ public:
     void setSkyBox(TexPtr skyBox);
     TexPtr getSkyBox() const;
 
-    NodePtr getRoot() const noexcept;
+    Entity::reference root() noexcept;
 
-    DrawList getDrawList() const noexcept;
-    LightList getLightList() const noexcept;
+    Entity::reference findObject(size_t ID);
 
+    template < typename NodeT >
+    NodeT* getPool();
 
-private:
-    void getDrawListImpl(DrawList& list, const NodePtr& obj) const noexcept;
-    void getLightListImpl(LightList& list, const NodePtr& obj) const noexcept;
+    Entity* getPool(EntityType type);
 };
 
 using ScenePtr = std::shared_ptr < Scene >;
+
+template<typename NodeT>
+inline NodeT* Scene::getPool() {
+	if constexpr (std::same_as<NodeT, Camera>)   return getCamera();
+ 	if constexpr (std::same_as<NodeT, Object3D>) return objects.undegroundArray();
+	if constexpr (std::same_as<NodeT, Light>)	 return lights.undegroundArray();
+	if constexpr (std::same_as<NodeT, Node>) 	 return nodes.undegroundArray();
+	return nullptr;
+}
 
 #endif // SCENE_H

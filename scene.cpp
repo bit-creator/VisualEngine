@@ -3,17 +3,23 @@
 
 Scene::Scene() noexcept
 	: _background(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f))
-	, _camera(std::make_shared<Camera>(PerspectiveCamera(PI / 3, 1, 0.1, 100)))
-	, _root(std::make_shared<Node>(NodeType::NODE_NODE))
-{  }
+	, _camera(PerspectiveCamera(PI / 3, 1, 0.1, 100))
+	, _root(Entity::reference(0, EntityType::NODE))
+	, objects(500)
+	, lights(100)
+	, nodes(30)
+{
+//	auto nod = nodes.capture();
+//	_root = nodes[0];
+}
 
-void Scene::setCamera(CameraPtr camera) noexcept {
-	_root->addChild(camera);
+void Scene::setCamera(Camera camera) noexcept {
+	_root->addChild(Entity::reference(0, EntityType::CAMERA));
 	_camera = camera;
 }
 
-CameraPtr Scene::getCamera() const noexcept {
-	return _camera;
+Camera* Scene::getCamera() noexcept {
+	return &_camera;
 }
 
 void Scene::setBackgroundColor(const glm::vec4 &color) noexcept {
@@ -24,24 +30,8 @@ const glm::vec4& Scene::getBackgroundColor() const noexcept {
 	return _background;
 }
 
-NodePtr Scene::getRoot() const noexcept {
+Entity::reference Scene::root() noexcept {
 	return _root;
-}
-
-DrawList Scene::getDrawList() const noexcept {
-	DrawList result;
-	getDrawListImpl(result, _root);
-	return result;
-}
-
-void Scene::getDrawListImpl(DrawList &list, const NodePtr& obj) const noexcept {
-	for(auto child : obj->getChilds()) {
-		if(child->isEnabled()) {
-			getDrawListImpl(list, child);
-			if(child->getNodeType() == NodeType::NODE_OBJECT)
-				list.push_back((Object3D*)child.get());
-		}
-	}
 }
 
 void Scene::disableSkyBox() {
@@ -55,12 +45,6 @@ bool Scene::useSkyBox() const {
 void Scene::loadSkyboxImage(BoxSide side, TexPtr skyBox, std::string filename) {
 }
 
-LightList Scene::getLightList() const noexcept {
-	LightList result;
-	getLightListImpl(result, _root);
-	return result;
-}
-
 void Scene::setSkyBox(TexPtr skyBox) {
 	_skyBox = skyBox;
 }
@@ -69,10 +53,21 @@ TexPtr Scene::getSkyBox() const {
 	return _skyBox;
 }
 
-void Scene::getLightListImpl(LightList &list, const NodePtr &obj) const noexcept {
-	for(auto child : obj->getChilds()) {
-		getLightListImpl(list, child);
-	if(child->getNodeType() == NodeType::NODE_LIGHT)
-		list.push_back((Light*)child.get());
-	}
+Entity* Scene::getPool(EntityType type) {
+	switch(type) {
+	case EntityType::CAMERA: return getCamera();
+	case EntityType::OBJECT: return objects.undegroundArray();
+	case EntityType::LIGHT:  return lights.undegroundArray();
+	case EntityType::NODE:   return nodes.undegroundArray();
+	}; return nullptr;
+}
+
+Entity::reference Scene::findObject(size_t ID) {
+	for(size_t ind = 0; ind < objects.maxSize(); ++ind) {
+		if(!objects[ind].isDied()) {
+			if (ID == objects[ind].getID()) {
+				return Entity::reference(ind, EntityType::OBJECT);
+			}
+		}
+	} return Entity::reference();
 }

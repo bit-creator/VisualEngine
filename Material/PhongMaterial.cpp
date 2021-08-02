@@ -40,14 +40,18 @@ void PhongMaterial::setUniforms(const ShaderProgram &prg) {
     prg.setUniform("uTexAmbient",  (int)TextureUnit::Ambient);
     prg.setUniform("uTexDiffuse",  (int)TextureUnit::Diffuse);
     prg.setUniform("uTexSpecular", (int)TextureUnit::Specular);
+    prg.setUniform("uSpecularIntensivity", _specularColor.getColorSource().x);
+
+
+
 }
 
 void PhongMaterial::bindMaps() {
 	Material::bindMaps();
 
-    if (_ambientMap)  _ambientMap->bind((int)TextureUnit::Ambient);
-    if (_diffuseMap)  _diffuseMap->bind((int)TextureUnit::Diffuse);
-    if (_specularMap) _specularMap->bind((int)TextureUnit::Specular);
+    if (_ambientMap)  _ambientMap->bind(TextureUnit::Ambient);
+    if (_diffuseMap)  _diffuseMap->bind(TextureUnit::Diffuse);
+    if (_specularMap) _specularMap->bind(TextureUnit::Specular);
 }
 
 void PhongMaterial::setDrawData(Draw &drawData) {

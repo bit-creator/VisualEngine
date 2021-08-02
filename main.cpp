@@ -1,3 +1,10 @@
+/**
+ * scene graph:
+ *      impliment deep copy
+ *      impliment destroy
+ *      impliment pool defragmentation
+ */
+
 #include <iostream>
 
 #include <cstdlib>
@@ -8,7 +15,8 @@
 int main() {
     auto& eng = Engine::engine();
 
-    DemoSample();
+//    DemoSample();
+    sphereSample();
 
     eng.engine().run();
 

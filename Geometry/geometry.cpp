@@ -76,14 +76,5 @@ bool Geometry::hasTexCoord() const noexcept {
 
 
 size_t Geometry::getAttributeHash() noexcept {
-	std::bitset<NUM_ATTRIBUTES> 		hash;
-
-	hash.set((int)Attribute::ATTRIB_BITANGENT, VAO.hasAttribute(Attribute::ATTRIB_BITANGENT));
-	hash.set((int)Attribute::ATTRIB_COLOR,     VAO.hasAttribute(Attribute::ATTRIB_COLOR));
-	hash.set((int)Attribute::ATTRIB_NORMAL,    VAO.hasAttribute(Attribute::ATTRIB_NORMAL));
-	hash.set((int)Attribute::ATTRIB_POSITION,  VAO.hasAttribute(Attribute::ATTRIB_POSITION));
-	hash.set((int)Attribute::ATTRIB_TANGENT,   VAO.hasAttribute(Attribute::ATTRIB_TANGENT));
-	hash.set((int)Attribute::ATTRIB_TEX,       VAO.hasAttribute(Attribute::ATTRIB_TEX));
-
-	return hash.to_ullong();
+	return VAO.getAttribHash();
 }

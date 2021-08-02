@@ -26,10 +26,14 @@ GLenum Texture::getTarget() {
 	return _target;
 }
 
-void Texture::bind(int index) {
-	glActiveTexture(GL_TEXTURE0 + index); HANDLE_GL_ERROR();
-	bind();
+void Texture::bind(TextureUnit unit) {
+	bind((int)unit);
 }
+
+void Texture::bind(RenderingTarget target) {
+	bind((int)target);
+}
+
 
 void Texture::bind() {
 	glBindTexture(getTarget(), getID()); HANDLE_GL_ERROR();
@@ -85,6 +89,17 @@ void Texture::setEmpty() {
 	unbind();
 }
 
+void Texture::allocate(GLuint width, GLuint height, GLenum format,  GLenum internalFormat, GLenum type) {
+	bind();
+
+	glTexImage2D(getTarget(), 0, internalFormat, width, height, 0, format,  type, NULL); HANDLE_GL_ERROR();
+
+	glTexParameteri(getTarget(), GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(getTarget(), GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	unbind();
+}
+
 GLuint Texture::gentex() noexcept {
     GLuint ID;
     glGenTextures(1, &ID); HANDLE_GL_ERROR();
@@ -124,4 +139,19 @@ Texture2D::Texture2D(const char *name)
 	: Texture(GL_TEXTURE_2D) {
 	setEmpty();
 	loadImage(name);
+}
+
+void Texture2D::allocate(GLuint width, GLuint height, GLenum format, GLenum internalFormat, GLenum type) {
+	if(internalFormat == GL_ZERO) internalFormat = format;
+	Texture::allocate(width, height, format, internalFormat, type);
+}
+
+void Texture::bind(GLuint index) {
+	if (index > 31) {
+		ERROR("texture not bind, to many textures");
+		return;
+	}
+
+	glActiveTexture(GL_TEXTURE0 + index); HANDLE_GL_ERROR();
+	bind();
 }

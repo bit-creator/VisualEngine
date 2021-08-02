@@ -21,12 +21,12 @@ void Material::unbindMaps() {
 }
 
 void Material::setDrawData(Draw &drawData) {
-	drawData._type = (int)_type;
+	drawData._materialType = (int)_type;
 	if(_rougnessMap) drawData._hasRougnessMap = true;
 }
 
 void Material::bindMaps() {
-	if(_rougnessMap) _rougnessMap->bind((int)TextureUnit::Rougness);
+	if(_rougnessMap) _rougnessMap->bind(TextureUnit::Rougness);
 }
 
 void Material::setRoughness(const float roughness) noexcept
@@ -65,7 +65,6 @@ TexPtr Material::getRougnessTexture() const noexcept {
 MaterialType Material::getType() const {
 	return _type;
 }
-
 
 const GLenum Material::getPolygonsFillMode() const noexcept {
 	return _fillMode;

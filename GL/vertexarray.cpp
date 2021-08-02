@@ -2,7 +2,7 @@
 
 VertexArray::VertexArray() noexcept
     : GLObject(genVAO())
-    , _atributes({std::nullopt, std::nullopt, std::nullopt})
+    , _atributes()
 { HANDLE_GL_ERROR(); }
 
 VertexArray::~VertexArray() noexcept {
@@ -19,6 +19,7 @@ void VertexArray::unbind() noexcept {
 
 void VertexArray::enable(Attribute attr) noexcept {
 	glEnableVertexAttribArray(getAttribLocation(attr)); HANDLE_GL_ERROR();
+	_hash[int(attr)] = true;
 }
 
 void VertexArray::enableAll() noexcept {
@@ -28,6 +29,7 @@ void VertexArray::enableAll() noexcept {
 
 void VertexArray::disable(Attribute attr) noexcept {
 	glDisableVertexAttribArray(getAttribLocation(attr)); HANDLE_GL_ERROR();
+	_hash[int(attr)] = false;
 }
 
 void VertexArray::disableAll() noexcept {
@@ -49,10 +51,13 @@ GLuint VertexArray::getAttribDataType(Attribute attr) const noexcept {
 	return GL_FLOAT;
 }
 
+std::size_t VertexArray::getAttribHash() const {
+	return _hash.to_ullong();
+}
+
 GLuint VertexArray::getAttribLocation(Attribute attr) const noexcept {
 	return static_cast<int>(attr);
 }
-
 
 void VertexArray::addAttribute(Attribute attr, GLsizei stride, GLsizei offset) noexcept {
     glVertexAttribPointer(

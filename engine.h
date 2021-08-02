@@ -15,6 +15,7 @@
 #include <memory>
 
 #include "abstracteventlistener.hpp"
+#include "AbstractEntityPool.h"
 #include "camera.h"
 #include "ShaderFactory.h"
 #include "object3d.h"
@@ -23,31 +24,50 @@
 
 #include "GL/shaderprogram.h"
 #include "GL/Texture.h"
+#include "GL/FrameBuffer.h"
+#include "GL/ShadowBuffer.h"
 
 #include "Geometry/Primitive/cube.h"
+#include "Geometry/Primitive/rect.h"
 
-class Engine
-{
+
+class Engine {
 private:
 	ScenePtr                        		 _scene;
     Cube	   								 _skyBox;
+    Rect									 _screen;
     ShaderFactory							 _factory;
+    FrameBuffer								 _FBO;
+    ShadowBuffer							 _SBO;
+    glm::mat3								 _postProcesingKernel;
 
 private:
     std::vector < EventListenerPtr >		 _eventListeners;
 
 private:
-    Engine() noexcept =default;
+    Engine() noexcept;
     ~Engine() noexcept =default;
     Engine(const Engine&) =delete;
     Engine& operator =(const Engine&) =delete;
 
     void renderSkyBox();
-public:
-    inline static const Window     window = Window(4.6f, 1366u, 720u, "Visual Engine");
+    void renderScreen();
+    void lightPass();
+    void geometryPass(Object3D& obj) noexcept;
 
+public:
+    inline static const Window     window = Window(4.6f, 1920u, 1080u, "Visual Engine");
+
+//public:
+//    ObjectPool					   objects;
+//    LightPool					   lights;
+//    NodePool					   nodes;
+
+public:
     static Engine&
     engine() noexcept;
+
+    static ScenePtr scene();
 
     void addEventListener(EventListenerPtr eventListener);
 
@@ -62,7 +82,27 @@ public:
 
     void run(const Window& window = window) noexcept;
 
-    void render(Object3D& obj, LightList lights) noexcept;
+    template < typename NodeT >
+    static inline NodeT* getPool();
+
+    static Entity* getPool(EntityType type);
+
+    float getPickerKey(const glm::vec2& mousePosition);
+
+	const glm::mat3& getPostProcesingKernel() const;
+	void setPostProcesingKernel(const glm::mat3 &postProcesingKernel);
 };
+
+
+//////// TEMPLATE FUNCTIONS /////////
+template<typename NodeT>
+inline NodeT* Engine::getPool() {
+	return Engine::engine().getScene()->getPool<NodeT>();
+}
+
+template<typename NodeT>
+inline NodeT* Entity::reference::get() {
+	return Engine::engine().getPool<NodeT>() + _offset;
+}
 
 #endif // ENGINE_H

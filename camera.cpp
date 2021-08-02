@@ -3,7 +3,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 Camera::Camera(const glm::mat4& projMatr, CameraType type = CameraType::CAMERA_CUSTOM) noexcept
-    : Node(NodeType::NODE_CAMERA)
+    : Entity(EntityType::CAMERA)
     , _projectionMatr(projMatr)
     , _type(type)
 {  }
@@ -20,14 +20,37 @@ CameraType Camera::getType() const noexcept {
 	return _type;
 }
 
+Camera::Camera(const Camera &oth) noexcept
+	: Entity(EntityType::CAMERA)
+	, _projectionMatr(oth._projectionMatr)
+	, _type(oth._type)
+{
+}
+
+Camera::reference Camera::create(const Camera &oth) {
+	Camera tmp = oth;
+//	reference ref = reference(Camera(oth));
+	Engine::engine().getScene()->setCamera(tmp);
+	return Entity::reference(0, EntityType::CAMERA);
+}
+
+Camera& Camera::operator =(const Camera &oth) {
+	if(&oth == this) return *this;
+
+	_projectionMatr = oth._projectionMatr;
+	_type = oth._type;
+
+	return *this;
+}
+
 Ray Camera::getRay(glm::vec2 screenPos) {
 	Ray viewRay;
 
 	auto vec = glm::inverse(_projectionMatr) * glm::vec4(screenPos, -1, 1);
 	vec /= vec.w;
-	glm::vec3 dir = glm::vec3(getWorldMat() * vec) - _position;
+	glm::vec3 dir = glm::vec3(getWorldMat() * vec) - transform.getPosition();
 
-	viewRay.setOrigin(_position);
+	viewRay.setOrigin(transform.getPosition());
 	viewRay.setDirection(dir);
 
 	return viewRay;
@@ -48,3 +71,14 @@ PerspectiveCamera::PerspectiveCamera(float fovy, float aspect, float near, float
                   0, 0, -1,0,
                   0, 0, 0, 1), CameraType::CAMERA_PERSPECTIVE)
 {  }
+
+CustomCamera::CustomCamera(const glm::mat4 &projMatr)
+	: Camera(projMatr, CameraType::CAMERA_CUSTOM)
+ {
+}
+
+Entity::reference Camera::copy() {
+}
+
+void Camera::destroy() {
+}

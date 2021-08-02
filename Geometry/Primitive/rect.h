@@ -16,14 +16,13 @@
 
 #include "../geometry.h"
 
-class Rect : public Geometry
-{
-    public:
-        Rect() noexcept;
-        virtual ~Rect() noexcept override;
+class Rect : public Geometry {
+public:
+	Rect() noexcept;
+    virtual ~Rect() noexcept override;
 
-        void setupBuffers() noexcept override;
-
+    void setupBuffers() noexcept override;
+	std::vector<Intersection> rayCast(Ray ray) const override;
 };
 
 #endif // RECT_H

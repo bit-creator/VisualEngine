@@ -11,6 +11,7 @@
 #include "ShaderFactory.h"
 #include "engine.h"
 #include "constants.hpp"
+#include <random>
 
 #include "GL/Texture.h"
 
@@ -26,6 +27,8 @@
 #include "Geometry/Primitive/cone.h"
 #include "Geometry/Primitive/mobiusstrip.h"
 
+#include <ranges>
+
 class DemoSampleListener : public EventListener
 {
     Scene& scene;
@@ -36,12 +39,17 @@ class DemoSampleListener : public EventListener
     float  dir = -1.0;
 
 public:
-    ObjPtr  _cube;
+    Entity::reference  _cube;
     TexPtr  _skybox;
-    NodePtr _atom;
+    Entity::reference _atom;
     MaterialPtr _selected;
     MaterialPtr _regular;
     BumpMatPtr  _bump;
+    Entity::reference  _sun;
+    Entity::reference  _earth;
+    Entity::reference  _moon;
+    Entity::reference  _salSys;
+    Entity::reference  _earthSys;
 
     DemoSampleListener(Scene& sc)
         : scene(sc)
@@ -56,8 +64,7 @@ public:
 
     	if (onEarth) {
 
-//	    auto bumpMaterial = std::dynamic_pointer_cast<BumpMaterial>(_bump);
-    		_bump->_scale += dir * 0.004;
+    	_bump->_scale += dir * 0.004;
 
 	    if(_bump->_scale >= 0.2) _bump->_scale = 0.2;
 	    if(_bump->_scale <= 0.) _bump->_scale = 0.0;
@@ -65,46 +72,55 @@ public:
     		return;
     	}
 
-        NodePtr root = scene.getRoot();
+        Entity::reference root = scene.root();
 
-        NodePtr salSys = *((root->getChilds()).rbegin());
-        NodePtr sun = *((salSys->getChilds()).begin());
+//        Entity::reference salSys = *((root->getChilds()).rbegin());
+//        Entity::reference sun = *((salSys->getChilds()).begin());
+//
+//        Entity::reference earthSys = *((salSys->getChilds()).rbegin());
+//
+//        Entity::reference earth = *((earthSys->getChilds()).begin());
+//        Entity::reference moon = *((earthSys->getChilds()).rbegin());
 
-        NodePtr earthSys = *((salSys->getChilds()).rbegin());
+        _sun->transform.setRotate(glm::vec3(0.0f, 1.0f, 0.0f), f4);
+        _earth->transform.setRotate(glm::vec3(0.0f, 1.0f, 0.0f), f4);
+        _moon->transform.setRotate(glm::vec3(0.0f, 1.0f, 0.0f), f5);
+        _salSys->transform.setRotate(glm::vec3(0.0f, 1.0f, 0.0f), f4);
+        _earthSys->transform.setRotate(glm::vec3(0.0f, 1.0f, 0.0f), f5);
 
-        NodePtr earth = *((earthSys->getChilds()).begin());
-        NodePtr moon = *((earthSys->getChilds()).rbegin());
+        glm::mat3 indenityKernel = {
+        	0, 0, 0,
+			0, 1, 0,
+			0, 0, 0
+        };
 
-        sun->setRotate(glm::vec3(0.0f, 1.0f, 0.0f), f4);
-        earth->setRotate(glm::vec3(0.0f, 1.0f, 0.0f), f4);
-        moon->setRotate(glm::vec3(0.0f, 1.0f, 0.0f), f5);
-        salSys->setRotate(glm::vec3(0.0f, 1.0f, 0.0f), f4);
-        earthSys->setRotate(glm::vec3(0.0f, 1.0f, 0.0f), f5);
-
-    	if (glm::distance(scene.getCamera()->getPosition(), glm::vec3(earth->getWorldMat() * glm::vec4(earth->getPosition(), 1.0))) <= 0.75f) {
+    	if (glm::distance(scene.getCamera()->transform.getPosition(), glm::vec3(_earth->getWorldMat() * glm::vec4(_earth->transform.getPosition(), 1.0))) <= 0.75f) {
     		scene.setSkyBox(_skybox);
-    		_cube->setEnabled(true);
-    		_atom->setEnabled(true);
-    		salSys->setEnabled(false);
+    		_cube->enable();
+    		_atom->enable();
+    		_salSys->disable();
+    		Engine::engine().setPostProcesingKernel(indenityKernel);
     		onEarth = true;
     		std::cout << "on  earth" << std::endl;
     	}
     }
 
     void onMouseClick(int button, int action, int mode) noexcept {
-    	auto res = scene.getRoot()->rayCast(scene.getCamera()->getRay(glm::vec2(0.0, 0.0)));
-    	if (res.empty()) {
-    		std::cout << "no object" << std::endl;
-    	} else {
-    		Intersection* el = &(res.front());
-    		for (auto elem : res) if(elem._distance <= el->_distance) el = &elem;
-    			if(el->_obj->getMaterial() == _selected) {
-    				el->_obj->setMaterial(_regular);
-    			} else if (el->_obj->getMaterial() == _regular) {
-    				el->_obj->setMaterial(_selected);
-    			} else if(el->_obj->getMaterial() == _bump) {
-    		    	dir *= -1;
+    	auto& eng = Engine::engine();
+
+    	if(button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE) {
+    		if (auto id = eng.getPickerKey(glm::vec2(0.0, 0.0)); id) {
+    			if (auto ref = scene.findObject(id); !ref.expired()) {
+    				auto res = ref.get<Object3D>();
+    				if(res->getMaterial() == _selected) {
+    					res->setMaterial(_regular);
+    				} else if (res->getMaterial() == _regular) {
+    					res->setMaterial(_selected);
+    				} else if(res->getMaterial() == _bump) {
+    					dir *= -1;
+    				}
     			}
+    		}
     	}
     }
 
@@ -117,20 +133,41 @@ void DemoSample() {
 
     auto scene = Scene::create();
 
+//    Reference* ref = &refe;
+
+//    glm::mat3 blurKernel = {
+//    	1.0, 2.0, 1.0,
+//    	2.0, 4.0, 2.0,
+//    	1.0, 2.0, 1.0
+//    };
+//
+//    blurKernel /= 16;
+//
+    glm::mat3 indenityKernel = {
+    	0, 0, 0,
+		0, 1, 0,
+		0, 0, 0
+    };
+    eng.setPostProcesingKernel(indenityKernel);
+
     eng.setScene(scene);
 
     auto [width, height] = eng.getWindowSize();
     float aspect = 1.0 * width / height;
 
-    auto headLighter = Light::createSharedThisPtr(LightDirectional());
-    auto cam = Camera::createSharedThisPtr(PerspectiveCamera(PI / 3, aspect, 0.1, 100));
+    auto cam = Camera::create(PerspectiveCamera(PI / 3, aspect, 0.1, 100));
+    auto headLighter = Light::create(cam);
+
+//    std::cout << scene->getCamera()->getChilds().size() << std::endl;
 
     auto controler = CameraControl::create(cam);
     eng.addEventListener(controler);
 
-    cam->addChild(headLighter);
+//    cam->addChild(headLighter);
+//
+//    scene->root()->addChild(cam);
 
-    scene->setCamera(cam);
+//    scene->setCamera(cam);
 
     auto sphereGeom = Sphere::create(5);
     auto cube = Cube::create();
@@ -153,24 +190,45 @@ void DemoSample() {
     auto earth    = PhongMaterial::create();
     auto moon     = PhongMaterial::create();
 
-    auto atom 		  = Node::create();
-    auto planetSystem = Node::create();
+    auto cubeObj  = Object3D::create();
     auto salarySystem = Node::create();
+    auto planetSystem = Node::create(salarySystem);
+    auto atom 		  = Node::create();
 
-    auto sunObj   = Object3D::createSharedThisPtr(sun);
-    auto earthObj = Object3D::createSharedThisPtr(earth);
-    auto moonObj  = Object3D::createSharedThisPtr(moon);
-    auto cubeObj  = Object3D::createSharedThisPtr(simple);
+//    auto sunObj   = Object3D::create(sun, sphereGeom);
+//    auto earthObj = Object3D::create(earth, sphereGeom);
+//    auto moonObj  = Object3D::create(moon, sphereGeom);
+//    auto cubeObj  = Object3D::create(simple, cube);
 
-    std::vector<ObjPtr> electrons{10, ObjPtr()};
-    for(auto& el : electrons){
-    	el = Object3D::createSharedThisPtr(glossy);
+    auto sunObj   = Object3D::create(salarySystem);
+    auto earthObj = Object3D::create(planetSystem);
+    auto moonObj  = Object3D::create(planetSystem);
+
+	sunObj.get<Object3D>()->initialize(sun, sphereGeom);
+    earthObj.get<Object3D>()->initialize(earth, sphereGeom);
+    moonObj.get<Object3D>()->initialize(moon, sphereGeom);
+    cubeObj.get<Object3D>()->initialize(simple, cube);
+
+//	dynamic_cast<Object3D*>(sunObj.get())->setClicable(true);
+//	dynamic_cast<Object3D*>(moonObj.get())->setClicable(true);
+//	dynamic_cast<Object3D*>(earthObj.get())->setClicable(true);
+//	dynamic_cast<Object3D*>(cubeObj.get())->setClicable(true);
+
+	sunObj.get<Object3D>()->setClicable(true);
+	moonObj.get<Object3D>()->setClicable(true);
+	earthObj.get<Object3D>()->setClicable(true);
+	cubeObj.get<Object3D>()->setClicable(true);
+
+    std::vector<Entity::reference> electrons;
+
+    for(int i = 0; i< 10; ++i) {
+    	auto el = Object3D::create(atom);
+    	el.get<Object3D>()->initialize(glossy, sphereGeom);
+
+    	electrons.push_back(el);
+    	el.get<Object3D>()->setClicable(true);
+    	atom->addChild(el);
     }
-
-    sunObj->setGeometry(sphereGeom);
-    earthObj->setGeometry(sphereGeom);
-    moonObj->setGeometry(sphereGeom);
-    cubeObj->setGeometry(cube);
 
     scene->setSkyBox(spaceSkyBox);
 
@@ -189,7 +247,7 @@ void DemoSample() {
     skyBox->loadImage("resource/skybox/negy.jpg", BoxSide::SIDE_BOTTOM);
 
 
-    headLighter->setColor(glm::vec4(1.0, 1.0, 1.0, 1.0));
+    headLighter.get<Light>()->setColor(glm::vec4(1.0, 1.0, 1.0, 1.0));
 
 
     simple->setAmbientColor(glm::vec4(0., 0., 0., 1.0));
@@ -244,41 +302,49 @@ void DemoSample() {
 
     for(auto electron : electrons) {
     	auto currentAngle = index * angle;
-    	electron->setGeometry(sphereGeom);
-    	electron->setPosition(glm::vec3(radius* cos(currentAngle), 0, radius * sin(currentAngle)));
-    	atom->addChild(electron);
+//    	electron->setGeometry(sphereGeom);
+    	electron->transform.setPosition(glm::vec3(radius* cos(currentAngle), 0, radius * sin(currentAngle)));
+//    	atom->addChild(electron);
     	++index;
     }
 
-    atom->setEnabled(false);
-    planetSystem->setEnabled(true);
-    cubeObj->setEnabled(false);
-    salarySystem->setEnabled(true);
+    atom->disable();
+    planetSystem->enable();
+    cubeObj->disable();
+    salarySystem->enable();
 
-    cubeObj->setPosition(glm::vec3(0.0, 0.0, 4.0));
-    atom->setPosition(cubeObj->getPosition());
-    moonObj->setPosition(glm::vec3(1.0f, 0.0f, 0.0f));
-    planetSystem->setPosition(glm::vec3(3.0f, 0.0f, 0.0f));
-    salarySystem->setPosition(glm::vec3(0.0f, 0.0f, 3.0f));
-    cam->setPosition(glm::vec3(0.0, 0.0, 1.0));
+    cubeObj->transform.setPosition(glm::vec3(0.0, 0.0, 4.0));
+//    cubeObj->setScale(glm::vec3(1.0, 1.0, 50.0));
+    atom->transform.setPosition(cubeObj->transform.getPosition());
+    moonObj->transform.setPosition(glm::vec3(1.0f, 0.0f, 0.0f));
+    planetSystem->transform.setPosition(glm::vec3(3.0f, 0.0f, 0.0f));
+    salarySystem->transform.setPosition(glm::vec3(0.0f, 0.0f, 3.0f));
+    cam->transform.setPosition(glm::vec3(0.0, 0.0, 1.0));
 
-    atom->setScale(glm::vec3(0.7));
-    earthObj->setScale(glm::vec3(0.5f, 0.5f, 0.5f));
-    moonObj->setScale(glm::vec3(0.25f, 0.25f, 0.25f));
+    atom->transform.setScale(glm::vec3(0.7));
+    earthObj->transform.setScale(glm::vec3(0.5f, 0.5f, 0.5f));
+    moonObj->transform.setScale(glm::vec3(0.25f, 0.25f, 0.25f));
 
-    planetSystem->addChild(earthObj);
-    planetSystem->addChild(moonObj);
-
-    salarySystem->addChild(sunObj);
-    salarySystem->addChild(planetSystem);
-
-    scene->getRoot()->addChild(cubeObj);
-    scene->getRoot()->addChild(atom);
-    scene->getRoot()->addChild(salarySystem);
+//    planetSystem->addChild(earthObj);
+//    planetSystem->addChild(moonObj);
+//
+//    salarySystem->addChild(sunObj);
+//    salarySystem->addChild(planetSystem);
+//
+//    scene->root()->addChild(cubeObj);
+//    scene->root()->addChild(atom);
+//    scene->root()->addChild(salarySystem);
 
     DemoSampleListener listener(*scene);
 
     listener._cube = cubeObj;
+    listener._sun  = sunObj;
+    listener._moon = moonObj;
+    listener._earth = earthObj;
+    listener._salSys = salarySystem;
+    listener._earthSys = planetSystem;
+
+
     listener._skybox = skyBox;
     listener._atom = atom;
     listener._selected = selected;
@@ -288,3 +354,107 @@ void DemoSample() {
     eng.addEventListener(std::make_shared<DemoSampleListener>(listener));
 }
 
+
+glm::vec3 random(int a, int b) {
+    std::random_device rd{};
+    std::mt19937 gen{rd()};
+
+	std::normal_distribution<> normal_dist(a, b);
+
+	return { normal_dist(gen), normal_dist(gen), normal_dist(gen) };
+}
+
+
+using std::ranges::views::iota;
+
+void sphereSample() {
+    auto& eng = Engine::engine();
+
+    auto scene = Scene::create();
+
+    eng.setScene(scene);
+
+    glm::mat3 indenityKernel = {
+    	0, 0, 0,
+		0, 1, 0,
+		0, 0, 0
+    };
+
+    eng.setPostProcesingKernel(indenityKernel);
+
+    auto [width, height] = eng.getWindowSize();
+    float aspect = 1.0 * width / height;
+
+//    auto lighter = Light::create();
+//    lighter.get<Light>()->transform.setPosition(glm::vec3(0.0f, 0.0f, 0.0f));
+
+    auto cam = Camera::create(PerspectiveCamera(PI / 3, aspect, 0.1, 100));
+
+    cam.get<Camera>()->transform.setPosition(glm::vec3(0.0, 0.0, 0.0));
+
+    auto controler = CameraControl::create(cam);
+    eng.addEventListener(controler);
+
+//    scene->setCamera(cam);
+
+    auto geom = Cube::create();
+    auto sphereg = Sphere::create(5);
+
+    auto tex = Texture2D::create("resource/nicholas-andy-wood2.jpg");
+
+    auto bubleMat = PhongMaterial::create();
+
+//    bubleMat->setAmbientColor(glm::vec4(0.1, 0.1, 0.1, 1.0));
+    bubleMat->setSpecularColor(glm::vec4(0., 0.0, 0., 1.0));
+    bubleMat->setRoughness(0.0f);
+
+    auto mat = PhongMaterial::create();
+
+    auto spaceSkyBox = TextureCubeMap::create();
+    auto headLighter = Light::create();
+    auto pointLighter = Light::create();
+    auto spotLighter = Light::create();
+
+    headLighter.get<Light>()->setupDir(glm::vec4(1.0, 0.0, 0.0, 1.0));
+    pointLighter.get<Light>()->setupPoint(100, glm::vec4(0.0, 1.0, 0.0, 1.0));
+
+    bubleMat->setDiffuseColor(pointLighter.get<Light>()->getColor());
+
+    auto pointBubl = Object3D::create(pointLighter);
+    pointBubl->transform.setPosition(pointLighter.get<Light>()->transform.getPosition());
+    pointBubl->transform.setScale(glm::vec3(0.1, 0.1, 0.1));
+    pointBubl.get<Object3D>()->initialize(bubleMat, sphereg, false);
+    pointBubl->enable();
+
+    spotLighter.get<Light>()->setupSpot(100, 0.5, glm::vec4(0.0, 0.0, 1.0, 1.0));
+
+    spaceSkyBox->loadImage("resource/skybox/corona_rt.png", BoxSide::SIDE_FRONT);
+    spaceSkyBox->loadImage("resource/skybox/corona_lf.png", BoxSide::SIDE_BACK);
+    spaceSkyBox->loadImage("resource/skybox/corona_bk.png", BoxSide::SIDE_LEFT);
+    spaceSkyBox->loadImage("resource/skybox/corona_ft.png", BoxSide::SIDE_RIGHT);
+    spaceSkyBox->loadImage("resource/skybox/corona_up.png", BoxSide::SIDE_TOP);
+    spaceSkyBox->loadImage("resource/skybox/corona_dn.png", BoxSide::SIDE_BOTTOM);
+
+    scene->setSkyBox(spaceSkyBox);
+
+    mat->setDiffuseTexture(tex);
+
+    mat->setAmbientColor(glm::vec4(0.1, 0.1, 0.1, 1.0));
+    mat->setDiffuseColor(glm::vec4(0.5, 0.5, 0.5, 1.0));
+    mat->setSpecularColor(glm::vec4(1., 1.0, 1., 1.0));
+    mat->setRoughness(0.01f);
+
+    for(int i = 0; i < 99; i ++) {
+    auto obj = Object3D::create();
+    obj->transform.setPosition(random(0, 10));
+    obj.get<Object3D>()->initialize(mat, geom, true);
+    obj->enable();
+    }
+
+//    for(int i = 0; i < 50; i ++) {
+//    auto light = Light::create();
+//    light->transform.setPosition(random(0, 10));
+//    light.get<Light>()->setColor(random(0.5, 1));
+//    light->enable();
+//    }
+}

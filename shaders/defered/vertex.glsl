@@ -1,4 +1,5 @@
-//#if defined(BUMP) || defined(GLASS) || defined(GLOSSY) || defined(PHONG)
+//#ifdef DEFERED
+
 ATTRIBUTE(POSITION_ATTRIBUTE_LOCATION) 	vec3 aCoord;
 ATTRIBUTE(NORMAL_ATTRIBUTE_LOCATION) 	vec3 aNormal;
 
@@ -15,38 +16,47 @@ uniform mat4 uMVPMat;
 
 uniform mat3 uNormalMat;
 
-// camera position
 uniform vec3 uCamPos;
 
-// output data
-#ifdef BUMP
-	out mat3 vTBNMat;
-#endif // BUMP
+out GEOMETRY_PASS {
+	#ifdef BUMP
+		mat3 gTBNMat;
+	#endif // BUMP
 
-out vec3 vNormal;
-out vec3 vView;
-out vec3 vPos;
+	vec3 gNormal;
+	vec3 gView;
 
-out vec2 vTexCoords;
+	float distance;
+
+	vec2 gTexCoords;
+} g_out;
+
+out vec4 vPos;
 
 void main() {
     gl_Position = uMVPMat * vec4(aCoord, 1.0);
 
-    vTexCoords = aTexCoord;
-    vNormal = normalize(uNormalMat * aNormal);
-    vPos = (uModelMat * vec4(aCoord, 1.0)).xyz;
+    g_out.gTexCoords = aTexCoord;
+    g_out.gNormal = normalize(uNormalMat * aNormal);
+//    vPos = (uModelMat * vec4(aCoord, 1.0)).xyz;
 
 #	ifdef BUMP
     	vec3 tangent = normalize((uModelMat * vec4(aTangent, 0.0)).xyz);
     	vec3 biTangent = normalize((uModelMat * vec4(aBiTangent, 0.0)).xyz);
 
-    	vTBNMat = mat3(-tangent, -biTangent, vNormal);
+    	g_out.gTBNMat = mat3(-tangent, -biTangent, g_out.gNormal);
 #	endif // BUMP
 
 #	ifdef USE_PERSPECTIVE_CAMERA
-    	vView = (uModelMat * vec4(aCoord, 1.0)).xyz - uCamPos;
-#	else 
-    	vView = vec3(0.0, 0.0, 1.0);
+    	g_out.gView = (uModelMat * vec4(aCoord, 1.0)).xyz - uCamPos;
+    	float len = length(g_out.gView);
+    	g_out.distance = (len - 1) / len;
+
+#	else
+    	g_out.gView = vec3(0.0, 0.0, 1.0);
 #	endif
+
+    vPos = uModelMat * vec4(aCoord, 1.0);
 }
-//#endif // BUMP || GLASS || GLOSSY || PHONG
+
+//#endif // DEFERED

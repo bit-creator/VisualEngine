@@ -13,6 +13,26 @@
 #include "../CreateAsPointer.hpp"
 #include "globject.h"
 
+constexpr static int NUM_TEXTURE_UNIT = 7;
+constexpr static int NUM_RENDERING_TARGET = 5;
+
+enum class TextureUnit {
+	Ambient  =0,
+	Diffuse  =1,
+	Specular =2,
+	Rougness =3,
+	SkyBox   =4,
+	Normal   =5,
+	Height   =6
+};
+
+enum class RenderingTarget {
+	SCREEN = 0,
+	ALBEDO,
+	NORMAL,
+	VIEW,
+	PICKER,
+};
 
 enum class BoxSide {
 	SIDE_RIGHT  = GL_TEXTURE_CUBE_MAP_POSITIVE_X,
@@ -35,16 +55,19 @@ public:
 
 	GLenum getTarget();
 
-	void bind(int index);
+	void bind(RenderingTarget target);
+	void bind(TextureUnit unit);
 	void bind();
 	void unbind();
 
 protected:
 	void loadImage(const char* name, const GLenum target);
 	void setEmpty();
+	void allocate(GLuint width, GLuint height, GLenum format, GLenum internalFormat, GLenum type);
 
 private:
 	GLuint gentex() noexcept;
+	void bind(GLuint index);
 
 private:
 	const GLenum								_target;
@@ -61,6 +84,7 @@ public:
 	Texture2D& operator=(Texture2D &&other) =default;
 
 	void loadImage(const char* name);
+	void allocate(GLuint width, GLuint height, GLenum format, GLenum internalFormat =GL_ZERO, GLenum type =GL_UNSIGNED_BYTE);
 };	// CLASS_TEXTURE2D
 
 class TextureCubeMap final : public Texture,

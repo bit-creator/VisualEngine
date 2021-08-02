@@ -10,12 +10,13 @@
 
 #include "abstracteventlistener.hpp"
 #include "camera.h"
+#include "CreateAsPointer.hpp"
 
 class CameraControl : virtual
 	public EventListener,
 	public SharedCreator < CameraControl > {
 private:
-	CameraPtr							_camera;
+	Entity::reference							_camera;
 
 private:		// move param
 	glm::vec3 							_direction;
@@ -23,7 +24,7 @@ private:		// move param
     float 								_velocity;
 
 public:
-	CameraControl(CameraPtr camera) noexcept;
+	CameraControl(Entity::reference camera) noexcept;
     virtual ~CameraControl() noexcept override;
 
     void setVelocity(float velocity) noexcept;
