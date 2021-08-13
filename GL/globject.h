@@ -14,21 +14,27 @@
 
 #include <iostream>
 #include <type_traits>
+#include <functional>
 
 #include <GL/glew.h>
 
 #define DEBUG
 #include "../Macro.hpp"
 
-
 using ObjectID = const GLuint;
 
 class GLObject {
 private:
-	ObjectID                            _object;                      // ID current shader
+	using Creator = std::function < ObjectID(void) >;
+	using Deleter = std::function < void(ObjectID&) >;
+
+private:
+	ObjectID                            _object;                      // ID current gl object
+	Deleter								_deleter;					  // Deleter for gl object
 
 protected:
-	explicit GLObject(ObjectID obj = 0) noexcept;
+	GLObject(Creator creator, Deleter deleter);
+
         
     GLObject(const GLObject&)  =delete;
     GLObject& operator=(const GLObject&) =delete;

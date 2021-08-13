@@ -52,7 +52,6 @@ public:
     std::size_t getAttribHash() const;
 
 private:
-    GLuint genVAO() noexcept;
     GLuint getAttribSize(Attribute attr) const noexcept;
     GLuint getAttribDataType(Attribute attr) const noexcept;
     GLuint getAttribLocation(Attribute attr) const noexcept;

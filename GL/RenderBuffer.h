@@ -19,9 +19,6 @@ public:
 	void unbind();
 
 	void allocate();
-
-private:
-	int genRB();
 };
 
 #endif /* GL_RENDERBUFFER_H_ */

@@ -1,11 +1,20 @@
 #include "shader.h"
 
 Shader::Shader(const GLuint shaderType) noexcept
-    : GLObject(glCreateShader(shaderType))
+	: GLObject(
+			// Creator
+			[shaderType]() -> ObjectID {
+				glCreateShader(shaderType);
+			},
+
+			// Deleter
+			[](ObjectID obj) {
+				glDeleteShader(obj);
+			}
+	)
 { HANDLE_GL_ERROR(); }
 
 Shader::~Shader() noexcept {
-	glDeleteShader(getID()); HANDLE_GL_ERROR();
 }
 
 bool Shader::compileShader() const noexcept {

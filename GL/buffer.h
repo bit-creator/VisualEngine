@@ -37,7 +37,6 @@ public:
 
 private:
 	void loadRawData(GLvoid* data, size_t size, GLenum usage) noexcept;
-    GLuint genBuff();
 }; // Buffer
 
 #endif // BUFFER_H

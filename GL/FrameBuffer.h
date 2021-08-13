@@ -62,7 +62,6 @@ public:
 	void attachNewColorTex(RenderingTarget target, GLenum format =GL_RGBA);
 
 private:
-	GLuint genFB();
 	TexPtr createTexture(GLenum format, GLenum internalformat = GL_ZERO, GLenum type = GL_UNSIGNED_BYTE);
 	bool   hasTarget(RenderingTarget target) const;
 	void   validateHashedData();

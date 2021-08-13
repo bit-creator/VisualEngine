@@ -66,7 +66,6 @@ protected:
 	void allocate(GLuint width, GLuint height, GLenum format, GLenum internalFormat, GLenum type);
 
 private:
-	GLuint gentex() noexcept;
 	void bind(GLuint index);
 
 private:

@@ -7,13 +7,25 @@
 
 #include "RenderBuffer.h"
 #include "../engine.h"
+#include "bindguard.h"
 
 RenderBuffer::RenderBuffer()
-	: GLObject(genRB())
+	: GLObject(
+		// Creator
+		[] () -> ObjectID {
+			GLuint rbo;
+			glGenRenderbuffers(1, &rbo);  HANDLE_GL_ERROR();
+			return rbo;
+		},
+
+		// Deleter
+		[] (ObjectID& obj) {
+			glDeleteRenderbuffers(1, &obj); HANDLE_GL_ERROR();
+		}
+	)
 { HANDLE_GL_ERROR(); }
 
 RenderBuffer::~RenderBuffer() {
-	glDeleteRenderbuffers(1, &getID()); HANDLE_GL_ERROR();
 }
 
 void RenderBuffer::bind() {
@@ -27,14 +39,7 @@ void RenderBuffer::unbind() {
 void RenderBuffer::allocate() {
 	auto [width, height] = Engine::window.getWindowSize();
 
-	bind();
+	bind_guard bd(*this);
 	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, width, height); HANDLE_GL_ERROR();
-	unbind();
-}
-
-int RenderBuffer::genRB() {
-	GLuint rbo;
-	glGenRenderbuffers(1, &rbo);  HANDLE_GL_ERROR();
-	return rbo;
 }
 

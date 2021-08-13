@@ -6,20 +6,31 @@
  */
 
 #include "Texture.h"
+#include "bindguard.h"
 
 #include "../3rdparty/stb_image.h"
 
 //		TEXTURE_BASE		//
-
 Texture::Texture(const GLenum target)
-	: GLObject(gentex())
+	: GLObject(
+		// Creator
+		[] () -> ObjectID {
+    		GLuint ID;
+    		glGenTextures(1, &ID); HANDLE_GL_ERROR();
+    		return ID;
+		},
+
+		// Deleter
+		[] (ObjectID& obj) {
+			glDeleteTextures(1, &obj); HANDLE_GL_ERROR();
+		}
+	)
 	, _target(target)
 {
 	bind();
 }
 
 Texture::~Texture() {
-	glDeleteTextures(1, &getID()); HANDLE_GL_ERROR();
 }
 
 GLenum Texture::getTarget() {
@@ -70,7 +81,7 @@ void Texture::loadImage(const char *name, const GLenum target) {
 }
 
 void Texture::setEmpty() {
-	bind();
+	bind_guard bd(*this);
 
 	unsigned char data[3] = {
 			0, 0, 0
@@ -85,25 +96,15 @@ void Texture::setEmpty() {
 
 	glTexImage2D(getTarget(), 0, GL_RGB, 2, 2, 0, GL_RGB,  GL_UNSIGNED_BYTE, data); HANDLE_GL_ERROR();
 	glGenerateMipmap(getTarget()); HANDLE_GL_ERROR();
-
-	unbind();
 }
 
 void Texture::allocate(GLuint width, GLuint height, GLenum format,  GLenum internalFormat, GLenum type) {
-	bind();
+	bind_guard bd(*this);
 
 	glTexImage2D(getTarget(), 0, internalFormat, width, height, 0, format,  type, NULL); HANDLE_GL_ERROR();
 
 	glTexParameteri(getTarget(), GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(getTarget(), GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-	unbind();
-}
-
-GLuint Texture::gentex() noexcept {
-    GLuint ID;
-    glGenTextures(1, &ID); HANDLE_GL_ERROR();
-    return ID;
 }
 
 //		TEXTURE_IMPL		//
@@ -117,14 +118,16 @@ TextureCubeMap::TextureCubeMap()
 {  }
 
 void Texture2D::loadImage(const char* name) {
-	bind();
+//	bind();
+	bind_guard bd(*this);
 	Texture::loadImage(name, GL_TEXTURE_2D);
 	glGenerateMipmap(getTarget()); HANDLE_GL_ERROR();
-	unbind();
+//	unbind();
 }
 
 void TextureCubeMap::loadImage(const char* name, const BoxSide side) {
-	bind();
+//	bind();
+	bind_guard bd(*this);
 
 	Texture::loadImage(name, (GLuint)side);
 
@@ -132,7 +135,7 @@ void TextureCubeMap::loadImage(const char* name, const BoxSide side) {
 	glTexParameteri(getTarget(), GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE); HANDLE_GL_ERROR();
 	glTexParameteri(getTarget(), GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE); HANDLE_GL_ERROR();
 
-	unbind();
+//	unbind();
 }
 
 Texture2D::Texture2D(const char *name)

@@ -1,11 +1,21 @@
 #include "shaderprogram.h"
 
 ShaderProgram::ShaderProgram() noexcept
-    : GLObject(glCreateProgram())
+    : GLObject(
+    	// Creator
+    	[] () -> ObjectID {
+			return glCreateProgram();
+		},
+
+		// Deleter
+		[] (ObjectID& obj) {
+			glDeleteProgram(obj); HANDLE_GL_ERROR();
+		}
+    )
 { HANDLE_GL_ERROR(); }
 
+
 ShaderProgram::~ShaderProgram() noexcept {
-	glDeleteProgram(getID()); HANDLE_GL_ERROR();
 }
 
 void ShaderProgram::attachShader(const Shader& shader) const noexcept {

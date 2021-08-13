@@ -1,12 +1,23 @@
 #include "vertexarray.h"
 
 VertexArray::VertexArray() noexcept
-    : GLObject(genVAO())
+	: GLObject(
+		// Creator
+		[] () -> ObjectID {
+			GLuint VAO;
+			glGenVertexArrays(1, &VAO); HANDLE_GL_ERROR();
+			return VAO;
+		},
+
+		// Deleter
+		[] (ObjectID& obj) {
+			glDeleteVertexArrays(1, &obj); HANDLE_GL_ERROR();
+		}
+	)
     , _atributes()
 { HANDLE_GL_ERROR(); }
 
 VertexArray::~VertexArray() noexcept {
-	glDeleteVertexArrays(1, &getID()); HANDLE_GL_ERROR();
 }
 
 void VertexArray::bind() noexcept {
@@ -35,12 +46,6 @@ void VertexArray::disable(Attribute attr) noexcept {
 void VertexArray::disableAll() noexcept {
     for(auto& attr : _atributes)
         if(attr) disable(*attr); 
-}
-
-GLuint VertexArray::genVAO() noexcept {
-	GLuint VAO;
-	glGenVertexArrays(1, &VAO); HANDLE_GL_ERROR();
-	return VAO;
 }
 
 GLuint VertexArray::getAttribSize(Attribute attr) const noexcept {

@@ -7,14 +7,16 @@
 
 #include "globject.h"
 
-GLObject::GLObject(ObjectID obj) noexcept
-    : _object(obj)
+GLObject::GLObject(Creator creator, Deleter deleter)
+	:  _object(creator())
+	, _deleter(deleter)
 {  }
 
 GLObject::~GLObject() noexcept {
-	HANDLE_GL_ERROR();
+	_deleter(_object); HANDLE_GL_ERROR();
 }
 
 ObjectID& GLObject::getID() const noexcept {
 	return _object;
 }
+

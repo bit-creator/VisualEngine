@@ -72,8 +72,6 @@ public:
     		return;
     	}
 
-        Entity::reference root = scene.root();
-
 //        Entity::reference salSys = *((root->getChilds()).rbegin());
 //        Entity::reference sun = *((salSys->getChilds()).begin());
 //
@@ -148,6 +146,7 @@ void DemoSample() {
 		0, 1, 0,
 		0, 0, 0
     };
+
     eng.setPostProcesingKernel(indenityKernel);
 
     eng.setScene(scene);
@@ -164,7 +163,7 @@ void DemoSample() {
     eng.addEventListener(controler);
 
 //    cam->addChild(headLighter);
-//
+
 //    scene->root()->addChild(cam);
 
 //    scene->setCamera(cam);
@@ -401,6 +400,8 @@ void sphereSample() {
     auto sphereg = Sphere::create(5);
 
     auto tex = Texture2D::create("resource/nicholas-andy-wood2.jpg");
+    auto normalTex   = Texture2D::create("resource/bump_normal.png");
+    auto heightTex   = Texture2D::create("resource/bump_depth.png");
 
     auto bubleMat = PhongMaterial::create();
 
@@ -408,7 +409,7 @@ void sphereSample() {
     bubleMat->setSpecularColor(glm::vec4(0., 0.0, 0., 1.0));
     bubleMat->setRoughness(0.0f);
 
-    auto mat = PhongMaterial::create();
+    auto mat = std::make_shared<BumpMaterial>();
 
     auto spaceSkyBox = TextureCubeMap::create();
     auto headLighter = Light::create();
@@ -443,6 +444,10 @@ void sphereSample() {
     mat->setDiffuseColor(glm::vec4(0.5, 0.5, 0.5, 1.0));
     mat->setSpecularColor(glm::vec4(1., 1.0, 1., 1.0));
     mat->setRoughness(0.01f);
+
+
+    mat->setNormalTexture(normalTex);
+    mat->setHeightTexture(heightTex);
 
     for(int i = 0; i < 99; i ++) {
     auto obj = Object3D::create();

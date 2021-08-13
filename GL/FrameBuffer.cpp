@@ -7,9 +7,22 @@
 
 #include "FrameBuffer.h"
 #include "../engine.h"
+#include "bindguard.h"
 
 FrameBuffer::FrameBuffer(GLenum pol)
-	: GLObject(genFB())
+	: GLObject(
+		// Creator
+		[] () -> ObjectID {
+			GLuint fbo;
+			glGenFramebuffers(1, &fbo);  HANDLE_GL_ERROR();
+			return fbo;
+		},
+
+		// Deleter
+		[] (ObjectID& obj) {
+			glDeleteFramebuffers(1, &obj); HANDLE_GL_ERROR();
+		}
+	)
 	, _acsessPolytics(pol)
 	, _depthBuffer(nullptr)
 	, _stencilBuffer(nullptr)
@@ -22,7 +35,6 @@ FrameBuffer::FrameBuffer(GLenum pol)
 
 FrameBuffer::~FrameBuffer() {
 	unbind();
-	glDeleteFramebuffers(1, &getID()); HANDLE_GL_ERROR();
 }
 
 void FrameBuffer::bind() {
@@ -42,17 +54,13 @@ void FrameBuffer::bind() {
 }
 
 bool FrameBuffer::readyToWork() {
-	bind();
+	bind_guard bd(*this);
 	bool ready = glCheckFramebufferStatus(_acsessPolytics) == GL_FRAMEBUFFER_COMPLETE; HANDLE_GL_ERROR();
 	return ready;
 }
 
 void FrameBuffer::unbind() {
-	if (readyToWork()) {
 		glBindFramebuffer(_acsessPolytics, 0);  HANDLE_GL_ERROR();
-	} else {
-		ERROR("FRAMEBUFFER NOT READY")
-	}
 }
 
 GLenum FrameBuffer::getAcsessPolytics() const {
@@ -71,11 +79,11 @@ void FrameBuffer::attachNewColorTex(RenderingTarget target, GLenum format) {
 		return;
 	}
 
-	bind();
+	bind_guard bd(*this);
 
 	TexPtr colorTex = createTexture(format); HANDLE_GL_ERROR();
 
-	colorTex->bind(); HANDLE_GL_ERROR();
+	bind_guard tex(*colorTex);
 
 	glFramebufferTexture2D (
 			_acsessPolytics,
@@ -84,14 +92,11 @@ void FrameBuffer::attachNewColorTex(RenderingTarget target, GLenum format) {
 			colorTex->getID(), 0
 	); HANDLE_GL_ERROR();
 
-	colorTex->unbind(); HANDLE_GL_ERROR();
-
 	_colorTextures[target] = colorTex;
 
 	_dirtyHashedData = true;
 	_dirtyTargetHash = true;
 
-	bind();
 
 	return;
 }
@@ -101,7 +106,7 @@ void FrameBuffer::enableDepthBuffer() {
 
 	_depthBuffer = createTexture(GL_DEPTH_COMPONENT); HANDLE_GL_ERROR();
 
-	_depthBuffer->bind(); HANDLE_GL_ERROR();
+	bind_guard guard(*_depthBuffer);
 
 	glFramebufferTexture2D (
 			_acsessPolytics,
@@ -109,8 +114,6 @@ void FrameBuffer::enableDepthBuffer() {
 			_depthBuffer->getTarget(),
 			_depthBuffer->getID(), 0
 	); HANDLE_GL_ERROR();
-
-	_depthBuffer->unbind(); HANDLE_GL_ERROR();
 }
 
 void FrameBuffer::enableStencilBuffer() {
@@ -118,7 +121,7 @@ void FrameBuffer::enableStencilBuffer() {
 
 	_stencilBuffer = createTexture(GL_STENCIL_INDEX, GL_STENCIL_INDEX8); HANDLE_GL_ERROR();
 
-	_stencilBuffer->bind(); HANDLE_GL_ERROR();
+	bind_guard guard(*_stencilBuffer);
 
 	glFramebufferTexture2D (
 			_acsessPolytics,
@@ -126,8 +129,6 @@ void FrameBuffer::enableStencilBuffer() {
 			_stencilBuffer->getTarget(),
 			_stencilBuffer->getID(), 0
 	); HANDLE_GL_ERROR();
-
-	_stencilBuffer->unbind(); HANDLE_GL_ERROR();
 }
 
 void FrameBuffer::enableDepthStencilBuffer() {
@@ -135,7 +136,7 @@ void FrameBuffer::enableDepthStencilBuffer() {
 
 	_depthStencilBuffer = createTexture(GL_DEPTH_STENCIL, GL_DEPTH24_STENCIL8, GL_UNSIGNED_INT_24_8); HANDLE_GL_ERROR();
 
-	_depthStencilBuffer->bind(); HANDLE_GL_ERROR();
+	bind_guard guard(*_depthStencilBuffer);
 
 	glFramebufferTexture2D (
 			_acsessPolytics,
@@ -143,8 +144,6 @@ void FrameBuffer::enableDepthStencilBuffer() {
 			_depthStencilBuffer->getTarget(),
 			_depthStencilBuffer->getID(), 0
 	); HANDLE_GL_ERROR();
-
-	_depthStencilBuffer->unbind(); HANDLE_GL_ERROR();
 }
 
 void FrameBuffer::useRenderBuffer() {
@@ -152,14 +151,15 @@ void FrameBuffer::useRenderBuffer() {
 
 	_renderBuffer.allocate(); HANDLE_GL_ERROR();
 
-	_renderBuffer.bind(); HANDLE_GL_ERROR();
+	bind_guard guard(_renderBuffer);
+
 	glFramebufferRenderbuffer(
 			_acsessPolytics,
 			GL_DEPTH_STENCIL_ATTACHMENT,
 			GL_RENDERBUFFER,
 			_renderBuffer.getID()
 	); HANDLE_GL_ERROR();
-	_renderBuffer.bind(); HANDLE_GL_ERROR();
+
 }
 
 void FrameBuffer::bindTextures() {
@@ -198,17 +198,11 @@ TexPtr FrameBuffer::createTexture(GLenum format, GLenum internalformat, GLenum t
 
 	auto tex = Texture2D::create(); HANDLE_GL_ERROR();
 
-	tex->bind(); HANDLE_GL_ERROR();
+	bind_guard guard(*tex);
+
 	tex->allocate(width, height, format, internalformat, type); HANDLE_GL_ERROR();
-	tex->unbind(); HANDLE_GL_ERROR();
 
 	return tex;
-}
-
-GLuint FrameBuffer::genFB() {
-	GLuint fbo;
-	glGenFramebuffers(1, &fbo);  HANDLE_GL_ERROR();
-	return fbo;
 }
 
 bool FrameBuffer::hasTarget(RenderingTarget target) const {
@@ -224,15 +218,13 @@ float FrameBuffer::getPickerKey(const glm::vec2& mousePosition) {
 	auto [width, height] = Engine::window.getWindowSize();
 	GLubyte data[sizeof(Object3D::ID_t)];
 
-	bind();
+	bind_guard bd(*this);
 
 	glReadBuffer(GL_COLOR_ATTACHMENT0 + (int)RenderingTarget::PICKER); HANDLE_GL_ERROR();
 
 	_colorTextures[RenderingTarget::PICKER]->bind();
 
 	glReadPixels(width / 2, height / 2, 1, 1, Object3D::getColorKeyFormat(), GL_UNSIGNED_BYTE, &data);  HANDLE_GL_ERROR();  // NEED FIX
-
-	unbind();
 
 	Object3D::ID_t id;
 	memcpy(&id, data, sizeof(Object3D::ID_t));
