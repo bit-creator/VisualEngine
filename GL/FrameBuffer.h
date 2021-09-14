@@ -13,16 +13,18 @@
 
 #include <glm/vec2.hpp>
 
-#include "globject.h"
 #include "Texture.h"
 #include "RenderBuffer.h"
 
-class FrameBuffer : public GLObject {
+class FrameBuffer: public RowGraphicObject <
+	Creators::frameBuff,
+	Deleters::frameBuff
+> {
 private:
 	std::map < RenderingTarget, TexPtr >				_colorTextures;
 	RenderBuffer										_renderBuffer;
 
-	GLenum												_acsessPolytics	 	=GL_FRAMEBUFFER;
+	uint32_t											_acsessPolytics;
 
 	TexPtr												_depthBuffer	 	=nullptr;
 	TexPtr												_stencilBuffer 	 	=nullptr;
@@ -32,12 +34,12 @@ private:
 	mutable bool										_dirtyTargetHash =true;
 
 private: // HASHED_DATA
-	mutable GLuint										_targetHash;
-	GLuint												_sizeOfAttachment;
-	std::vector < GLuint > 								_attachments;
+	mutable uint32_t										_targetHash;
+	uint32_t												_sizeOfAttachment;
+	std::vector < uint32_t > 								_attachments;
 
 public:
-	FrameBuffer(GLenum pol = GL_FRAMEBUFFER);
+	FrameBuffer(uint32_t pol);
 	virtual ~FrameBuffer();
 
 	void bind();
@@ -48,9 +50,9 @@ public:
 
 	float getPickerKey(const glm::vec2& mousePosition);
 
-	GLenum getAcsessPolytics() const;
-	GLuint getNumberOfTarget() const;
-	GLuint TargetHash() const;
+	uint32_t getAcsessPolytics() const;
+	uint32_t getNumberOfTarget() const;
+	uint32_t TargetHash() const;
 
 	bool readyToWork();
 
@@ -59,10 +61,10 @@ public:
 	void enableDepthStencilBuffer();
 	void useRenderBuffer();
 
-	void attachNewColorTex(RenderingTarget target, GLenum format =GL_RGBA);
+	void attachNewColorTex(RenderingTarget target, uint32_t format);
 
 private:
-	TexPtr createTexture(GLenum format, GLenum internalformat = GL_ZERO, GLenum type = GL_UNSIGNED_BYTE);
+	TexPtr createTexture(uint32_t format, uint32_t internalformat, uint32_t type);
 	bool   hasTarget(RenderingTarget target) const;
 	void   validateHashedData();
 };

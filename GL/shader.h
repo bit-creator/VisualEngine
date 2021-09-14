@@ -12,21 +12,24 @@
 #ifndef SHADER_H
 #define SHADER_H
 
-#include <iostream>
-#include <fstream>
 #include <vector>
 #include <memory>
 #include <string_view>
 
-#include "globject.h"
+#include "RowGraphicObject.h"
 
-class Shader : public GLObject {
+class Shader: public RowGraphicObject<
+	Creators::shader,
+	Deleters::shader
+> {
 private:
 	std::vector < const char* >					_shaderSources;
-	std::vector < GLint >		  			_shaderLength;
+	std::vector < uint32_t >		  				_shaderLength;
+
+protected:
+	Shader(const uint32_t shaderType) noexcept;
 
 public:
-	Shader(const GLuint shaderType) noexcept;
     ~Shader() noexcept;
 
     bool compileShader() const noexcept;
@@ -34,22 +37,12 @@ public:
 }; // Shader
 
 
-class VertexShader final : public Shader
-{
-public:
+struct VertexShader: public Shader {
 	VertexShader();
-	~VertexShader() = default;
-	VertexShader(VertexShader &&other) = default;
-	VertexShader& operator=(VertexShader &&other) = default;
 };
 
-class FragmentShader final : public Shader
-{
-public:
+struct FragmentShader: public Shader {
 	FragmentShader();
-	~FragmentShader() = default;
-	FragmentShader(FragmentShader &&other) = default;
-	FragmentShader& operator=(FragmentShader &&other) = default;
 };
 
 using ShaderPtr = std::shared_ptr<Shader>;

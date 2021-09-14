@@ -8,9 +8,12 @@
 #ifndef GL_RENDERBUFFER_H_
 #define GL_RENDERBUFFER_H_
 
-#include "globject.h"
+#include "RowGraphicObject.h"
 
-class RenderBuffer final : public GLObject {
+class RenderBuffer: public RowGraphicObject <
+	Creators::renderBuff,
+	Deleters::renderBuff
+> {
 public:
 	RenderBuffer();
 	~RenderBuffer();

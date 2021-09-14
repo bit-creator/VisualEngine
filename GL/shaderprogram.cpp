@@ -1,18 +1,7 @@
 #include "shaderprogram.h"
 
-ShaderProgram::ShaderProgram() noexcept
-    : GLObject(
-    	// Creator
-    	[] () -> ObjectID {
-			return glCreateProgram();
-		},
-
-		// Deleter
-		[] (ObjectID& obj) {
-			glDeleteProgram(obj); HANDLE_GL_ERROR();
-		}
-    )
-{ HANDLE_GL_ERROR(); }
+ShaderProgram::ShaderProgram() noexcept {
+}
 
 
 ShaderProgram::~ShaderProgram() noexcept {
@@ -20,26 +9,26 @@ ShaderProgram::~ShaderProgram() noexcept {
 
 void ShaderProgram::attachShader(const Shader& shader) const noexcept {
     if (shader.compileShader()) {
-    	glAttachShader(getID(), shader.getID()); HANDLE_GL_ERROR();
+    	glAttachShader(_object, shader.getID()); HANDLE_GL_ERROR();
     }
 }
 
 void ShaderProgram::enable() const noexcept {
-	glUseProgram(getID()); HANDLE_GL_ERROR();
+	glUseProgram(_object); HANDLE_GL_ERROR();
 }
 
 bool ShaderProgram::link() const noexcept {
-    glLinkProgram(getID()); HANDLE_GL_ERROR();
+    glLinkProgram(_object); HANDLE_GL_ERROR();
 
     GLint success;
     GLchar infoLog[512];
 
-    glValidateProgram(getID()); HANDLE_GL_ERROR();
+    glValidateProgram(_object); HANDLE_GL_ERROR();
 
-    glGetProgramiv(getID(), GL_LINK_STATUS, &success); HANDLE_GL_ERROR();
+    glGetProgramiv(_object, GL_LINK_STATUS, &success); HANDLE_GL_ERROR();
 
     if (!success) {
-        glGetProgramInfoLog(getID(), 512, NULL, infoLog); HANDLE_GL_ERROR();
+        glGetProgramInfoLog(_object, 512, NULL, infoLog); HANDLE_GL_ERROR();
         ERROR(" Shader program no linked, problems:");
         std::cout << infoLog << '\n' << std::endl;
 
@@ -51,7 +40,7 @@ bool ShaderProgram::link() const noexcept {
 
 GLuint ShaderProgram::getLocation(const std::string &name) const noexcept {
 	if (!_locations.contains(name)) {
-		_locations[name] = glGetUniformLocation(getID(), name.c_str());
+		_locations[name] = glGetUniformLocation(_object, name.c_str());
 	}
 	return _locations[name];
 }

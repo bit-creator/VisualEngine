@@ -5,6 +5,7 @@
  *      Author: bit_creator
  */
 
+#include <fstream>
 #include "ShaderFactory.h"
 #include "Material/MaterialTypes.hpp"
 

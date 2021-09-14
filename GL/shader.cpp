@@ -1,40 +1,32 @@
 #include "shader.h"
 
-Shader::Shader(const GLuint shaderType) noexcept
-	: GLObject(
-			// Creator
-			[shaderType]() -> ObjectID {
-				glCreateShader(shaderType);
-			},
+#include <iostream>
 
-			// Deleter
-			[](ObjectID obj) {
-				glDeleteShader(obj);
-			}
-	)
-{ HANDLE_GL_ERROR(); }
+Shader::Shader(const GLuint shaderType) noexcept
+	: RowGraphicObject(shaderType)
+{  }
 
 Shader::~Shader() noexcept {
 }
 
 bool Shader::compileShader() const noexcept {
-	glShaderSource(getID(), _shaderSources.size(), &_shaderSources[0], _shaderLength.data()); HANDLE_GL_ERROR();
+	glShaderSource(_object, _shaderSources.size(), &_shaderSources[0], (const GLint*)_shaderLength.data()); HANDLE_GL_ERROR();
 
-    glCompileShader(getID()); HANDLE_GL_ERROR();
+    glCompileShader(_object); HANDLE_GL_ERROR();
 
     GLint success;
     GLchar infoLog[512];
 
-    glGetShaderiv(getID(), GL_COMPILE_STATUS, &success); HANDLE_GL_ERROR();
+    glGetShaderiv(_object, GL_COMPILE_STATUS, &success); HANDLE_GL_ERROR();
 
     if(!success) {
-	   glGetShaderInfoLog(getID(), 512, NULL, infoLog); HANDLE_GL_ERROR();
+	   glGetShaderInfoLog(_object, 512, NULL, infoLog); HANDLE_GL_ERROR();
 	   ERROR("Shader not compile, problems:");
        std::cout << infoLog << '\n' << std::endl;
 
-	   std::cout << _shaderSources[0];
-	   std::cout << _shaderSources[1];
-	   std::cout << _shaderSources[2];
+//	   std::cout << _shaderSources[0];
+//	   std::cout << _shaderSources[1];
+//	   std::cout << _shaderSources[2];
 	   std::raise(SIGTERM);
        return false;
     }

@@ -9,27 +9,14 @@
 #include "../engine.h"
 #include "bindguard.h"
 
-RenderBuffer::RenderBuffer()
-	: GLObject(
-		// Creator
-		[] () -> ObjectID {
-			GLuint rbo;
-			glGenRenderbuffers(1, &rbo);  HANDLE_GL_ERROR();
-			return rbo;
-		},
-
-		// Deleter
-		[] (ObjectID& obj) {
-			glDeleteRenderbuffers(1, &obj); HANDLE_GL_ERROR();
-		}
-	)
-{ HANDLE_GL_ERROR(); }
+RenderBuffer::RenderBuffer() {
+}
 
 RenderBuffer::~RenderBuffer() {
 }
 
 void RenderBuffer::bind() {
-	glBindRenderbuffer(GL_RENDERBUFFER, getID());
+	glBindRenderbuffer(GL_RENDERBUFFER, _object);
 }
 
 void RenderBuffer::unbind() {

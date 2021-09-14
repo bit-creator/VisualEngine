@@ -2,14 +2,14 @@
 #include "GL/FrameBuffer.h"
 #include <chrono>
 
-Engine::Engine() noexcept {
+Engine::Engine() noexcept : _FBO(GL_FRAMEBUFFER) {
 	_FBO.bind();
 
 	_FBO.attachNewColorTex(RenderingTarget::PICKER, Object3D::getColorKeyFormat());
-	_FBO.attachNewColorTex(RenderingTarget::VIEW);
-	_FBO.attachNewColorTex(RenderingTarget::NORMAL);
-	_FBO.attachNewColorTex(RenderingTarget::SCREEN);
-	_FBO.attachNewColorTex(RenderingTarget::ALBEDO);
+	_FBO.attachNewColorTex(RenderingTarget::VIEW, GL_RGBA);
+	_FBO.attachNewColorTex(RenderingTarget::NORMAL, GL_RGBA);
+	_FBO.attachNewColorTex(RenderingTarget::SCREEN, GL_RGBA);
+	_FBO.attachNewColorTex(RenderingTarget::ALBEDO, GL_RGBA);
 //	_FBO.enableDepthBuffer();
 //	_FBO.enableStencilBuffer();
 //	_FBO.enableDepthStencilBuffer();

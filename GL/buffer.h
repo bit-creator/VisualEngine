@@ -12,21 +12,26 @@
 #ifndef BUFFER_H
 #define BUFFER_H
 
-#include "globject.h"
+#include "RowGraphicObject.h"
 
-class Buffer : public GLObject {
+class Buffer: public RowGraphicObject <
+	Creators::buffer,
+	Deleters::buffer
+> {
 private:
-	const GLuint                           _type;
+	const uint32_t                           _type;
+
+protected:
+	Buffer(uint32_t type) noexcept;
 
 public:
-	Buffer(GLuint type) noexcept;
-    ~Buffer() noexcept;
+	~Buffer() noexcept;
 
     void bind() noexcept;
     void unbind() noexcept;
     
     template < typename Tp >
-		void loadData(Tp data, GLenum usage) {
+		void loadData(Tp data, uint32_t usage) {
     		loadRawData(std::data(data), std::size(data) * sizeof(typename Tp::value_type), usage);
     	}
 
@@ -36,7 +41,15 @@ public:
 		}
 
 private:
-	void loadRawData(GLvoid* data, size_t size, GLenum usage) noexcept;
+	void loadRawData(void* data, size_t size, uint32_t usage) noexcept;
 }; // Buffer
+
+struct VertexBuffer: public Buffer {
+	VertexBuffer();
+};
+
+struct IndexBuffer: public Buffer {
+	IndexBuffer();
+};
 
 #endif // BUFFER_H

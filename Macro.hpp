@@ -12,15 +12,19 @@
 #ifndef __MACRO_HPP__
 #define __MACRO_HPP__
 
+#include "setup.h"
+
 #ifdef DEBUG	/* enable all */
 #	define CHECK_GL_ERROR
 #	define CONSOLE_MESSAGES
 #	define CONSOLE_ERRORS
+#	define CONSOLE_WARNING
 #endif // DEBUG 
 #ifdef RELEASE	/* disable all */
 #	undef  CHECK_GL_ERROR
 #	undef  CONSOLE_MESSAGES
 #	undef  CONSOLE_ERRORS
+#	undef  CONSOLE_WARNING
 #endif // RELEASE
 #ifndef CHECK_GL_ERROR
 #   define HANDLE_GL_ERROR() {  }
@@ -75,6 +79,19 @@
 #else
 #	define ERROR(msg) {	             						\
 		std::cout << "|  ERRORS  | " 						\
+    		      << "file | " << __FILE__					\
+    	    	  << " | method | " << __PRETTY_FUNCTION__	\
+    	    	  << " | line | " << __LINE__   			\
+    	    	  << " | " << msg 							\
+    	    	  << std::endl;								\
+    	/*std::raise(SIGTERM);*/								\
+	}
+#endif // CONSOLE_ERRORS
+#ifndef CONSOLE_WARNING
+#	define WARNING (msg) #msg
+#else
+#	define WARNING(msg) {	             						\
+		std::cout << "|  WARNING  | " 						\
     		      << "file | " << __FILE__					\
     	    	  << " | method | " << __PRETTY_FUNCTION__	\
     	    	  << " | line | " << __LINE__   			\

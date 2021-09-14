@@ -11,7 +11,8 @@
 #include <memory>
 
 #include "../CreateAsPointer.hpp"
-#include "globject.h"
+
+#include "RowGraphicObject.h"
 
 constexpr static int NUM_TEXTURE_UNIT = 7;
 constexpr static int NUM_RENDERING_TARGET = 5;
@@ -43,9 +44,12 @@ enum class BoxSide {
 	SIDE_BACK   = GL_TEXTURE_CUBE_MAP_NEGATIVE_Z
 };
 
-class Texture : public GLObject {
+class Texture: public RowGraphicObject <
+	Creators::texture,
+	Deleters::texture
+> {
 protected:
-	Texture(const GLenum target);
+	Texture(const uint32_t target);
 
 public:
 	~Texture();
@@ -61,15 +65,15 @@ public:
 	void unbind();
 
 protected:
-	void loadImage(const char* name, const GLenum target);
+	void loadImage(const char* name, const uint32_t target);
 	void setEmpty();
-	void allocate(GLuint width, GLuint height, GLenum format, GLenum internalFormat, GLenum type);
+	void allocate(uint32_t width, uint32_t height, uint32_t format, uint32_t internalFormat, uint32_t type);
 
 private:
-	void bind(GLuint index);
+	void bind(uint32_t index);
 
 private:
-	const GLenum								_target;
+	const uint32_t								_target;
 };	// CLASS_TEXTURE
 
 class Texture2D final : public Texture,
@@ -83,7 +87,7 @@ public:
 	Texture2D& operator=(Texture2D &&other) =default;
 
 	void loadImage(const char* name);
-	void allocate(GLuint width, GLuint height, GLenum format, GLenum internalFormat =GL_ZERO, GLenum type =GL_UNSIGNED_BYTE);
+	void allocate(uint32_t width, uint32_t height, uint32_t format, uint32_t internalFormat, uint32_t type);
 };	// CLASS_TEXTURE2D
 
 class TextureCubeMap final : public Texture,

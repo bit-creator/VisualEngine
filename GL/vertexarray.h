@@ -16,7 +16,7 @@
 #include <bitset>
 #include <optional>
 
-#include "globject.h"
+#include "RowGraphicObject.h"
 
 enum class Attribute
 {
@@ -30,9 +30,12 @@ enum class Attribute
 
 constexpr static int NUM_ATTRIBUTES = 6;
 
-class VertexArray : public GLObject {
+class VertexArray: public RowGraphicObject <
+	Creators::vertexArray,
+	Deleters::vertexArray
+> {
 private:
-	std::array < std::optional < Attribute >, NUM_ATTRIBUTES >                   _atributes;
+	std::bitset < NUM_ATTRIBUTES >												 _atributes;
 	std::bitset < NUM_ATTRIBUTES >												 _hash;
 
 public:
@@ -46,15 +49,17 @@ public:
     void disable(Attribute attr) noexcept;
     void disableAll() noexcept;
 
-    void addAttribute(Attribute attr, GLsizei stride, GLsizei offset) noexcept;
+    void addAttribute(Attribute attr, int32_t stride, int32_t offset) noexcept;
 
     bool hasAttribute(Attribute attr) const noexcept;
     std::size_t getAttribHash() const;
 
 private:
-    GLuint getAttribSize(Attribute attr) const noexcept;
-    GLuint getAttribDataType(Attribute attr) const noexcept;
-    GLuint getAttribLocation(Attribute attr) const noexcept;
+    uint32_t getAttribSize(Attribute attr) const noexcept;
+    uint32_t getAttribDataType(Attribute attr) const noexcept;
+    uint32_t getAttribLocation(Attribute attr) const noexcept;
+    void enable(uint32_t attr) noexcept;
+    void disable(uint32_t attr) noexcept;
 };
 
 #endif //  VERTEXARRAY_H

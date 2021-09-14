@@ -12,20 +12,7 @@
 
 //		TEXTURE_BASE		//
 Texture::Texture(const GLenum target)
-	: GLObject(
-		// Creator
-		[] () -> ObjectID {
-    		GLuint ID;
-    		glGenTextures(1, &ID); HANDLE_GL_ERROR();
-    		return ID;
-		},
-
-		// Deleter
-		[] (ObjectID& obj) {
-			glDeleteTextures(1, &obj); HANDLE_GL_ERROR();
-		}
-	)
-	, _target(target)
+	: _target(target)
 {
 	bind();
 }

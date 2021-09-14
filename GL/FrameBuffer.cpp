@@ -10,20 +10,7 @@
 #include "bindguard.h"
 
 FrameBuffer::FrameBuffer(GLenum pol)
-	: GLObject(
-		// Creator
-		[] () -> ObjectID {
-			GLuint fbo;
-			glGenFramebuffers(1, &fbo);  HANDLE_GL_ERROR();
-			return fbo;
-		},
-
-		// Deleter
-		[] (ObjectID& obj) {
-			glDeleteFramebuffers(1, &obj); HANDLE_GL_ERROR();
-		}
-	)
-	, _acsessPolytics(pol)
+	:_acsessPolytics(pol)
 	, _depthBuffer(nullptr)
 	, _stencilBuffer(nullptr)
 	, _depthStencilBuffer(nullptr)
@@ -38,7 +25,7 @@ FrameBuffer::~FrameBuffer() {
 }
 
 void FrameBuffer::bind() {
-	glBindFramebuffer(_acsessPolytics, getID());  HANDLE_GL_ERROR();
+	glBindFramebuffer(_acsessPolytics, _object);  HANDLE_GL_ERROR();
 
 	if(_dirtyHashedData) {
 		_attachments.clear();
@@ -81,7 +68,7 @@ void FrameBuffer::attachNewColorTex(RenderingTarget target, GLenum format) {
 
 	bind_guard bd(*this);
 
-	TexPtr colorTex = createTexture(format); HANDLE_GL_ERROR();
+	TexPtr colorTex = createTexture(format, GL_ZERO, GL_UNSIGNED_BYTE); HANDLE_GL_ERROR();
 
 	bind_guard tex(*colorTex);
 
@@ -104,7 +91,7 @@ void FrameBuffer::attachNewColorTex(RenderingTarget target, GLenum format) {
 void FrameBuffer::enableDepthBuffer() {
 	bind();
 
-	_depthBuffer = createTexture(GL_DEPTH_COMPONENT); HANDLE_GL_ERROR();
+	_depthBuffer = createTexture(GL_DEPTH_COMPONENT, GL_ZERO, GL_UNSIGNED_BYTE); HANDLE_GL_ERROR();
 
 	bind_guard guard(*_depthBuffer);
 
@@ -119,7 +106,7 @@ void FrameBuffer::enableDepthBuffer() {
 void FrameBuffer::enableStencilBuffer() {
 	bind();
 
-	_stencilBuffer = createTexture(GL_STENCIL_INDEX, GL_STENCIL_INDEX8); HANDLE_GL_ERROR();
+	_stencilBuffer = createTexture(GL_STENCIL_INDEX, GL_STENCIL_INDEX8, GL_UNSIGNED_BYTE); HANDLE_GL_ERROR();
 
 	bind_guard guard(*_stencilBuffer);
 

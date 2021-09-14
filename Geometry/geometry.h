@@ -28,8 +28,8 @@ private:         //  Num of elements
 
 protected:          //  OpenGL Buffers
 	VertexArray                                             VAO;
-    Buffer                                                  VBO;
-    Buffer                                                  EBO;
+    VertexBuffer                                            VBO;
+    IndexBuffer                                             EBO;
 
 protected:
 	void setNum(size_t index, size_t vertex) noexcept;

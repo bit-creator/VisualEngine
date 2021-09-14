@@ -5,18 +5,15 @@ Geometry::Geometry() noexcept
 	: _numVertex   (0)
 	, _numIndex    (0)
     , _conectionMode ( GL_TRIANGLES )
-    , VAO          (  )
-    , VBO          ( GL_ARRAY_BUFFER )
-    , EBO          ( GL_ELEMENT_ARRAY_BUFFER )
-{ MESSAGE("Geometry constructor called") }
+{  }
 
 Geometry::Geometry(const Geometry& oth) noexcept
 	: _numVertex   ( oth._numVertex )
 	, _numIndex    ( oth._numIndex )
 	, _conectionMode ( oth._conectionMode )
 	, VAO          (  )
-	, VBO          ( GL_ARRAY_BUFFER )
-	, EBO          ( GL_ELEMENT_ARRAY_BUFFER )
+	, VBO          (  )
+	, EBO          (  )
 {
 	MESSAGE("Geometry COPY constructor called")
 }
@@ -26,8 +23,8 @@ Geometry::Geometry(Geometry&& oth) noexcept
 	, _numIndex    ( oth._numIndex )
 	, _conectionMode ( oth._conectionMode )
 	, VAO          (  )
-	, VBO          ( GL_ARRAY_BUFFER )
-	, EBO          ( GL_ELEMENT_ARRAY_BUFFER )
+	, VBO          (  )
+	, EBO          (  )
 {
 	MESSAGE("Geometry constructor called")
 }

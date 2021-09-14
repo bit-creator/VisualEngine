@@ -15,15 +15,11 @@
 #include <memory>
 
 #include "abstracteventlistener.hpp"
-#include "AbstractEntityPool.h"
-#include "camera.h"
 #include "ShaderFactory.h"
 #include "object3d.h"
 #include "window.h"
 #include "scene.h"
 
-#include "GL/shaderprogram.h"
-#include "GL/Texture.h"
 #include "GL/FrameBuffer.h"
 #include "GL/ShadowBuffer.h"
 

@@ -21,11 +21,14 @@
 
 #include "../CreateAsPointer.hpp"
 
-class ShaderProgram :
-	public GLObject,
-	public UniqueCreator<ShaderProgram> {
+#include "RowGraphicObject.h"
+
+class ShaderProgram: public RowGraphicObject <
+	Creators::shaderPrg,
+	Deleters::shaderPrg
+>, public UniqueCreator<ShaderProgram> {
 private:
-	mutable std::map<std::string, GLuint>						_locations;
+	mutable std::map<std::string, uint32_t>						_locations;
 
 public:
 	ShaderProgram() noexcept;
