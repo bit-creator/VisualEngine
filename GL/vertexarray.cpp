@@ -16,12 +16,12 @@ void VertexArray::unbind() noexcept {
 
 void VertexArray::enable(Attribute attr) noexcept {
 	glEnableVertexAttribArray(getAttribLocation(attr)); HANDLE_GL_ERROR();
-	_hash[int(attr)] = true;
+	_enabled[int(attr)] = true;
 }
 
 void VertexArray::enable(uint32_t attr) noexcept {
 	glEnableVertexAttribArray(attr); HANDLE_GL_ERROR();
-	_hash[attr] = true;
+	_enabled[attr] = true;
 }
 
 void VertexArray::enableAll() noexcept {
@@ -31,12 +31,12 @@ void VertexArray::enableAll() noexcept {
 
 void VertexArray::disable(Attribute attr) noexcept {
 	glDisableVertexAttribArray(getAttribLocation(attr)); HANDLE_GL_ERROR();
-	_hash[int(attr)] = false;
+	_enabled[int(attr)] = false;
 }
 
 void VertexArray::disable(uint32_t attr) noexcept {
 	glDisableVertexAttribArray(attr); HANDLE_GL_ERROR();
-	_hash[attr] = false;
+	_enabled[attr] = false;
 }
 
 void VertexArray::disableAll() noexcept {
@@ -53,7 +53,7 @@ GLuint VertexArray::getAttribDataType(Attribute attr) const noexcept {
 }
 
 std::size_t VertexArray::getAttribHash() const {
-	return _hash.to_ullong();
+	return _enabled.to_ullong();
 }
 
 GLuint VertexArray::getAttribLocation(Attribute attr) const noexcept {

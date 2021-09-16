@@ -11,8 +11,8 @@
 Light::Light()
 	: Entity(EntityType::LIGHT)
 	, _type(LightType::DIRECTIONAL)
-	, _angle(0.0)
 	, _intensity(npos)
+	, _angle(0.0)
 	, _color(0.0, 0.0, 0.0, 0.0)
 {  }
 

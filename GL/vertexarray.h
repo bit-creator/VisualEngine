@@ -36,7 +36,7 @@ class VertexArray: public RowGraphicObject <
 > {
 private:
 	std::bitset < NUM_ATTRIBUTES >												 _atributes;
-	std::bitset < NUM_ATTRIBUTES >												 _hash;
+	std::bitset < NUM_ATTRIBUTES >												 _enabled;
 
 public:
 	VertexArray() noexcept;
